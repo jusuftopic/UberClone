@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#433F3F"
+
+    tools:context=".Login.RiderLogin">
+
+
+    <Button
+        android:id="@+id/notAccountRider"
+        android:layout_width="211dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="101dp"
+        android:layout_marginTop="9dp"
+        android:backgroundTint="#271F1F"
+        android:onClick="regiterNewUser"
+        android:text="Don't have account?"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/forgotpassword"
+        app:strokeColor="#2E2828" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="340dp"
+        android:layout_height="76dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="27dp"
+        android:gravity="center"
+        android:text="Rider Login
+"
+        android:textColor="#271F1F"
+        android:textSize="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/ridernameforregistration"
+        android:layout_width="250dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="44dp"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="Enter username"
+        android:inputType="textPersonName"
+        android:textColorHint="#271F1F"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registrationwarning" />
+
+    <EditText
+        android:id="@+id/riderpasswordforregisttration"
+        android:layout_width="250dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="34dp"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="Enter password"
+        android:inputType="textPassword"
+        android:textColorHint="#271F1F"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ridernameforregistration" />
+
+    <Button
+        android:id="@+id/registration"
+        android:layout_width="209dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="101dp"
+        android:layout_marginTop="57dp"
+        android:backgroundTint="#271F1F"
+        android:onClick="loginrider"
+        android:text="Login"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/riderpasswordforregisttration"
+        app:strokeColor="#2E2828" />
+
+    <Button
+        android:id="@+id/forgotpassword"
+        android:layout_width="210dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="103dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#271F1F"
+        android:onClick="forgottenPasswordProcess"
+        android:text="Forgot password?"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registration"
+        app:strokeColor="#2E2828" />
+
+    <TextView
+        android:id="@+id/registrationwarning"
+        android:layout_width="331dp"
+        android:layout_height="31dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="23dp"
+        android:gravity="center"
+        android:textColor="#FBFBFB"
+        android:textSize="13dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

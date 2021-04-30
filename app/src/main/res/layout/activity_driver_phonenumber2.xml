@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#433F3F"
+    tools:context=".Registration.Phonenumber.DriverPhonenumber">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="302dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="52dp"
+        android:gravity="center"
+        android:text="Please enter your phonenumber"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="148dp"
+        android:layout_marginTop="56dp"
+        android:gravity="center"
+        android:text="Choose country"
+        android:textSize="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Spinner
+        android:id="@+id/countries"
+        android:layout_width="215dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/drivernumberprefix"
+        android:layout_width="50dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="72dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textSize="18dp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/countries" />
+
+    <EditText
+        android:id="@+id/driverphonenumbersecond"
+        android:layout_width="195dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="72dp"
+        android:ems="10"
+        android:inputType="number"
+        android:visibility="visible"
+        app:layout_constraintStart_toEndOf="@+id/drivernumberprefix"
+        app:layout_constraintTop_toBottomOf="@+id/countries" />
+
+    <TextView
+        android:id="@+id/phonenumberwarningdiver"
+        android:layout_width="303dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="54dp"
+        android:layout_marginTop="17dp"
+        android:gravity="center"
+        android:textColor="#FFF7F7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/addNumberButtonDriver"
+        android:layout_width="194dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="28dp"
+        android:backgroundTint="#171616"
+        android:onClick="addNumberToDatabase"
+        android:text="Add number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/driverphonenumbersecond" />
+
+    <Button
+        android:id="@+id/addNumberLaterDriver"
+        android:layout_width="194dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#171616"
+        android:text="Later"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addNumberButtonDriver" />
+</androidx.constraintlayout.widget.ConstraintLayout>

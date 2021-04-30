@@ -1,0 +1,11 @@
+<resources>
+
+    <style name="Widget.Theme.UberClone.MyView" parent="">
+        <item name="android:background">@color/gray_400</item>
+        <item name="exampleColor">@color/light_blue_400</item>
+    </style>
+
+    <style name="AppThema" parent="Theme.AppCompat.Light.NoActionBar">
+
+    </style>
+</resources>
