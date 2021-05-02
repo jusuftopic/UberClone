@@ -238,9 +238,6 @@ public class DriverPhonenumber extends AppCompatActivity implements Phonenumber{
 
     @Override
     public void restartFields() {
-        if (!TextUtils.isEmpty(numberprefix.getText())){
-            numberprefix.setText("");
-        }
         if (!TextUtils.isEmpty(phonenumber.getText())){
             phonenumber.setText("");
         }

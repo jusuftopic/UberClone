@@ -4,6 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#433F3F"
+
     tools:context=".Registration.DriverCarDetails.CarInformations.UberXDetails">
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/cardetails"
+        android:layout_width="417dp"
+        android:layout_height="361dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></include>
+
+    <Button
+        android:id="@+id/submitCarDetails"
+        android:layout_width="152dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="128dp"
+        android:layout_marginTop="128dp"
+        android:backgroundTint="#000000"
+        android:onClick="addCarToDatabase"
+        android:text="Add car"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

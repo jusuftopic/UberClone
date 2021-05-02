@@ -11,16 +11,19 @@
         android:id="@+id/car_types"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="179dp" />
+        android:layout_marginTop="46dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="263dp"
         android:layout_height="60dp"
+        android:layout_marginStart="74dp"
+        android:layout_marginTop="73dp"
         android:gravity="center"
         android:text="Choose type of vehicle"
         android:textSize="25dp"
-        tools:layout_editor_absoluteX="74dp"
-        tools:layout_editor_absoluteY="73dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

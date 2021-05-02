@@ -38,7 +38,6 @@ public class CarTypePicker extends AppCompatActivity {
         setContentView(R.layout.activity_car_type_picker);
 
         nameOfDriver = getNameOfDriver();
-        Log.i("CarType- Name",nameOfDriver);
 
         vehicletypes = getVehicleTypes();
         pricerange = getPricerange();
@@ -54,7 +53,7 @@ public class CarTypePicker extends AppCompatActivity {
                     case 0:
                         moveToCarDetails(UberXDetails.class);
                         break;
-                    case 1:
+            /*        case 1:
                         moveToCarDetails(UberXLDetails.class);
                         break;
                     case 2:
@@ -75,7 +74,7 @@ public class CarTypePicker extends AppCompatActivity {
                         break;
                     case 7:
                         moveToCarDetails(UberWAVDetails.class);
-                        break;
+                        break;*/
                 }
             }
 
