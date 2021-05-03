@@ -20,7 +20,7 @@ public class CarAdapter extends ArrayAdapter<String> {
 
 
     public CarAdapter(@NonNull Context context,String[] cartype, String[] pricerange) {
-        super(context, R.layout.carspicker);
+        super(context, R.layout.carspicker,cartype);
         this.context = context;
         this.cartype = cartype;
         this.pricerange = pricerange;

@@ -126,7 +126,7 @@ public class DriverPhonenumber extends AppCompatActivity implements Phonenumber{
     public void addNumberToDatabase(View view) {
         if (!fieldsEmpty()){
             if (!String.valueOf(numberprefix.getText()).equals("") && country != null){
-                if (String.valueOf(numberprefix.getText()).length() >= 3 && String.valueOf(phonenumber.getText()).length() >= 8){
+                if (String.valueOf(numberprefix.getText()).length() >= 2 && String.valueOf(phonenumber.getText()).length() >= 8){
 
                     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                     DatabaseReference root = firebaseDatabase.getReference();

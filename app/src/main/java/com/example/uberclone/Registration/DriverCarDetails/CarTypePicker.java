@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import com.example.uberclone.Extras.Adapters.CarAdapters.CarAdapter;
@@ -32,15 +33,25 @@ public class CarTypePicker extends AppCompatActivity {
     private String[] vehicletypes;
     private String[] pricerange;
 
+    private Button toCategory;
+
+    private String category;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_type_picker);
 
+        this.getSupportActionBar().hide();
+
         nameOfDriver = getNameOfDriver();
 
         vehicletypes = getVehicleTypes();
         pricerange = getPricerange();
+
+        toCategory = (Button) findViewById(R.id.tocategory);
+
+        category = "UberX";
 
         cartypes = (Spinner) findViewById(R.id.car_types);
         carAdapter = new CarAdapter(CarTypePicker.this,vehicletypes,pricerange);
@@ -51,30 +62,36 @@ public class CarTypePicker extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position){
                     case 0:
-                        moveToCarDetails(UberXDetails.class);
+                        category = "UberX";
                         break;
-            /*        case 1:
-                        moveToCarDetails(UberXLDetails.class);
+
+                    case 1:
+                        category = "UberXL";
                         break;
+
                     case 2:
-                        moveToCarDetails(UberSUVDetails.class);
+                        category = "UberSUV";
                         break;
+
                     case 3:
-                        moveToCarDetails(UberBlackDetails.class);
+                        category = "UberBlack";
                         break;
+
                     case 4:
-                        moveToCarDetails(UberSelectDetails.class);
+                        category = "UberSelect";
                         break;
 
                     case 5:
-                        moveToCarDetails(UberExpressPoolXDetails.class);
+                        category = "UberLux";
                         break;
+
                     case 6:
-                        moveToCarDetails(UberLuxDetails.class);
+                        category = "UberWAV";
                         break;
-                    case 7:
-                        moveToCarDetails(UberWAVDetails.class);
-                        break;*/
+
+                    default:
+                        category = "";
+                        break;
                 }
             }
 
@@ -83,8 +100,23 @@ public class CarTypePicker extends AppCompatActivity {
 
             }
         });
-
     }
+
+    public void goToCategory(View view){
+        if (!category.equalsIgnoreCase("")){
+          switch (category){
+              case "UberX":
+                  Intent toUberX = new Intent(CarTypePicker.this,UberXDetails.class);
+                  toUberX.putExtra("driver from picker",nameOfDriver);
+                  startActivity(toUberX);
+                  break;
+          }
+        }
+        else{
+
+        }
+    }
+
 
     public String[] getVehicleTypes(){
         String[] vehicles = new String[8];
@@ -116,7 +148,6 @@ public class CarTypePicker extends AppCompatActivity {
 
         return vehicleprices;
 
-
     }
 
     public String buildPriceRange(double min_price, double max_price){
@@ -124,12 +155,6 @@ public class CarTypePicker extends AppCompatActivity {
 
         return builder.append(min_price).append("-").append(max_price).append("$").toString();
 
-    }
-
-    public void moveToCarDetails(Class activity){
-        Intent toCarDetails = new Intent(CarTypePicker.this,activity);
-        toCarDetails.putExtra("driver from picker",nameOfDriver);
-        startActivity(toCarDetails);
     }
 
     public String getNameOfDriver(){

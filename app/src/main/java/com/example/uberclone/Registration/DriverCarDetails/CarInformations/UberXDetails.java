@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.uberclone.Modules.Car.CarMarks.CarMarks;
 import com.example.uberclone.Modules.Car.UberX;
 import com.example.uberclone.R;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,6 +40,8 @@ public class UberXDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uber_x_details);
 
+        this.getSupportActionBar().hide();
+
         drivername = getDriverName();
         Log.i("Name from car picker", drivername);
 
@@ -47,64 +50,28 @@ public class UberXDetails extends AppCompatActivity {
         number_of_passangers = (EditText) findViewById(R.id.maxpassangers);
         price = (EditText) findViewById(R.id.price);
 
+        Toast.makeText(UberXDetails.this,String.valueOf(number_of_doors.getText()),Toast.LENGTH_LONG).show();
+
         addCar = (Button) findViewById(R.id.submitCarDetails);
     }
 
     public void addCarToDatabase(View view){
-
-        String name_car = String.valueOf(carname.getText());
-        int doors = Integer.parseInt(String.valueOf(number_of_doors.getText()));
-        int passangers = Integer.parseInt(String.valueOf(number_of_passangers.getText()));
-        double car_price = Double.parseDouble(String.valueOf(price.getText()));
-
-        if (isValideCar(name_car,doors,passangers,car_price)){
-
-            UberX uberX = new UberX(name_car,doors,passangers,car_price);
-
-            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-            DatabaseReference root = firebaseDatabase.getReference();
-
-            root.child("User").child("Driver").child(drivername).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists()){
-                        root.child("User").child("Driver").child(drivername).child("Car").setValue(uberX).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                             Toast.makeText(UberXDetails.this,"Succesefull added car",Toast.LENGTH_LONG).show();
-                            }
-                        });
-                    }
-                    else{
-                        Log.e("SNAPSHOT STATUS(UBERX)","Problem with user in database");
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+        if (!fieldsEmpty()){
+            if (isValidCarLength()){
+                if (CarMarks.isValideCarMarkt(String.valueOf(carname.getText()))){
 
                 }
-            });
+
+            }
+            else{
+                Toast.makeText(UberXDetails.this,"Name of car musst have minimal 3 latters",Toast.LENGTH_LONG).show();
+            }
+
         }
         else{
-        /*    AlertDialog.Builder builder = new AlertDialog.Builder(UberXDetails.this)
-                    .setTitle("Invalid informations")
-                    .setMessage("Your car may not fit the UberX category.\nRead requirements for this category?")
-                    .setNegativeButton("No",null)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent toCategoryDetails = new Intent(UberXDetails.this,UberXCategoryInfos.class);
-                            startActivity(toCategoryDetails);
-                        }
-                    });
-
-            builder.create().show();*/
-
-            Toast.makeText(UberXDetails.this,"Not fit the UberX category",Toast.LENGTH_LONG).show();
+            Toast.makeText(UberXDetails.this,"Some fields are empty. Try again!",Toast.LENGTH_LONG).show();
             restartFields();
         }
-
 
     }
 
@@ -115,23 +82,7 @@ public class UberXDetails extends AppCompatActivity {
         return false;
     }
 
-    public boolean isValideCar(String name_car,int doors,int passangers, double price){
-        if (!fieldsEmpty()){
-            UberX uberX = new UberX(name_car,doors,passangers,price);
 
-            if (uberX.isValidNumberOfDoors() && uberX.isValidNumberOfPassangers(uberX.getMaxPassengers()) && uberX.isValidPrice(UberX.MIN_PRICE_RANGE,UberX.MAX_PRICE_RANGE)){
-                return true;
-            }
-        }
-        else{
-            Toast.makeText(UberXDetails.this,"Fill all required fields",Toast.LENGTH_LONG).show();
-            restartFields();
-        }
-
-
-
-        return false;
-    }
 
     public String getDriverName() {
         if (this.getIntent().getStringExtra("driver from picker") != null) {
@@ -140,6 +91,24 @@ public class UberXDetails extends AppCompatActivity {
 
         return null;
     }
+
+    public boolean isValidCarLength(){
+
+        return String.valueOf(carname.getText()).length() >= 3;
+    }
+
+   /* public boolean isValideCarMark(String mark){
+
+        for (CarMarks carMarks : CarMarks.values()){
+            if (carMarks.getCarmark_name().equalsIgnoreCase(mark)){
+                return true;
+            }
+        }
+
+
+
+        return false;
+    }*/
 
     public void restartFields(){
         if (!TextUtils.isEmpty(carname.getText())){
