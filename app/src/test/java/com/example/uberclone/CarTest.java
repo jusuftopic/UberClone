@@ -38,7 +38,9 @@ public class CarTest {
     @Test
     public void testValidNumberPassangersOn4_TRUE(){
 
-       Assert.assertTrue(car.isValidNumberOfPassangers(UberLux.MAX_NUMBER_OF_PASSENGERS));
+     //  Assert.assertTrue(car.isValidNumberOfPassangers(UberLux.MAX_NUMBER_OF_PASSENGERS));
+
+        Assert.assertTrue(car.isValidNumberOfPassangers(4));
     }
 
     @Test

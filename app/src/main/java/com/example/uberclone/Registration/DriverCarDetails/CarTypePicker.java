@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.uberclone.Extras.Adapters.CarAdapters.CarAdapter;
 import com.example.uberclone.Modules.Car.UberBlack;
@@ -22,6 +23,7 @@ import com.example.uberclone.Modules.Car.UberX;
 import com.example.uberclone.Modules.Car.UberXL;
 import com.example.uberclone.R;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberXDetails;
+import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberXLDetails;
 
 public class CarTypePicker extends AppCompatActivity {
 
@@ -110,12 +112,19 @@ public class CarTypePicker extends AppCompatActivity {
                   toUberX.putExtra("driver from picker",nameOfDriver);
                   startActivity(toUberX);
                   break;
+
+              case "UberXL":
+                  Intent toUberXL = new Intent(CarTypePicker.this, UberXLDetails.class);
+                  toUberXL.putExtra("driver from picker",nameOfDriver);
+                  startActivity(toUberXL);
           }
         }
         else{
-
+            Toast.makeText(CarTypePicker.this,"Problem to pick category",Toast.LENGTH_LONG).show();
         }
     }
+
+
 
 
     public String[] getVehicleTypes(){

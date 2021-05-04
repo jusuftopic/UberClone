@@ -2,10 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constlay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#433F3F"
 
+    android:background="#433F3F"
     tools:context=".Registration.DriverCarDetails.CarInformations.UberXDetails">
 
     <include
@@ -13,6 +14,8 @@
         layout="@layout/cardetails"
         android:layout_width="417dp"
         android:layout_height="361dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"></include>
 
@@ -25,6 +28,17 @@
         android:backgroundTint="#000000"
         android:onClick="addCarToDatabase"
         android:text="Add car"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include" />
+
+    <TextView
+        android:id="@+id/warning"
+        android:layout_width="349dp"
+        android:layout_height="23dp"
+        android:layout_marginStart="31dp"
+        android:layout_marginTop="82dp"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/include" />
 

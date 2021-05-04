@@ -53,7 +53,7 @@ public abstract class Car {
         return this.numberOfDoors;
     }
     public int getMaxPassengers(){
-        return this.getMaxPassengers();
+        return this.maxPassengers;
     }
 
     public double getPrice_per_km() {

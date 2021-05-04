@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.uberclone.Modules.Car.CarMarks.CarMarks;
@@ -33,6 +34,8 @@ public class UberXDetails extends AppCompatActivity {
     private EditText number_of_passangers;
     private EditText price;
 
+    private TextView warning;
+
     private Button addCar;
 
     @Override
@@ -50,7 +53,7 @@ public class UberXDetails extends AppCompatActivity {
         number_of_passangers = (EditText) findViewById(R.id.maxpassangers);
         price = (EditText) findViewById(R.id.price);
 
-        Toast.makeText(UberXDetails.this,String.valueOf(number_of_doors.getText()),Toast.LENGTH_LONG).show();
+        warning = (TextView) findViewById(R.id.warning);
 
         addCar = (Button) findViewById(R.id.submitCarDetails);
     }
@@ -60,17 +63,55 @@ public class UberXDetails extends AppCompatActivity {
             if (isValidCarLength()){
                 if (CarMarks.isValideCarMarkt(String.valueOf(carname.getText()))){
 
+                    String uberXcar = String.valueOf(carname.getText());
+                    String uberXnumOfDoors = String.valueOf(number_of_doors.getText());
+                    String uberXNumberOfPassangers = String.valueOf(number_of_passangers.getText());
+                    String uberXprice = String.valueOf(price.getText());
+
+                    UberX uberX = new UberX(uberXcar,Integer.parseInt(uberXnumOfDoors),Integer.parseInt(uberXNumberOfPassangers),Double.parseDouble(uberXprice));
+
+                    if (uberX.isValidNumberOfDoors() && uberX.isValidNumberOfPassangers(4) && uberX.isValidPrice(UberX.MIN_PRICE_RANGE,UberX.MAX_PRICE_RANGE)){
+
+                        Log.i("UberXDetails update:","VALID CAR");
+
+                        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                        DatabaseReference root = firebaseDatabase.getReference();
+
+                        root.child("User").child("Driver").child(drivername).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()){
+                                    root.child("User").child("Driver").child(drivername).child("Car").child("UberX").setValue(uberX).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                         Log.i("UberXDetails car: ","ADDED");
+                                        }
+                                    });
+                                }
+                                else{
+                                    Log.i("UberXDetails user: ","EXISTS");
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+                }
+                else {
+                    setWarning("Your car does not belong to this category!");
                 }
 
             }
             else{
-                Toast.makeText(UberXDetails.this,"Name of car musst have minimal 3 latters",Toast.LENGTH_LONG).show();
+                setWarning("Car mark musst have minimum 3 latters!");
             }
 
         }
         else{
-            Toast.makeText(UberXDetails.this,"Some fields are empty. Try again!",Toast.LENGTH_LONG).show();
-            restartFields();
+            setWarning("Some fields are empty. Try again!");
         }
 
     }
@@ -109,6 +150,11 @@ public class UberXDetails extends AppCompatActivity {
 
         return false;
     }*/
+
+    public void setWarning(String message){
+        warning.setText(message);
+        restartFields();
+    }
 
     public void restartFields(){
         if (!TextUtils.isEmpty(carname.getText())){
