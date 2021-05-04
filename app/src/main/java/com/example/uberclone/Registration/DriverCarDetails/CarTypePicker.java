@@ -22,6 +22,7 @@ import com.example.uberclone.Modules.Car.UberWAV;
 import com.example.uberclone.Modules.Car.UberX;
 import com.example.uberclone.Modules.Car.UberXL;
 import com.example.uberclone.R;
+import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberSUVDetails;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberXDetails;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberXLDetails;
 
@@ -117,6 +118,13 @@ public class CarTypePicker extends AppCompatActivity {
                   Intent toUberXL = new Intent(CarTypePicker.this, UberXLDetails.class);
                   toUberXL.putExtra("driver from picker",nameOfDriver);
                   startActivity(toUberXL);
+                  break;
+
+              case "UberSUV":
+                  Intent toUberSUV = new Intent(CarTypePicker.this, UberSUVDetails.class);
+                  toUberSUV.putExtra("driver from picker",nameOfDriver);
+                  startActivity(toUberSUV);
+                  break;
           }
         }
         else{
