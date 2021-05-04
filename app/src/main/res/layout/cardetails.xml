@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#433F3F">
+
+
+    <EditText
+        android:id="@+id/carname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="57dp"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="Mark of car"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/numberofdoors"
+        android:layout_width="75dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="21dp"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintStart_toEndOf="@+id/textView7"
+        app:layout_constraintTop_toBottomOf="@+id/carname" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="135dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="95dp"
+        android:layout_marginTop="29dp"
+        android:gravity="center"
+        android:text="Number of doors"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/carname" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="135dp"
+        android:layout_height="39dp"
+        android:layout_marginStart="95dp"
+        android:layout_marginTop="14dp"
+        android:gravity="center"
+        android:text="Max passangers"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+    <EditText
+        android:id="@+id/maxpassangers"
+        android:layout_width="75dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintStart_toEndOf="@+id/textView8"
+        app:layout_constraintTop_toBottomOf="@+id/numberofdoors" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="84dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="95dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="Price/$"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView8">
+
+    </TextView>
+
+    <EditText
+        android:id="@+id/price"
+        android:layout_width="75dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="65dp"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintStart_toEndOf="@+id/textView9"
+        app:layout_constraintTop_toBottomOf="@+id/maxpassangers"></EditText>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

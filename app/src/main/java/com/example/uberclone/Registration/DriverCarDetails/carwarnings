@@ -1,0 +1,8 @@
+"Some fields are empty. Try again!"
+"Car mark musst have minimum 3 latters!"
+"Your car does not belong to this category!"
+"Number of doors: 4; Number of passangers: 4"
+
+Errors and Infos
+Log.e("UberXL username: ","doesnt exists");
+ Log.i("UberXL car: ","ADDED");
