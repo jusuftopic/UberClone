@@ -3,6 +3,7 @@ package com.example.uberclone;
 import com.example.uberclone.Modules.Car.Car;
 import com.example.uberclone.Modules.Car.InteriorType.InteriorType;
 import com.example.uberclone.Modules.Car.UberLux;
+import com.example.uberclone.Modules.Car.UberSUV;
 import com.example.uberclone.Modules.Car.UberSelect;
 import com.example.uberclone.Modules.Car.UberWAV;
 import com.example.uberclone.Modules.Car.UberX;
@@ -18,6 +19,7 @@ public class CarTest {
     private UberLux uberLux;
     private UberSelect uberSelect;
     private UberWAV uberWAV;
+    private UberSUV uberSUV;
 
     @Before
     public void setUp(){
@@ -25,6 +27,7 @@ public class CarTest {
         uberLux = new UberLux("Mercedes",4,4,true,true,5.5);
         uberSelect = new UberSelect("Cadillac",4,4,"Leather",3.3);
         uberWAV = new UberWAV("Combi",3,UberWAV.MAX_NUMBER_OF_PASSENGERS,true,true,3.4);
+        uberSUV = new UberSUV("Subaru",4,4,"black","black",3.4);
 
     }
     @After
@@ -33,6 +36,7 @@ public class CarTest {
         uberLux = null;
         uberSelect = null;
         uberWAV = null;
+        uberSUV = null;
     }
 
     @Test
@@ -159,6 +163,63 @@ public class CarTest {
 
         Assert.assertFalse(uberWAV.isValideUberWAV());
     }
+
+    @Test
+    public void testUberSUVEnterior_True1(){
+        String color = "black";
+
+        Assert.assertTrue(uberSUV.isValideEnterior(color));
+    }
+
+    @Test
+    public void testUberSUVEnterior_True2(){
+        String color = "BLACK";
+
+        Assert.assertTrue(uberSUV.isValideEnterior(color));
+    }
+
+    @Test
+    public void testUberSUVEnterior_True3(){
+        String color = "Black";
+
+        Assert.assertTrue(uberSUV.isValideEnterior(color));
+    }
+
+    @Test
+    public void testUberSUVInterior_True1(){
+        String color = "black";
+
+        Assert.assertTrue(uberSUV.isValideInterior(color));
+    }
+
+    @Test
+    public void testUberSUVInterior_True2(){
+        String color = "BLACK";
+
+        Assert.assertTrue(uberSUV.isValideInterior(color));
+    }
+
+    @Test
+    public void testUberSUVInterior_True3(){
+        String color = "Black";
+
+        Assert.assertTrue(uberSUV.isValideInterior(color));
+    }
+
+    @Test
+    public void testUberSUVEnterior_FALSE(){
+        String color = "Yellow";
+
+        Assert.assertFalse(uberSUV.isValideEnterior(color));
+    }
+
+    @Test
+    public void testUberSUVInterior_FALSE(){
+        String color = "Yellow";
+
+        Assert.assertFalse(uberSUV.isValideInterior(color));
+    }
+
 
 
 

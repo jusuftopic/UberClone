@@ -194,7 +194,7 @@ public class UberSUVDetails extends AppCompatActivity {
                     String uberSUVcolor_enterior = interior_color;
                     String uberSUVprice = String.valueOf(price.getText());
 
-                    UberSUV uberSUV = new UberSUV(uberSUVcarmark,Integer.parseInt(uberSUVnumOfDoors),Integer.parseInt(uberSUVnumOfPassangers),uberSUVcolor_enterior,uberSUVcolor_interior,uberSUVprice)
+                    UberSUV uberSUV = new UberSUV(uberSUVcarmark,Integer.parseInt(uberSUVnumOfDoors),Integer.parseInt(uberSUVnumOfPassangers),uberSUVcolor_enterior,uberSUVcolor_interior,Double.parseDouble(uberSUVprice));
 
 
 
@@ -217,7 +217,19 @@ public class UberSUVDetails extends AppCompatActivity {
         if (uberSUV.isValidNumberOfDoors()){
             if (uberSUV.isValidNumberOfPassangers(4)){
                 if (uberSUV.isValidPrice(UberSUV.MIN_PRICE_RANGE,UberSUV.MAX_PRICE_RANGE)){
-
+                    if (uberSUV.isValideEnterior(enterior_color)){
+                        if (uberSUV.isValideInterior(interior_color)){
+                            return true;
+                        }
+                        else{
+                            setWarning("Interior of SUV musst be black");
+                            return false;
+                        }
+                    }
+                    else{
+                        setWarning("Enterior of SUV musst be black");
+                        return false;
+                    }
 
                 }
                 setWarning("Price musst be between "+UberSUV.MIN_PRICE_RANGE +" and "+UberSUV.MAX_PRICE_RANGE);
