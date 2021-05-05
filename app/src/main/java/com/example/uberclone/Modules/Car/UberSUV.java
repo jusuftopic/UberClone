@@ -13,26 +13,34 @@ public class UberSUV extends Car {
     public final static int COLOR_ENTERIOR = Color.BLACK;
     public final static int COLOR_INTERIOR = Color.BLACK;
 
-    private Color color_enterior;
-    private Color color_interior;
+    private String color_enterior;
+    private String color_interior;
 
-    public UberSUV(String autoname, int numberOfDoors, int maxPassengers,Color color_enterior, Color color_interior,double price_per_km){
+    public UberSUV(String autoname, int numberOfDoors, int maxPassengers,String color_enterior, String color_interior,double price_per_km){
         super(autoname, numberOfDoors, maxPassengers, price_per_km);
         this.color_enterior = color_enterior;
         this.color_interior = color_interior;
     }
 
-    public void setColorEnterior(Color color_enterior){
+    public boolean isValideInterior(String color){
+        return color.equalsIgnoreCase("black");
+    }
+
+    public boolean isValideEnterior(String color){
+        return color.equalsIgnoreCase("black");
+    }
+
+    public void setColorEnterior(String color_enterior){
         this.color_enterior = color_enterior;
     }
-    public void setColorInterior(Color color_interior){
+    public void setColorInterior(String color_interior){
         this.color_interior = color_interior;
     }
 
-    public Color getColor_enterior(){
+    public String getColor_enterior(){
         return this.color_enterior;
     }
-    public Color getColor_interior(){
+    public String getColor_interior(){
         return this.color_interior;
     }
 }

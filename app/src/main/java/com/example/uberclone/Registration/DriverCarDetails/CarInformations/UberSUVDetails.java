@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -58,19 +59,123 @@ public class UberSUVDetails extends AppCompatActivity {
 
         warning = (TextView) findViewById(R.id.warning_uberSUV);
 
+        interior_color = "";
+        enterior_color = "";
+
         colors = getColors();
 
         interiorpicker = (Spinner) findViewById(R.id.interiorpicker);
         enteriorpicker = (Spinner) findViewById(R.id.enteriorpicker);
 
-        colorAdapter = new ColorAdapter(UberSUVDetails.this,colors);
+        colorAdapter = new ColorAdapter(UberSUVDetails.this, colors);
 
         interiorpicker.setAdapter(colorAdapter);
         enteriorpicker.setAdapter(colorAdapter);
 
+        interiorpicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        interior_color = "Black";
+                        break;
+                    case 1:
+                        interior_color = "White";
+                        break;
+                    case 2:
+                        interior_color = "Yellow";
+                        break;
+                    case 3:
+                        interior_color = "Green";
+                        break;
+                    case 4:
+                        interior_color = "Red";
+                        break;
+                    case 5:
+                        interior_color = "Blue";
+                        break;
+                    case 6:
+                        interior_color = "Orange";
+                        break;
+                    case 7:
+                        interior_color = "Violet";
+                        break;
+                    case 8:
+                        interior_color = "Brown";
+                        break;
+                    case 9:
+                        interior_color = "Grey";
+                        break;
 
-        interior_color = "";
-        enterior_color = "";
+                    case 10:
+                        interior_color = "Pink";
+                        break;
+
+                    default:
+                        interior_color = "";
+                        break;
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        enteriorpicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position){
+                    case 0:
+                        enterior_color = "Black";
+                        break;
+                    case 1:
+                        enterior_color = "White";
+                        break;
+                    case 2:
+                        enterior_color = "Yellow";
+                        break;
+                    case 3:
+                        enterior_color = "Green";
+                        break;
+                    case 4:
+                        enterior_color = "Red";
+                        break;
+                    case 5:
+                        enterior_color = "Blue";
+                        break;
+                    case 6:
+                        enterior_color = "Orange";
+                        break;
+                    case 7:
+                        enterior_color = "Violet";
+                        break;
+                    case 8:
+                        enterior_color = "Brown";
+                        break;
+                    case 9:
+                        enterior_color = "Grey";
+                        break;
+
+                    case 10:
+                        enterior_color = "Pink";
+                        break;
+
+                    default:
+                        enterior_color = "";
+                        break;
+                }
+                }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
 
         addcar = (Button) findViewById(R.id.submitCarDetails_uberSUV);
 
@@ -85,11 +190,13 @@ public class UberSUVDetails extends AppCompatActivity {
                     String uberSUVcarmark = String.valueOf(carname.getText());
                     String uberSUVnumOfDoors = String.valueOf(num_of_doors.getText());
                     String uberSUVnumOfPassangers = String.valueOf(num_of_passangers.getText());
+                    String uberSUVcolor_interior = enterior_color;
+                    String uberSUVcolor_enterior = interior_color;
                     String uberSUVprice = String.valueOf(price.getText());
 
-                    /*UberSUV uberSUV = new UberSUV(uberSUVcarmark,uberSUVnumOfDoors,uberSUVnumOfPassangers,uberSUVprice)
+                    UberSUV uberSUV = new UberSUV(uberSUVcarmark,Integer.parseInt(uberSUVnumOfDoors),Integer.parseInt(uberSUVnumOfPassangers),uberSUVcolor_enterior,uberSUVcolor_interior,uberSUVprice)
 
-                    if ()*/
+
 
                 } else {
                     setWarning("Your car does not belong to this category!");
@@ -105,19 +212,37 @@ public class UberSUVDetails extends AppCompatActivity {
         }
     }
 
-    public void pickInterior(View view) {
+    public boolean valideInfos(UberSUV uberSUV){
 
+        if (uberSUV.isValidNumberOfDoors()){
+            if (uberSUV.isValidNumberOfPassangers(4)){
+                if (uberSUV.isValidPrice(UberSUV.MIN_PRICE_RANGE,UberSUV.MAX_PRICE_RANGE)){
+
+
+                }
+                setWarning("Price musst be between "+UberSUV.MIN_PRICE_RANGE +" and "+UberSUV.MAX_PRICE_RANGE);
+                return false;
+
+            }
+            else{
+                setWarning("SUV musst have maximum 4 passangers");
+                return false;
+            }
+
+        }
+        else {
+            setWarning("SUV musst habe minumum 1 and maximum 4 doors");
+            return false;
+        }
     }
 
-    public void pickEnterior(View view) {
 
-    }
 
-    public String[] getColors(){
+    public String[] getColors() {
         String[] colorFormEnum = new String[11];
         int i = 0;
 
-        for (SUVColors colors : SUVColors.values()){
+        for (SUVColors colors : SUVColors.values()) {
             colorFormEnum[i] = colors.getColorname();
             i++;
         }
