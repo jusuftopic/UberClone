@@ -57,21 +57,21 @@ public class CarTest {
     @Test
     public void testValidNumberOfDoors_TRUE(){
 
-       Assert.assertTrue(car.isValidNumberOfDoors());
+       Assert.assertTrue(car.isValidNumberOfDoors(UberX.MAX_NUMBER_OF_DOORS));
     }
 
     @Test
     public void testValidNumberOfDoors_FALSE(){
         car.setNumberOfDoors(0);
 
-        Assert.assertFalse(car.isValidNumberOfDoors());
+        Assert.assertFalse(car.isValidNumberOfDoors(UberX.MAX_NUMBER_OF_DOORS));
     }
 
     @Test
     public void testValidNumberOfDoors_FALSE2(){
         car.setNumberOfDoors(7);
 
-        Assert.assertFalse(car.isValidNumberOfDoors());
+        Assert.assertFalse(car.isValidNumberOfDoors(UberX.MAX_NUMBER_OF_DOORS));
     }
 
 

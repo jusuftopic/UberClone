@@ -214,7 +214,7 @@ public class UberSUVDetails extends AppCompatActivity {
 
     public boolean valideInfos(UberSUV uberSUV){
 
-        if (uberSUV.isValidNumberOfDoors()){
+        if (uberSUV.isValidNumberOfDoors(UberSUV.MAX_NUMBER_OF_DOORS)){
             if (uberSUV.isValidNumberOfPassangers(4)){
                 if (uberSUV.isValidPrice(UberSUV.MIN_PRICE_RANGE,UberSUV.MAX_PRICE_RANGE)){
                     if (uberSUV.isValideEnterior(enterior_color)){

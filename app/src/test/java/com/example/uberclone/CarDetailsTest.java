@@ -27,7 +27,7 @@ public class CarDetailsTest {
 
     @Test
     public void testValideInfos_True(){
-        Assert.assertTrue(uberSUV.isValidNumberOfDoors());
+        Assert.assertTrue(uberSUV.isValidNumberOfDoors(UberSUV.MAX_NUMBER_OF_DOORS));
         Assert.assertTrue(uberSUV.isValidNumberOfPassangers(4));
         Assert.assertTrue(uberSUV.isValideInterior("black"));
         Assert.assertTrue(uberSUV.isValideEnterior("black"));
@@ -37,7 +37,7 @@ public class CarDetailsTest {
     @Test
     public void testValideInfos_False1(){
         uberSUV.setNumberOfDoors(6);
-        Assert.assertFalse(uberSUV.isValidNumberOfDoors());
+        Assert.assertFalse(uberSUV.isValidNumberOfDoors(UberSUV.MAX_NUMBER_OF_DOORS));
 
         Assert.assertTrue(uberSUV.isValidNumberOfPassangers(4));
         Assert.assertTrue(uberSUV.isValideInterior("black"));
@@ -47,7 +47,7 @@ public class CarDetailsTest {
 
     @Test
     public void testValideInfos_False2(){
-        Assert.assertTrue(uberSUV.isValidNumberOfDoors());
+        Assert.assertTrue(uberSUV.isValidNumberOfDoors(UberSUV.MAX_NUMBER_OF_DOORS));
 
         uberSUV.setMaxPassengers(8);
         Assert.assertFalse(uberSUV.isValidNumberOfPassangers(4));
@@ -59,7 +59,7 @@ public class CarDetailsTest {
 
     @Test
     public void testValideInfos_False3(){
-        Assert.assertTrue(uberSUV.isValidNumberOfDoors());
+        Assert.assertTrue(uberSUV.isValidNumberOfDoors(UberSUV.MAX_NUMBER_OF_DOORS));
         Assert.assertTrue(uberSUV.isValidNumberOfPassangers(4));
 
         String color = "red";
@@ -72,7 +72,7 @@ public class CarDetailsTest {
     @Test
     public void testValideInfos_False4(){
 
-        Assert.assertTrue(uberSUV.isValidNumberOfDoors());
+        Assert.assertTrue(uberSUV.isValidNumberOfDoors(UberSUV.MAX_NUMBER_OF_DOORS));
         Assert.assertTrue(uberSUV.isValidNumberOfPassangers(4));
         Assert.assertTrue(uberSUV.isValideInterior("black"));
 
@@ -84,7 +84,7 @@ public class CarDetailsTest {
     @Test
     public void testValideInfos_False5(){
 
-        Assert.assertTrue(uberSUV.isValidNumberOfDoors());
+        Assert.assertTrue(uberSUV.isValidNumberOfDoors(UberSUV.MAX_NUMBER_OF_DOORS));
         Assert.assertTrue(uberSUV.isValidNumberOfPassangers(4));
         Assert.assertTrue(uberSUV.isValideInterior("black"));
         Assert.assertTrue(uberSUV.isValideEnterior("black"));

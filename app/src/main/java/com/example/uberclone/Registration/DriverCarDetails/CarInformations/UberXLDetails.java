@@ -66,7 +66,7 @@ public class UberXLDetails extends AppCompatActivity {
 
                     UberXL uberXL = new UberXL(uberXLcarmark,Integer.parseInt(uberXLnumOfDoors),Integer.parseInt(uberXLnumOfPassangers),Double.parseDouble(uberXLprice));
 
-                    if (uberXL.isValidNumberOfDoors() && uberXL.isValidNumberOfPassangers(UberXL.MAX_NUMBER_OF_PASSENGERS) && uberXL.isValidPrice(UberXL.MIN_PRICE_RANGE,UberXL.MAX_PRICE_RANGE)){
+                    if (uberXL.isValidNumberOfDoors(UberXL.MAX_NUMBER_OF_DOORS) && uberXL.isValidNumberOfPassangers(UberXL.MAX_NUMBER_OF_PASSENGERS) && uberXL.isValidPrice(UberXL.MIN_PRICE_RANGE,UberXL.MAX_PRICE_RANGE)){
 
                         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                         DatabaseReference root = firebaseDatabase.getReference();
