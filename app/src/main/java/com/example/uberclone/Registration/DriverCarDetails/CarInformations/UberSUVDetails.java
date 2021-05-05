@@ -9,10 +9,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.uberclone.Extras.Adapters.ColorAdapter.ColorAdapter;
 import com.example.uberclone.Modules.Car.CarMarks.SUVMarks;
 import com.example.uberclone.Modules.Car.UberSUV;
+import com.example.uberclone.Modules.Color.SUVColors;
 import com.example.uberclone.R;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
@@ -26,13 +29,15 @@ public class UberSUVDetails extends AppCompatActivity {
     private EditText num_of_passangers;
     private EditText price;
 
-    private Button choose_interior_color;
-    private Button choose_enterior_color;
+    private String[] colors;
+
+    private Spinner interiorpicker;
+    private Spinner enteriorpicker;
 
     private String interior_color;
     private String enterior_color;
 
-    private int defaultColor;
+    private ColorAdapter colorAdapter;
 
     private TextView warning;
 
@@ -44,7 +49,7 @@ public class UberSUVDetails extends AppCompatActivity {
         setContentView(R.layout.activity_uber_s_u_v_details);
 
         nameOfDriver = getNameOfDriver();
-        Log.i("UberSUVDetails user",nameOfDriver);
+        Log.i("UberSUVDetails user", nameOfDriver);
 
         carname = (EditText) findViewById(R.id.carname_uberSUV);
         num_of_doors = (EditText) findViewById(R.id.numberofdoors_uberSUV);
@@ -53,23 +58,29 @@ public class UberSUVDetails extends AppCompatActivity {
 
         warning = (TextView) findViewById(R.id.warning_uberSUV);
 
-        choose_interior_color = (Button) findViewById(R.id.interiorbutton);
-        choose_enterior_color = (Button) findViewById(R.id.enteriorbutton);
+        colors = getColors();
+
+        interiorpicker = (Spinner) findViewById(R.id.interiorpicker);
+        enteriorpicker = (Spinner) findViewById(R.id.enteriorpicker);
+
+        colorAdapter = new ColorAdapter(UberSUVDetails.this,colors);
+
+        interiorpicker.setAdapter(colorAdapter);
+        enteriorpicker.setAdapter(colorAdapter);
+
 
         interior_color = "";
         enterior_color = "";
-
-        defaultColor = ContextCompat.getColor(UberSUVDetails.this,R.color.colorPrimary);
 
         addcar = (Button) findViewById(R.id.submitCarDetails_uberSUV);
 
 
     }
 
-    public void addCarToDatabase(View view){
-        if (!fieldsEmpty()){
-            if (isValidCarLength()){
-                if (SUVMarks.isValideSUVMark(String.valueOf(carname.getText()))){
+    public void addCarToDatabase(View view) {
+        if (!fieldsEmpty()) {
+            if (isValidCarLength()) {
+                if (SUVMarks.isValideSUVMark(String.valueOf(carname.getText()))) {
 
                     String uberSUVcarmark = String.valueOf(carname.getText());
                     String uberSUVnumOfDoors = String.valueOf(num_of_doors.getText());
@@ -80,44 +91,38 @@ public class UberSUVDetails extends AppCompatActivity {
 
                     if ()*/
 
-                }
-                else{
+                } else {
                     setWarning("Your car does not belong to this category!");
                 }
 
-            }
-            else {
+            } else {
                 setWarning("Car mark musst have minimum 3 latters!");
             }
 
-        }
-        else{
+        } else {
             setWarning("Some fields are empty. Try again!");
 
         }
     }
 
-    public void pickInterior(View view){
+    public void pickInterior(View view) {
 
     }
 
-    public void pickEnterior(View view){
+    public void pickEnterior(View view) {
 
     }
 
-    public void openColorPicker(){
-        AmbilWarnaDialog dialog = new AmbilWarnaDialog(UberSUVDetails.this, defaultColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
-            @Override
-            public void onCancel(AmbilWarnaDialog dialog) {
+    public String[] getColors(){
+        String[] colorFormEnum = new String[11];
+        int i = 0;
 
-            }
+        for (SUVColors colors : SUVColors.values()){
+            colorFormEnum[i] = colors.getColorname();
+            i++;
+        }
 
-            @Override
-            public void onOk(AmbilWarnaDialog dialog, int color) {
-                defaultColor = color;
-                warning.setText(String.valueOf(color));
-            }
-        });
+        return colorFormEnum;
     }
 
 
@@ -134,17 +139,17 @@ public class UberSUVDetails extends AppCompatActivity {
         return String.valueOf(carname.getText()).length() >= 3;
     }
 
-    public String getNameOfDriver(){
+    public String getNameOfDriver() {
         String drivername_from_intent = this.getIntent().getStringExtra("driver from picker");
 
-        if (drivername_from_intent != null){
+        if (drivername_from_intent != null) {
             return drivername_from_intent;
         }
 
         return null;
     }
 
-    public void setWarning(String message){
+    public void setWarning(String message) {
         warning.setText(message);
         restartFields();
     }
