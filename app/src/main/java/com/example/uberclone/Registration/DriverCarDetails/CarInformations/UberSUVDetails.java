@@ -115,6 +115,7 @@ public class UberSUVDetails extends AppCompatActivity {
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
                 defaultColor = color;
+                warning.setText(String.valueOf(color));
             }
         });
     }

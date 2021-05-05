@@ -11,9 +11,13 @@
         android:id="@+id/enteriorbutton"
         android:layout_width="158dp"
         android:layout_height="38dp"
+        android:layout_marginStart="126dp"
+        android:layout_marginTop="18dp"
+        android:backgroundTint="#000000"
+        android:onClick="pickEnterior"
         android:text="Enterior color"
-        tools:layout_editor_absoluteX="126dp"
-        tools:layout_editor_absoluteY="346dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/interiorbutton" />
 
     <EditText
         android:id="@+id/carname_uberSUV"
@@ -122,9 +126,13 @@
         android:id="@+id/interiorbutton"
         android:layout_width="158dp"
         android:layout_height="38dp"
+        android:layout_marginStart="126dp"
+        android:layout_marginTop="25dp"
+        android:backgroundTint="#000000"
+        android:onClick="pickInterior"
         android:text="Interior color"
-        tools:layout_editor_absoluteX="126dp"
-        tools:layout_editor_absoluteY="290dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
