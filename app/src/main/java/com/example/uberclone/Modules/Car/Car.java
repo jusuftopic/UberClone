@@ -24,8 +24,8 @@ public abstract class Car {
         return false;
     }
 
-    public boolean isValidNumberOfDoors(){
-        return this.numberOfDoors > 0 && this.numberOfDoors <= 6;
+    public boolean isValidNumberOfDoors(int maxNumOfDoors){
+        return this.numberOfDoors > 0 && this.numberOfDoors <= maxNumOfDoors;
     }
 
     public boolean isValidPrice(double minRange,double maxRange){

@@ -6,6 +6,8 @@ public class UberSUV extends Car {
 
     public static final int MAX_NUMBER_OF_PASSENGERS = 4;
 
+    public static final int MAX_NUMBER_OF_DOORS = 4;
+
     public static final double MIN_PRICE_RANGE = 1.7;
     public static final double MAX_PRICE_RANGE = 3.8;
 
