@@ -2,6 +2,7 @@ package com.example.uberclone.Registration.CardActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import com.braintreepayments.cardform.utils.CardType;
 import com.braintreepayments.cardform.view.CardEditText;
 import com.braintreepayments.cardform.view.CardForm;
+import com.example.uberclone.MainApp.Rider.RiderMainContent;
 import com.example.uberclone.Modules.Card.Card;
 import com.example.uberclone.R;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -66,7 +68,9 @@ public class CardEntery extends AppCompatActivity {
                     root.child("User").child("Rider").child(ridername).child("Card").setValue(card).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Toast.makeText(CardEntery.this,"Card added to database",Toast.LENGTH_LONG).show();
+                            Intent toMainContent = new Intent(CardEntery.this, RiderMainContent.class);
+                            toMainContent.putExtra("ridername from card activity",ridername);
+                            startActivity(toMainContent);
                         }
                     });
                 }

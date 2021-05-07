@@ -56,6 +56,8 @@ public class UberSUVDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uber_s_u_v_details);
 
+        this.getSupportActionBar().hide();
+
         nameOfDriver = getNameOfDriver();
         Log.i("UberSUVDetails user", nameOfDriver);
 

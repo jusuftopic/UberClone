@@ -73,7 +73,7 @@ public class UberXDetails extends AppCompatActivity {
 
                     UberX uberX = new UberX(uberXcar,Integer.parseInt(uberXnumOfDoors),Integer.parseInt(uberXNumberOfPassangers),Double.parseDouble(uberXprice));
 
-                    if (uberX.isValidNumberOfDoors(UberX.MAX_NUMBER_OF_DOORS) && uberX.isValidNumberOfPassangers(4) && uberX.isValidPrice(UberX.MIN_PRICE_RANGE,UberX.MAX_PRICE_RANGE)){
+                    if(valideRequirements(uberX)){
 
                         Log.i("UberXDetails update:","VALID CAR");
 
