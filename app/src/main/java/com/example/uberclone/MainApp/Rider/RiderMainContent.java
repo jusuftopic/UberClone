@@ -53,7 +53,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        nameOfRider = getNameOfRider();
+        getNameOfRider();
         search_place = (EditText) findViewById(R.id.whereToGo);
     }
 
@@ -96,7 +96,6 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
     }
 
     public String getNameOfRider(){
-
-        return this.getIntent().getStringExtra("ridername from card activity") != null ? this.getIntent().getStringExtra("ridername from card activity") : null;
+        return this.getIntent().getStringExtra("ridername from card activity") != null ? this.getIntent().getStringExtra("ridername from card activity") : this.getIntent().getStringExtra("ridername from login");
     }
 }
