@@ -1,5 +1,6 @@
 package com.example.uberclone.Registration.DriverCarDetails.CarInformations;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -18,6 +19,12 @@ import com.example.uberclone.Modules.Car.CarMarks.SUVMarks;
 import com.example.uberclone.Modules.Car.UberSUV;
 import com.example.uberclone.Modules.Color.SUVColors;
 import com.example.uberclone.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -195,6 +202,34 @@ public class UberSUVDetails extends AppCompatActivity {
                     String uberSUVprice = String.valueOf(price.getText());
 
                     UberSUV uberSUV = new UberSUV(uberSUVcarmark,Integer.parseInt(uberSUVnumOfDoors),Integer.parseInt(uberSUVnumOfPassangers),uberSUVcolor_enterior,uberSUVcolor_interior,Double.parseDouble(uberSUVprice));
+
+                    if (valideInfos(uberSUV)){
+
+                        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                        DatabaseReference root = firebaseDatabase.getReference();
+
+                        root.child("User").child("Driver").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()){
+                                    root.child("User").child("Driver").child(nameOfDriver).setValue(uberSUV).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                         Log.i("UberSUV registration ","SUCCESEFULL");
+                                        }
+                                    });
+                                }
+                                else{
+                                    Log.e("UberSUVDetails user: ","ERROR TO FIND A USER WIHT username "+nameOfDriver);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
 
 
 
