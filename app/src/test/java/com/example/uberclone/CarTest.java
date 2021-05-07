@@ -220,13 +220,4 @@ public class CarTest {
         Assert.assertFalse(uberSUV.isValideInterior(color));
     }
 
-
-
-
-
-
-
-
-
-
 }

@@ -1,14 +1,23 @@
 package com.example.uberclone.MainApp.Rider;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.EditText;
 
 import com.example.uberclone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -17,6 +26,11 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
     private GoogleMap mMap;
 
     private String nameOfRider;
+
+    private EditText search_place;
+
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +42,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         mapFragment.getMapAsync(this);
 
         nameOfRider = getNameOfRider();
+        search_place = (EditText) findViewById(R.id.whereToGo);
     }
 
     /**
@@ -43,10 +58,29 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                setLocation(location);
+            }
+        };
+
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+        }
+        else{
+            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            setLocation(lastKnownLocation);
+
+
+        }
+    }
+
+    public void setLocation(Location location){
+        LatLng currentposition = new LatLng(location.getLatitude(),location.getLongitude());
+        mMap.addMarker(new MarkerOptions().title("Your current location").position(currentposition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentposition,10f));
     }
 
     public String getNameOfRider(){
