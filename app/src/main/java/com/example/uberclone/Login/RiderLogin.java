@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.example.uberclone.Login.ForgottenPassword.RiderForgottenPassword;
 import com.example.uberclone.MainActivity;
+import com.example.uberclone.MainApp.Rider.RiderMainContent;
+import com.example.uberclone.Modules.Participants.Rider;
 import com.example.uberclone.R;
 import com.example.uberclone.Registration.RiderRegistration;
 import com.google.firebase.database.DataSnapshot;
@@ -70,8 +72,9 @@ public class RiderLogin extends AppCompatActivity {
                         String passwordInDatabase = String.valueOf(snapshot.child("password").getValue());
 
                         if (passwordOfUser.equals(passwordInDatabase)){
-                            Intent intent = new Intent(RiderLogin.this, MainActivity.class);
-                            startActivity(intent);
+                            Intent toMainContent = new Intent(RiderLogin.this, RiderMainContent.class);
+                            toMainContent.putExtra("ridername from login",nameOfUser);
+                            startActivity(toMainContent);
                         }
                         else{
                             warning.setText("Wrong password! Please try again");
