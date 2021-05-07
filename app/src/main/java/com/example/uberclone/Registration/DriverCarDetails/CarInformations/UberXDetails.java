@@ -48,14 +48,17 @@ public class UberXDetails extends AppCompatActivity {
         drivername = getDriverName();
         Log.i("Name from car picker", drivername);
 
-        carname = (EditText) findViewById(R.id.carname);
-        number_of_doors = (EditText) findViewById(R.id.numberofdoors);
-        number_of_passangers = (EditText) findViewById(R.id.maxpassangers);
-        price = (EditText) findViewById(R.id.price);
+        carname = (EditText) findViewById(R.id.carname_uberx);
+        number_of_doors = (EditText) findViewById(R.id.numberofdoors_uberx);
+        number_of_passangers = (EditText) findViewById(R.id.maxpassangers_uberx);
+        price = (EditText) findViewById(R.id.price_uberx);
 
-        warning = (TextView) findViewById(R.id.warning);
+        warning = (TextView) findViewById(R.id.warning_uberx);
 
-        addCar = (Button) findViewById(R.id.submitCarDetails);
+        addCar = (Button) findViewById(R.id.submitCarDetails_uberx);
+
+
+
     }
 
     public void addCarToDatabase(View view){
@@ -116,6 +119,30 @@ public class UberXDetails extends AppCompatActivity {
 
     }
 
+    public boolean valideRequirements(UberX uberX){
+        if (uberX.isValidNumberOfDoors(UberX.MAX_NUMBER_OF_DOORS)){
+            if (uberX.isValidNumberOfPassangers(UberX.MAX_NUMBER_OF_PASSENGERS)){
+                if (uberX.isValidPrice(UberX.MIN_PRICE_RANGE,UberX.MAX_PRICE_RANGE)){
+                    return true;
+                }
+                else{
+                    setWarning("Price musst be between "+UberX.MIN_PRICE_RANGE+" and "+UberX.MAX_PRICE_RANGE);
+                    return false;
+                }
+
+            }
+            else{
+                setWarning("UberX musst have maximum +"+UberX.MAX_NUMBER_OF_PASSENGERS +" passangers");
+                return false;
+            }
+
+        }
+        else{
+            setWarning("UberX musst have minumum 1 and maximum "+UberX.MAX_NUMBER_OF_DOORS +" doors");
+            return false;
+        }
+    }
+
     public boolean fieldsEmpty(){
         if (TextUtils.isEmpty(carname.getText()) || TextUtils.isEmpty(number_of_doors.getText()) || TextUtils.isEmpty(number_of_passangers.getText()) || TextUtils.isEmpty(price.getText())){
             return true;
@@ -138,18 +165,6 @@ public class UberXDetails extends AppCompatActivity {
         return String.valueOf(carname.getText()).length() >= 3;
     }
 
-   /* public boolean isValideCarMark(String mark){
-
-        for (CarMarks carMarks : CarMarks.values()){
-            if (carMarks.getCarmark_name().equalsIgnoreCase(mark)){
-                return true;
-            }
-        }
-
-
-
-        return false;
-    }*/
 
     public void setWarning(String message){
         warning.setText(message);

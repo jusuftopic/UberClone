@@ -278,7 +278,7 @@ public class UberSUVDetails extends AppCompatActivity {
 
         }
         else {
-            setWarning("SUV musst habe minumum 1 and maximum 4 doors");
+            setWarning("SUV musst have minumum 1 and maximum 4 doors");
             return false;
         }
     }
