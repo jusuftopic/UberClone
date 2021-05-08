@@ -2,7 +2,6 @@ package com.example.uberclone.Registration.DriverCarDetails.CarInformations;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,7 +18,7 @@ import com.example.uberclone.Extras.Adapters.ColorAdapter.ColorAdapter;
 import com.example.uberclone.MainApp.Driver.DriverMainContent;
 import com.example.uberclone.Modules.Car.CarMarks.SUVMarks;
 import com.example.uberclone.Modules.Car.UberSUV;
-import com.example.uberclone.Modules.Color.SUVColors;
+import com.example.uberclone.Modules.Color.Colors;
 import com.example.uberclone.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -27,8 +26,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class UberSUVDetails extends AppCompatActivity {
 
@@ -288,7 +285,7 @@ public class UberSUVDetails extends AppCompatActivity {
         String[] colorFormEnum = new String[11];
         int i = 0;
 
-        for (SUVColors colors : SUVColors.values()) {
+        for (Colors colors : Colors.values()) {
             colorFormEnum[i] = colors.getColorname();
             i++;
         }
