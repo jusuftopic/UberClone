@@ -30,8 +30,11 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:name=".MainApp.Driver.DriverMainContent"
+            android:label="@string/title_activity_driver_main_content"></activity>
+        <activity
             android:name=".MainApp.Rider.RiderMainContent"
-            android:label="@string/title_activity_rider_main_content"></activity>
+            android:label="@string/title_activity_rider_main_content" />
         <activity android:name=".Registration.DriverCarDetails.CarInformations.UberSUVDetails" />
         <activity android:name=".Registration.DriverCarDetails.CarInformations.UberXLDetails" />
         <activity android:name=".Registration.DriverCarDetails.CarInformations.UberXDetails" />
