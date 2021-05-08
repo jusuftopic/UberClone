@@ -3,6 +3,7 @@ package com.example.uberclone.Registration.DriverCarDetails.CarInformations;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.uberclone.MainApp.Driver.DriverMainContent;
 import com.example.uberclone.Modules.Car.CarMarks.CarMarks;
 import com.example.uberclone.Modules.Car.UberX;
 import com.example.uberclone.Modules.Car.UberXL;
@@ -80,6 +82,9 @@ public class UberXLDetails extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                          Log.i("UberXL car: ","ADDED");
+                                            Intent toMainContent = new Intent(UberXLDetails.this, DriverMainContent.class);
+                                            toMainContent.putExtra("drivername from cardetails",nameOfDriver);
+                                            startActivity(toMainContent);
                                         }
                                     });
                                 }
