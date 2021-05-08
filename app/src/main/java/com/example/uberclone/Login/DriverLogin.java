@@ -64,7 +64,7 @@ public class DriverLogin extends AppCompatActivity {
             String nameOfDriver = String.valueOf(drivername.getText());
             String passwordOfUser = String.valueOf(driverpassword.getText());
 
-            root.child("User").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
+            root.child("User").child("Driver").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.exists()){

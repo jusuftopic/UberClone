@@ -138,7 +138,7 @@ public class UberSUVDetails extends AppCompatActivity {
         enteriorpicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position){
+                switch (position) {
                     case 0:
                         enterior_color = "Black";
                         break;
@@ -178,14 +178,13 @@ public class UberSUVDetails extends AppCompatActivity {
                         enterior_color = "";
                         break;
                 }
-                }
+            }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
-
 
 
         addcar = (Button) findViewById(R.id.submitCarDetails_uberSUV);
@@ -205,9 +204,9 @@ public class UberSUVDetails extends AppCompatActivity {
                     String uberSUVcolor_enterior = interior_color;
                     String uberSUVprice = String.valueOf(price.getText());
 
-                    UberSUV uberSUV = new UberSUV(uberSUVcarmark,Integer.parseInt(uberSUVnumOfDoors),Integer.parseInt(uberSUVnumOfPassangers),uberSUVcolor_enterior,uberSUVcolor_interior,Double.parseDouble(uberSUVprice));
+                    UberSUV uberSUV = new UberSUV(uberSUVcarmark, Integer.parseInt(uberSUVnumOfDoors), Integer.parseInt(uberSUVnumOfPassangers), uberSUVcolor_enterior, uberSUVcolor_interior, Double.parseDouble(uberSUVprice));
 
-                    if (valideInfos(uberSUV)){
+                    if (valideInfos(uberSUV)) {
 
                         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                         DatabaseReference root = firebaseDatabase.getReference();
@@ -215,19 +214,18 @@ public class UberSUVDetails extends AppCompatActivity {
                         root.child("User").child("Driver").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if (snapshot.exists()){
-                                    root.child("User").child("Driver").child(nameOfDriver).setValue(uberSUV).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                if (snapshot.exists()) {
+                                    root.child("User").child("Driver").child(nameOfDriver).child("Car").child("UberSUV").setValue(uberSUV).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                         Log.i("UberSUV registration ","SUCCESEFULL");
+                                            Log.i("UberSUV registration ", "SUCCESEFULL");
                                             Intent toMainContent = new Intent(UberSUVDetails.this, DriverMainContent.class);
-                                            toMainContent.putExtra("drivername from cardetails",nameOfDriver);
+                                            toMainContent.putExtra("drivername from cardetails", nameOfDriver);
                                             startActivity(toMainContent);
                                         }
                                     });
-                                }
-                                else{
-                                    Log.e("UberSUVDetails user: ","ERROR TO FIND A USER WIHT username "+nameOfDriver);
+                                } else {
+                                    Log.e("UberSUVDetails user: ", "ERROR TO FIND A USER WIHT username " + nameOfDriver);
                                 }
                             }
 
@@ -237,7 +235,6 @@ public class UberSUVDetails extends AppCompatActivity {
                             }
                         });
                     }
-
 
 
                 } else {
@@ -254,42 +251,37 @@ public class UberSUVDetails extends AppCompatActivity {
         }
     }
 
-    public boolean valideInfos(UberSUV uberSUV){
+    public boolean valideInfos(UberSUV uberSUV) {
 
-        if (uberSUV.isValidNumberOfDoors(UberSUV.MAX_NUMBER_OF_DOORS)){
-            if (uberSUV.isValidNumberOfPassangers(4)){
-                if (uberSUV.isValidPrice(UberSUV.MIN_PRICE_RANGE,UberSUV.MAX_PRICE_RANGE)){
-                    if (uberSUV.isValideEnterior(enterior_color)){
-                        if (uberSUV.isValideInterior(interior_color)){
+        if (uberSUV.isValidNumberOfDoors(UberSUV.MAX_NUMBER_OF_DOORS)) {
+            if (uberSUV.isValidNumberOfPassangers(4)) {
+                if (uberSUV.isValidPrice(UberSUV.MIN_PRICE_RANGE, UberSUV.MAX_PRICE_RANGE)) {
+                    if (uberSUV.isValideEnterior(enterior_color)) {
+                        if (uberSUV.isValideInterior(interior_color)) {
                             return true;
-                        }
-                        else{
+                        } else {
                             setWarning("Interior of SUV musst be black");
                             return false;
                         }
-                    }
-                    else{
+                    } else {
                         setWarning("Enterior of SUV musst be black");
                         return false;
                     }
 
                 }
-                setWarning("Price musst be between "+UberSUV.MIN_PRICE_RANGE +" and "+UberSUV.MAX_PRICE_RANGE);
+                setWarning("Price musst be between " + UberSUV.MIN_PRICE_RANGE + " and " + UberSUV.MAX_PRICE_RANGE);
                 return false;
 
-            }
-            else{
+            } else {
                 setWarning("SUV musst have maximum 4 passangers");
                 return false;
             }
 
-        }
-        else {
+        } else {
             setWarning("SUV musst have minumum 1 and maximum 4 doors");
             return false;
         }
     }
-
 
 
     public String[] getColors() {

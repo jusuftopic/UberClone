@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.uberclone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,6 +22,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class DriverMainContent extends FragmentActivity implements OnMapReadyCallback {
+
+    private String nameOfDriver;
 
     private GoogleMap mMap;
 
@@ -48,6 +51,9 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        nameOfDriver = getNameOfDriver();
+        Log.i("DriverMainContent name"," "+nameOfDriver);
 
     }
 
@@ -96,6 +102,15 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         LatLng current_position = new LatLng(location.getLatitude(),location.getLongitude());
         mMap.addMarker(new MarkerOptions().title("My location").position(current_position).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_position,10f));
+    }
+
+    public String getNameOfDriver(){
+        if (this.getIntent().getStringExtra("drivername from cardetails") == null){
+            if (this.getIntent().getStringExtra("drivername from login") != null){
+                return this.getIntent().getStringExtra("drivername from login");
+            }
+        }
+        return null;
     }
 }
 
