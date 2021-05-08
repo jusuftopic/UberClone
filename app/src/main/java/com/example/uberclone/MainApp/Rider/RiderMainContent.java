@@ -79,6 +79,16 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             public void onLocationChanged(@NonNull Location location) {
                 setLocation(location);
             }
+
+            @Override
+            public void onProviderDisabled(@NonNull String provider) {
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
         };
 
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
@@ -89,7 +99,6 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             setLocation(lastKnownLocation);
-
 
         }
     }
