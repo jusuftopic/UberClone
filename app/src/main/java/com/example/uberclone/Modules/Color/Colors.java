@@ -14,8 +14,8 @@ public enum Colors {
     GREY("Grey",9),
     PINK("Pink",10);
 
-    public  final String colorname;
-    public final int index;
+    private   final String colorname;
+    private  final int index;
 
     private Colors(String colorname, int index){
         this.colorname = colorname;

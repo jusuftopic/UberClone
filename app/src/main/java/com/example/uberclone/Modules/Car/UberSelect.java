@@ -37,4 +37,9 @@ public class UberSelect extends Car {
     public void setInterior(String interior) {
         this.interior = interior;
     }
+
+    public boolean isValideInterior(String color){
+
+        return color.equalsIgnoreCase("black");
+    }
 }
