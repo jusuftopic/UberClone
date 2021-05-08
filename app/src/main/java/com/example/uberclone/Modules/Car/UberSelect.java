@@ -39,7 +39,6 @@ public class UberSelect extends Car {
     }
 
     public boolean isValideInterior(String color){
-
         return color.equalsIgnoreCase("black");
     }
 }

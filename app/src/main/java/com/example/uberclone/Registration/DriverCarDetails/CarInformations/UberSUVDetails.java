@@ -222,7 +222,7 @@ public class UberSUVDetails extends AppCompatActivity {
                                         }
                                     });
                                 } else {
-                                    Log.e("UberSUVDetails user: ", "ERROR TO FIND A USER WIHT username " + nameOfDriver);
+                                    Log.e("UberSUVDetails user: ", "ERROR TO FIND A USER WITH username " + nameOfDriver);
                                 }
                             }
 

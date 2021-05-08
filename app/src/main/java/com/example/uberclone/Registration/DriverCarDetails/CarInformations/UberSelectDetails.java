@@ -1,7 +1,9 @@
 package com.example.uberclone.Registration.DriverCarDetails.CarInformations;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,8 +16,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.uberclone.Extras.Adapters.ColorAdapter.ColorAdapter;
+import com.example.uberclone.MainApp.Driver.DriverMainContent;
+import com.example.uberclone.Modules.Car.CarMarks.CarMarks;
+import com.example.uberclone.Modules.Car.UberSelect;
 import com.example.uberclone.Modules.Color.Colors;
 import com.example.uberclone.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class UberSelectDetails extends AppCompatActivity {
 
@@ -51,6 +62,9 @@ public class UberSelectDetails extends AppCompatActivity {
         numOfDoors = (EditText) findViewById(R.id.numberofdoors_uberSelect);
         numOfPassangers = (EditText) findViewById(R.id.maxpassangers_uberSelect);
         price = (EditText) findViewById(R.id.price_uberSelect);
+
+        warning = (TextView) findViewById(R.id.warning_uberSelect);
+        addCar = (Button) findViewById(R.id.submitCarDetails_uberSelect);
 
         colors = getColors();
         pickedcolor = "";
@@ -109,6 +123,78 @@ public class UberSelectDetails extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void addCarToDatabase(View view){
+        if (!fieldsEmpty()){
+            if (isValidCarLength()){
+                if (CarMarks.isValideCarMarkt(String.valueOf(carname.getText()))){
+                    String uberSelect_carname = String.valueOf(carname.getText());
+                    String uberSelect_numOfDoors = String.valueOf(numOfDoors.getText());
+                    String uberSelect_numOfPassangers = String.valueOf(numOfPassangers.getText());
+                    String uberSelect_price = String.valueOf(price.getText());
+                    String uberSelect_interior = pickedcolor;
+
+                    UberSelect uberSelect = new UberSelect(uberSelect_carname,Integer.parseInt(uberSelect_numOfDoors),Integer.parseInt(uberSelect_numOfPassangers),uberSelect_interior,Double.parseDouble(uberSelect_price));
+
+                    if (valideCar(uberSelect)){
+                        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                        DatabaseReference root = firebaseDatabase.getReference();
+
+                        root.child("User").child("Driver").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()){
+                                    root.child("User").child("Driver").child(nameOfDriver).child("Car").child("UberSelect").setValue(uberSelect).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.i("UberSelect reg ", "SUCCESEFULL");
+                                            Intent toMainContent = new Intent(UberSelectDetails.this, DriverMainContent.class);
+                                            toMainContent.putExtra("drivername from cardetails", nameOfDriver);
+                                            startActivity(toMainContent);
+                                        }
+                                    });
+                                }
+                                else{
+                                    Log.e("UberSelectDetails: ", "ERROR TO FIND A USER WITH username " + nameOfDriver);
+
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+
+                }
+                else {
+                    setWarning("Your car does not belong to this category!");
+                }
+            }
+            else {
+                setWarning("Car mark musst have minimum 3 latters!");
+            }
+
+        }
+        else{
+            setWarning("Some fields are empty. Try again!");
+        }
+    }
+
+    public boolean valideCar(UberSelect uberSelect){
+        if (uberSelect.isValidNumberOfDoors(UberSelect.MAX_NUMBER_OF_DOORS)){
+            if (uberSelect.isValidNumberOfPassangers(UberSelect.MAX_NUMBER_OF_PASSENGERS)){
+                if (uberSelect.isValidPrice(UberSelect.MIN_PRICE_RANGE,UberSelect.MAX_PRICE_RANGE)){
+                    if (uberSelect.isValideInterior(pickedcolor)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public String[] getColors(){
