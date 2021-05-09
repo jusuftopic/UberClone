@@ -14,9 +14,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.uberclone.Extras.Adapters.ColorAdapter;
+import com.example.uberclone.Extras.Adapters.InteriorAdapter;
 import com.example.uberclone.MainApp.Driver.DriverMainContent;
 import com.example.uberclone.Modules.Car.CarMarks.CarMarks;
+import com.example.uberclone.Modules.Car.InteriorType.InteriorType;
 import com.example.uberclone.Modules.Car.UberSelect;
 import com.example.uberclone.Modules.Color.Colors;
 import com.example.uberclone.R;
@@ -37,13 +38,13 @@ public class UberSelectDetails extends AppCompatActivity {
     private EditText price;
 
     private Spinner interiorpicker;
-    private ColorAdapter colorAdapter;
+    private InteriorAdapter interiorAdapter;
 
     private TextView warning;
 
     private Button addCar;
 
-    private String[] interior;
+    private String[] interiors;
 
     private String pickinterior;
 
@@ -65,52 +66,23 @@ public class UberSelectDetails extends AppCompatActivity {
         warning = (TextView) findViewById(R.id.warning_uberSelect);
         addCar = (Button) findViewById(R.id.submitCarDetails_uberSelect);
 
-        interior = getInterior();
+        interiors = getInteriors();
         pickinterior = "";
 
         interiorpicker = (Spinner) findViewById(R.id.interiorpicker_UberSelect);
-        colorAdapter = new ColorAdapter(UberSelectDetails.this, interior);
-        interiorpicker.setAdapter(colorAdapter);
+        interiorAdapter = new InteriorAdapter(UberSelectDetails.this,interiors);
+        interiorpicker.setAdapter(interiorAdapter);
 
         interiorpicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position){
                     case 0:
-                        pickinterior = "Black";
+                        pickinterior = "LEATHER";
                         break;
                     case 1:
-                        pickinterior = "White";
+                        pickinterior = "VINLY";
                         break;
-                    case 2:
-                        pickinterior = "Yellow";
-                        break;
-                    case 3:
-                        pickinterior = "Green";
-                        break;
-                    case 4:
-                        pickinterior = "Red";
-                        break;
-                    case 5:
-                        pickinterior = "Blue";
-                        break;
-                    case 6:
-                        pickinterior = "Orange";
-                        break;
-                    case 7:
-                        pickinterior = "Violet";
-                        break;
-                    case 8:
-                        pickinterior = "Brown";
-                        break;
-                    case 9:
-                        pickinterior = "Grey";
-                        break;
-
-                    case 10:
-                        pickinterior = "Pink";
-                        break;
-
                     default:
                         pickinterior = "";
                         break;
@@ -187,24 +159,38 @@ public class UberSelectDetails extends AppCompatActivity {
         if (uberSelect.isValidNumberOfDoors(UberSelect.MAX_NUMBER_OF_DOORS)){
             if (uberSelect.isValidNumberOfPassangers(UberSelect.MAX_NUMBER_OF_PASSENGERS)){
                 if (uberSelect.isValidPrice(UberSelect.MIN_PRICE_RANGE,UberSelect.MAX_PRICE_RANGE)){
+                    if (uberSelect.isValidInterior()){
+                        return true;
+                    }
+                    else{
+                        setWarning("Interior musst be Leather or Vinly");
+                    }
 
                 }
+                else {
+                    setWarning("Price musst be between "+UberSelect.MIN_PRICE_RANGE+"-"+UberSelect.MAX_PRICE_RANGE+"$");
+                }
             }
+            else {
+                setWarning("Car must have maximum "+UberSelect.MAX_NUMBER_OF_PASSENGERS+" passangers");
+            }
+        }
+        else{
+            setWarning("Car must have maximum "+UberSelect.MAX_NUMBER_OF_DOORS+" doors");
         }
         return false;
     }
 
-    public String[] getInterior(){
-        String[] cols = new String[11];
+    public String[] getInteriors(){
+        String[] uberSelect_interiors = new String[2];
+        int counter = 0;
 
-        int i = 0;
-
-        for (Colors color : Colors.values()){
-            cols[i] = color.getColorname();
-            i++;
+        for (InteriorType type : InteriorType.values()){
+            uberSelect_interiors[counter] = type.getInteriortype();
+            counter++;
         }
 
-        return cols;
+        return uberSelect_interiors;
     }
 
     public boolean fieldsEmpty() {
