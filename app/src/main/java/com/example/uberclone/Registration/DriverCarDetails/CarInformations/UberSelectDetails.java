@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,7 +14,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.uberclone.Extras.Adapters.ColorAdapter.ColorAdapter;
+import com.example.uberclone.Extras.Adapters.ColorAdapter;
 import com.example.uberclone.MainApp.Driver.DriverMainContent;
 import com.example.uberclone.Modules.Car.CarMarks.CarMarks;
 import com.example.uberclone.Modules.Car.UberSelect;
@@ -44,9 +43,9 @@ public class UberSelectDetails extends AppCompatActivity {
 
     private Button addCar;
 
-    private String[] colors;
+    private String[] interior;
 
-    private String pickedcolor;
+    private String pickinterior;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +65,11 @@ public class UberSelectDetails extends AppCompatActivity {
         warning = (TextView) findViewById(R.id.warning_uberSelect);
         addCar = (Button) findViewById(R.id.submitCarDetails_uberSelect);
 
-        colors = getColors();
-        pickedcolor = "";
+        interior = getInterior();
+        pickinterior = "";
 
         interiorpicker = (Spinner) findViewById(R.id.interiorpicker_UberSelect);
-        colorAdapter = new ColorAdapter(UberSelectDetails.this,colors);
+        colorAdapter = new ColorAdapter(UberSelectDetails.this, interior);
         interiorpicker.setAdapter(colorAdapter);
 
         interiorpicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -78,42 +77,42 @@ public class UberSelectDetails extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position){
                     case 0:
-                        pickedcolor = "Black";
+                        pickinterior = "Black";
                         break;
                     case 1:
-                        pickedcolor = "White";
+                        pickinterior = "White";
                         break;
                     case 2:
-                        pickedcolor = "Yellow";
+                        pickinterior = "Yellow";
                         break;
                     case 3:
-                        pickedcolor = "Green";
+                        pickinterior = "Green";
                         break;
                     case 4:
-                        pickedcolor = "Red";
+                        pickinterior = "Red";
                         break;
                     case 5:
-                        pickedcolor = "Blue";
+                        pickinterior = "Blue";
                         break;
                     case 6:
-                        pickedcolor = "Orange";
+                        pickinterior = "Orange";
                         break;
                     case 7:
-                        pickedcolor = "Violet";
+                        pickinterior = "Violet";
                         break;
                     case 8:
-                        pickedcolor = "Brown";
+                        pickinterior = "Brown";
                         break;
                     case 9:
-                        pickedcolor = "Grey";
+                        pickinterior = "Grey";
                         break;
 
                     case 10:
-                        pickedcolor = "Pink";
+                        pickinterior = "Pink";
                         break;
 
                     default:
-                        pickedcolor = "";
+                        pickinterior = "";
                         break;
                 }
             }
@@ -133,7 +132,7 @@ public class UberSelectDetails extends AppCompatActivity {
                     String uberSelect_numOfDoors = String.valueOf(numOfDoors.getText());
                     String uberSelect_numOfPassangers = String.valueOf(numOfPassangers.getText());
                     String uberSelect_price = String.valueOf(price.getText());
-                    String uberSelect_interior = pickedcolor;
+                    String uberSelect_interior = pickinterior;
 
                     UberSelect uberSelect = new UberSelect(uberSelect_carname,Integer.parseInt(uberSelect_numOfDoors),Integer.parseInt(uberSelect_numOfPassangers),uberSelect_interior,Double.parseDouble(uberSelect_price));
 
@@ -188,16 +187,14 @@ public class UberSelectDetails extends AppCompatActivity {
         if (uberSelect.isValidNumberOfDoors(UberSelect.MAX_NUMBER_OF_DOORS)){
             if (uberSelect.isValidNumberOfPassangers(UberSelect.MAX_NUMBER_OF_PASSENGERS)){
                 if (uberSelect.isValidPrice(UberSelect.MIN_PRICE_RANGE,UberSelect.MAX_PRICE_RANGE)){
-                    if (uberSelect.isValideInterior(pickedcolor)){
-                        return true;
-                    }
+
                 }
             }
         }
         return false;
     }
 
-    public String[] getColors(){
+    public String[] getInterior(){
         String[] cols = new String[11];
 
         int i = 0;

@@ -1,4 +1,4 @@
-package com.example.uberclone.Extras.Adapters.ColorAdapter;
+package com.example.uberclone.Extras.Adapters;
 
 import android.content.Context;
 import android.text.TextWatcher;

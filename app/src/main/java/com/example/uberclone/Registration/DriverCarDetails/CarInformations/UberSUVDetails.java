@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.uberclone.Extras.Adapters.ColorAdapter.ColorAdapter;
+import com.example.uberclone.Extras.Adapters.ColorAdapter;
 import com.example.uberclone.MainApp.Driver.DriverMainContent;
 import com.example.uberclone.Modules.Car.CarMarks.SUVMarks;
 import com.example.uberclone.Modules.Car.UberSUV;

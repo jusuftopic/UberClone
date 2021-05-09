@@ -1,4 +1,4 @@
-package com.example.uberclone.Extras.Adapters.CarAdapters;
+package com.example.uberclone.Extras.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
