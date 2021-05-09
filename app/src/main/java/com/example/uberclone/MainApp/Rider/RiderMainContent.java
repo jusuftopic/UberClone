@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.EditText;
 
@@ -20,6 +22,10 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class RiderMainContent extends FragmentActivity implements OnMapReadyCallback {
 
@@ -111,5 +117,49 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
 
     public String getNameOfRider(){
         return this.getIntent().getStringExtra("ridername from card activity") != null ? this.getIntent().getStringExtra("ridername from card activity") : this.getIntent().getStringExtra("ridername from login");
+    }
+
+    private class GeoCordinates extends AsyncTask<String,Void,String>{
+        ProgressDialog progressDialog = new ProgressDialog(RiderMainContent.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setMessage("Please wait...");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String response;
+            try {
+                String address = strings[0];
+                HttpHandler httpHandler = new HttpHandler();
+                String url = String.format("https://maps.googleapis.com/maps/api/geocode/json?address=%s",address);
+                 response =   httpHandler.getHttpResponse(url);
+                return response;
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            try {
+                JSONObject jsonObject = new JSONObject(s);
+
+                String lat = ((JSONArray)jsonObject.get("results")).getJSONObject(0).getJSONObject("geometry")
+                        .getJSONObject("location").get("lat").toString();
+
+                String lng = ((JSONArray) jsonObject.get("result")).getJSONObject(0).getJSONObject("geometry").getJSONObject("location").get("lng").toString();
+            }
+            catch (JSONException jsonException){
+                jsonException.printStackTrace();
+            }
+        }
     }
 }
