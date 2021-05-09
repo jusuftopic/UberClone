@@ -20,7 +20,7 @@ public class HttpHandler {
             url = new URL(requestURL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setConnectTimeout(1500);
+            connection.setConnectTimeout(15000);
             connection.setReadTimeout(15000);
             connection.setDoInput(true);
             connection.setDoOutput(true);
