@@ -1,4 +1,4 @@
-package com.example.uberclone;
+package com.example.uberclone.Car;
 
 import com.example.uberclone.Modules.Car.Car;
 import com.example.uberclone.Modules.Car.InteriorType.InteriorType;

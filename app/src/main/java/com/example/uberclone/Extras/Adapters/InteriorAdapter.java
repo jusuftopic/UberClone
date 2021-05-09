@@ -29,7 +29,7 @@ public class InteriorAdapter extends ArrayAdapter<String> {
         View interior_view = inflater.inflate(R.layout.interior,null);
         TextView interior_type = (TextView) interior_view.findViewById(R.id.interior_to_pick);
 
-        interior_type.setText("interior_types[position]");
+        interior_type.setText(interior_types[position]);
 
         return interior_type;
     }
