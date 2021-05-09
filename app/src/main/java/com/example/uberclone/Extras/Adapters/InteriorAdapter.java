@@ -31,7 +31,7 @@ public class InteriorAdapter extends ArrayAdapter<String> {
 
         interior_type.setText(interior_types[position]);
 
-        return interior_type;
+        return interior_view;
     }
 
     @NonNull
