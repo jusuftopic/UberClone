@@ -3,7 +3,10 @@ package com.example.uberclone.Modules.Car.InteriorType;
 public enum InteriorType {
 
     LEATHER("LEATHER"),
-    VINLY("VINLY");
+    VINLY("VINLY"),
+    POLYESTER("POLYESTER"),
+    NYLON("NYLON");
+
 
     public final String interiortype;
 

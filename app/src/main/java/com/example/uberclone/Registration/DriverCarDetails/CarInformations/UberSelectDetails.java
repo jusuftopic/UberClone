@@ -83,6 +83,11 @@ public class UberSelectDetails extends AppCompatActivity {
                     case 1:
                         pickinterior = "VINLY";
                         break;
+                    case 2:
+                        pickinterior = "POLYESTER";
+                        break;
+                    case 3:
+                        pickinterior = "NYLON";
                     default:
                         pickinterior = "";
                         break;
@@ -182,7 +187,7 @@ public class UberSelectDetails extends AppCompatActivity {
     }
 
     public String[] getInteriors(){
-        String[] uberSelect_interiors = new String[2];
+        String[] uberSelect_interiors = new String[4];
         int counter = 0;
 
         for (InteriorType type : InteriorType.values()){
