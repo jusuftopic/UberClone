@@ -11,14 +11,16 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.uberclone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -33,7 +35,8 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
 
     private String nameOfRider;
 
-    private EditText search_place;
+    private EditText type_adress;
+    private Button search_adress;
 
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -63,7 +66,8 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         mapFragment.getMapAsync(this);
 
         getNameOfRider();
-        search_place = (EditText) findViewById(R.id.whereToGo);
+        type_adress = (EditText) findViewById(R.id.whereToGo);
+        search_adress = (Button) findViewById(R.id.serachAdress);
     }
 
     /**
@@ -109,6 +113,21 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         }
     }
 
+    public void searchForAdressToRide(View view){
+        String address = String.valueOf(type_adress.getText());
+
+        if (isValidAddress(address)){
+            new GeoCordinates().execute(address.replace(" ","+"));
+        }
+    }
+
+    public boolean isValidAddress(String address){
+        if (address != null && !address.equalsIgnoreCase("")){
+            return true;
+        }
+        return false;
+    }
+
     public void setLocation(Location location){
         LatLng currentposition = new LatLng(location.getLatitude(),location.getLongitude());
         mMap.addMarker(new MarkerOptions().title("Your current location").position(currentposition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
@@ -136,7 +155,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             try {
                 String address = strings[0];
                 HttpHandler httpHandler = new HttpHandler();
-                String url = String.format("https://maps.googleapis.com/maps/api/geocode/json?address=%s",address);
+                String url = String.format("https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=AIzaSyAHGvJ92ezvleOW9CGlzKA_thlAcjSRnF4",address);
                  response =   httpHandler.getHttpResponse(url);
                 return response;
             }
@@ -156,6 +175,12 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
                         .getJSONObject("location").get("lat").toString();
 
                 String lng = ((JSONArray) jsonObject.get("result")).getJSONObject(0).getJSONObject("geometry").getJSONObject("location").get("lng").toString();
+
+                Toast.makeText(RiderMainContent.this,"Latitude: "+lat+"; Longitude: "+lng,Toast.LENGTH_LONG).show();
+
+                if (progressDialog.isShowing()){
+                    progressDialog.dismiss();
+                }
             }
             catch (JSONException jsonException){
                 jsonException.printStackTrace();
