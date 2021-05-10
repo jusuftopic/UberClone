@@ -4,20 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import com.example.uberclone.Modules.Requests.RiderRequest;
 import com.example.uberclone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,10 +27,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class RiderMainContent extends FragmentActivity implements OnMapReadyCallback {
 
@@ -134,7 +125,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         }
     }
 
-    public void addRequestInDatabase(RiderRequest riderRequest){
+  /*  public void addRequestInDatabase(){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
@@ -170,7 +161,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         isCalled = called;
         callUber.setText(message);
     }
-
+*/
 
 
 
