@@ -11,11 +11,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.uberclone.Modules.Requests.RiderRequest;
 import com.example.uberclone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,6 +26,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -131,7 +134,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         }
     }
 
-    public void addRequestInDatabase(){
+    public void addRequestInDatabase(RiderRequest riderRequest){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
@@ -139,7 +142,20 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
              if (snapshot.exists()){
-                 root.child("Requests").child("Rider Calls").setValue()
+                 root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(riderRequest).addOnSuccessListener(new OnSuccessListener<Void>() {
+                     @Override
+                     public void onSuccess(Void aVoid) {
+                         Log.i("RiderRequest: ","SUCCESEFULL ADDED IN DATABASE");
+                     }
+                 });
+             }
+             else{
+                 root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(riderRequest).addOnSuccessListener(new OnSuccessListener<Void>() {
+                     @Override
+                     public void onSuccess(Void aVoid) {
+                         Log.i("RiderRequest: ","SUCCESEFULL ADDED IN DATABASE");
+                     }
+                 });
              }
             }
 
