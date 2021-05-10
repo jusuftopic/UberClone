@@ -171,10 +171,10 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             try {
                 JSONObject jsonObject = new JSONObject(s);
 
-                String lat = ((JSONArray)jsonObject.get("results")).getJSONObject(0).getJSONObject("geometry")
+                String lat = ((JSONArray)jsonObject.get("results")).getJSONObject(0).getJSONArray("geometry")
                         .getJSONObject("location").get("lat").toString();
 
-                String lng = ((JSONArray) jsonObject.get("result")).getJSONObject(0).getJSONObject("geometry").getJSONObject("location").get("lng").toString();
+                String lng = ((JSONArray) jsonObject.get("result")).getJSONObject(0).getJSONArray("geometry").getJSONObject("location").get("lng").toString();
 
                 Toast.makeText(RiderMainContent.this,"Latitude: "+lat+"; Longitude: "+lng,Toast.LENGTH_LONG).show();
 
