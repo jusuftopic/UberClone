@@ -17,21 +17,22 @@
 
     <EditText
         android:id="@+id/whereToGo"
-        android:layout_width="wrap_content"
+        android:layout_width="174dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
+        android:layout_marginLeft="40dp"
         android:layout_marginTop="60dp"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name" />
+        android:hint="Type adress"
+        android:inputType="textPersonName" />
 
     <Button
-        android:id="@+id/acceptrequest"
+        android:id="@+id/serachAdress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="370dp"
-        android:text="Accept " />
+        android:layout_marginLeft="230dp"
+        android:layout_marginTop="60dp"
+        android:background="@android:color/transparent"
+        android:text="Search"/>
 
 
 </RelativeLayout>
