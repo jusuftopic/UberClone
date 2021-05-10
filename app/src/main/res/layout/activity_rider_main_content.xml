@@ -15,18 +15,9 @@
         android:layout_height="match_parent"
         tools:context=".MainApp.Rider.RiderMainContent" />
 
-    <EditText
-        android:id="@+id/whereToGo"
-        android:layout_width="174dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="60dp"
-        android:ems="10"
-        android:hint="Type adress"
-        android:inputType="textPersonName" />
 
     <Button
-        android:id="@+id/serachAdress"
+        android:id="@+id/sendRequest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="230dp"
@@ -34,7 +25,7 @@
         android:background="@drawable/borders"
         android:shadowColor="#977979"
         android:onClick="searchForAdressToRide"
-        android:text="Search" />
+        android:text="Call Uber" />
 
 
 </RelativeLayout>

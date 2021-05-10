@@ -24,6 +24,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,11 +40,13 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
 
     private String nameOfRider;
 
-    private EditText type_adress;
-    private Button search_adress;
+    private boolean isCalled;
+
 
     private LocationManager locationManager;
     private LocationListener locationListener;
+
+    private Button callUber;
 
 
     @Override
@@ -65,9 +72,9 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        getNameOfRider();
-        type_adress = (EditText) findViewById(R.id.whereToGo);
-        search_adress = (Button) findViewById(R.id.serachAdress);
+        String nameOfRider = getNameOfRider();
+
+        isCalled = false;
     }
 
     /**
@@ -113,20 +120,44 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         }
     }
 
-    public void searchForAdressToRide(View view){
-        String address = String.valueOf(type_adress.getText());
+    public void callUberOnDrive(View view){
+        if (String.valueOf(callUber.getText()).equalsIgnoreCase("Call uber")){
 
-        if (isValidAddress(address)){
-            new GeoCordinates().execute(address.replace(" ","+"));
+            changeButtonInfos(true,"Cancle call");
+        }
+        else{
+            changeButtonInfos(false,"Call Uber");
+
         }
     }
 
-    public boolean isValidAddress(String address){
-        if (address != null && !address.equalsIgnoreCase("")){
-            return true;
-        }
-        return false;
+    public void addRequestInDatabase(){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+             if (snapshot.exists()){
+                 root.child("Requests").child("Rider Calls").setValue()
+             }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
+
+    public void changeButtonInfos (boolean called, String message){
+        isCalled = called;
+        callUber.setText(message);
+    }
+
+
+
+
 
     public void setLocation(Location location){
         LatLng currentposition = new LatLng(location.getLatitude(),location.getLongitude());
@@ -138,53 +169,4 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         return this.getIntent().getStringExtra("ridername from card activity") != null ? this.getIntent().getStringExtra("ridername from card activity") : this.getIntent().getStringExtra("ridername from login");
     }
 
-    private class GeoCordinates extends AsyncTask<String,Void,String>{
-        ProgressDialog progressDialog = new ProgressDialog(RiderMainContent.this);
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog.setMessage("Please wait...");
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String response;
-            try {
-                String address = strings[0];
-                HttpHandler httpHandler = new HttpHandler();
-                String url = String.format("https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=AIzaSyAHGvJ92ezvleOW9CGlzKA_thlAcjSRnF4",address);
-                 response =   httpHandler.getHttpResponse(url);
-                return response;
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            try {
-                JSONObject jsonObject = new JSONObject(s);
-
-                String lat = ((JSONArray)jsonObject.get("results")).getJSONObject(0).getJSONArray("geometry")
-                        .getJSONObject("location").get("lat").toString();
-
-                String lng = ((JSONArray) jsonObject.get("result")).getJSONObject(0).getJSONArray("geometry").getJSONObject("location").get("lng").toString();
-
-                Toast.makeText(RiderMainContent.this,"Latitude: "+lat+"; Longitude: "+lng,Toast.LENGTH_LONG).show();
-
-                if (progressDialog.isShowing()){
-                    progressDialog.dismiss();
-                }
-            }
-            catch (JSONException jsonException){
-                jsonException.printStackTrace();
-            }
-        }
-    }
 }
