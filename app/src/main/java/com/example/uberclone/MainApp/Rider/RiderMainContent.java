@@ -1,6 +1,7 @@
 package com.example.uberclone.MainApp.Rider;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
@@ -12,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -127,13 +129,13 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         if (String.valueOf(callUber.getText()).equalsIgnoreCase("Call uber")) {
             ProgressDialog dialog = new ProgressDialog(this);
             dialog.setMessage("Please wait...");
-            addRequestInDatabase(new RiderLocation(30, 30));
+            Location lastKnownLocation = getLastKnownLocation();
+            addRequestInDatabase(new RiderLocation(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude()));
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
             changeButtonInfos(true, "Cancle call");
 
-            //TODO intent to get infos for UberCar
             Intent toPickCar = new Intent(RiderMainContent.this,ChooseUberCar.class);
             toPickCar.putExtra("username from ridermain",nameOfRider);
             startActivity(toPickCar);
@@ -200,29 +202,39 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requests").child("Rider Calls").child(nameOfRider).addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(null);
-                }
-                else{
-                    Log.e("Rider main: ","PROBLEM WITH RIDER REQUEST");
+                if (snapshot.child(rider_username).exists()){
+                    root.child("Requests").child("Rider Calls").child(rider_username).setValue(null);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Rider main: ",error.getMessage());
+
             }
         });
     }
 
+    //------------------------------------------------------------------------------------------------------------------------------------
+    public Location getLastKnownLocation(){
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            return lastKnownLocation;
+        }
+        return null;
+    }
+   //---------------------------------------------------------------------------------------------------------------------------------------
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     public void setLocation(Location location) {
+        if (locationManager.isLocationEnabled() && location != null){
         LatLng currentposition = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.addMarker(new MarkerOptions().title("Your current location").position(currentposition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentposition, 10f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentposition, 10f));}
+
     }
 
     public String getNameOfRider() {
