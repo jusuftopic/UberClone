@@ -12,6 +12,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -45,6 +46,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
     private LocationManager locationManager;
     private LocationListener locationListener;
 
+
     private Button callUber;
 
 
@@ -74,6 +76,8 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         String nameOfRider = getNameOfRider();
 
         isCalled = false;
+
+        deleteRequestFromDatabase(nameOfRider);
     }
 
     /**
@@ -107,61 +111,58 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             }
         };
 
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-        }
-        else{
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        } else {
 
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             setLocation(lastKnownLocation);
 
         }
     }
 
-    public void callUberOnDrive(View view){
-        if (String.valueOf(callUber.getText()).equalsIgnoreCase("Call uber")){
-            changeButtonInfos(true,"Cancle call");
+    public void callUberOnDrive(View view) {
+        if (String.valueOf(callUber.getText()).equalsIgnoreCase("Call uber")) {
+            changeButtonInfos(true, "Cancle call");
             ProgressDialog dialog = new ProgressDialog(this);
             dialog.setMessage("Please wait...");
-            addRequestInDatabase(new RiderLocation(30,30));
-            if (dialog.isShowing()){
+            addRequestInDatabase(new RiderLocation(30, 30));
+            if (dialog.isShowing()) {
                 dialog.dismiss();
             }
-            changeButtonInfos(true,"Cancle call");
+            changeButtonInfos(true, "Cancle call");
 
-        }
-        else{
+        } else {
             setDialog();
-            changeButtonInfos(false,"Call Uber");
+            changeButtonInfos(false, "Call Uber");
 
 
         }
     }
 
-    public void addRequestInDatabase(RiderLocation riderLocation){
+    public void addRequestInDatabase(RiderLocation riderLocation) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
         root.child("Requests").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-             if (snapshot.exists()){
-                 root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
-                     @Override
-                     public void onSuccess(Void aVoid) {
-                         Log.i("RiderRequest: ","SUCCESEFULL ADDED IN DATABASE");
-                     }
-                 });
-             }
-             else{
-                 root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
-                     @Override
-                     public void onSuccess(Void aVoid) {
-                         Log.i("RiderRequest: ","SUCCESEFULL ADDED IN DATABASE");
-                     }
-                 });
-             }
+                if (snapshot.exists()) {
+                    root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.i("RiderRequest: ", "SUCCESEFULL ADDED IN DATABASE");
+                        }
+                    });
+                } else {
+                    root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.i("RiderRequest: ", "SUCCESEFULL ADDED IN DATABASE");
+                        }
+                    });
+                }
             }
 
             @Override
@@ -171,33 +172,56 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         });
     }
 
-    public void changeButtonInfos (boolean called, String message){
+    public void changeButtonInfos(boolean called, String message) {
         isCalled = called;
         callUber.setText(message);
     }
 
-    public void setDialog(){
+    public void setDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(RiderMainContent.this)
                 .setTitle("Already requested")
                 .setMessage("You already requested Uber.\nDo yo want to cancle and call again?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                      deleteRequestFromDatabase(nameOfRider);
+                        deleteRequestFromDatabase(nameOfRider);
                     }
                 })
-                .setNegativeButton("No",null);
+                .setNegativeButton("No", null);
 
         dialogBuilder.create().show();
     }
 
-    public void setLocation(Location location){
-        LatLng currentposition = new LatLng(location.getLatitude(),location.getLongitude());
-        mMap.addMarker(new MarkerOptions().title("Your current location").position(currentposition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentposition,10f));
+    public void deleteRequestFromDatabase(String rider_username) {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").child(nameOfRider).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(null);
+                }
+                else{
+                    Log.e("Rider main: ","PROBLEM WITH RIDER REQUEST");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Rider main: ",error.getMessage());
+            }
+        });
     }
 
-    public String getNameOfRider(){
+
+    public void setLocation(Location location) {
+        LatLng currentposition = new LatLng(location.getLatitude(), location.getLongitude());
+        mMap.addMarker(new MarkerOptions().title("Your current location").position(currentposition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentposition, 10f));
+    }
+
+    public String getNameOfRider() {
         return this.getIntent().getStringExtra("ridername from card activity") != null ? this.getIntent().getStringExtra("ridername from card activity") : this.getIntent().getStringExtra("ridername from login");
     }
 
