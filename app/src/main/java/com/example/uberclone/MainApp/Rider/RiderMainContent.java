@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -12,7 +15,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.example.uberclone.Modules.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -116,16 +121,25 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
 
     public void callUberOnDrive(View view){
         if (String.valueOf(callUber.getText()).equalsIgnoreCase("Call uber")){
-
             changeButtonInfos(true,"Cancle call");
+            ProgressDialog dialog = new ProgressDialog(this);
+            dialog.setMessage("Please wait...");
+            addRequestInDatabase(new RiderLocation(30,30));
+            if (dialog.isShowing()){
+                dialog.dismiss();
+            }
+            changeButtonInfos(true,"Cancle call");
+
         }
         else{
+            setDialog();
             changeButtonInfos(false,"Call Uber");
+
 
         }
     }
 
-  /*  public void addRequestInDatabase(){
+    public void addRequestInDatabase(RiderLocation riderLocation){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
@@ -133,7 +147,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
              if (snapshot.exists()){
-                 root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(riderRequest).addOnSuccessListener(new OnSuccessListener<Void>() {
+                 root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
                      @Override
                      public void onSuccess(Void aVoid) {
                          Log.i("RiderRequest: ","SUCCESEFULL ADDED IN DATABASE");
@@ -141,7 +155,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
                  });
              }
              else{
-                 root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(riderRequest).addOnSuccessListener(new OnSuccessListener<Void>() {
+                 root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
                      @Override
                      public void onSuccess(Void aVoid) {
                          Log.i("RiderRequest: ","SUCCESEFULL ADDED IN DATABASE");
@@ -161,10 +175,21 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         isCalled = called;
         callUber.setText(message);
     }
-*/
 
+    public void setDialog(){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(RiderMainContent.this)
+                .setTitle("Already requested")
+                .setMessage("You already requested Uber.\nDo yo want to cancle and call again?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                      deleteRequestFromDatabase(nameOfRider);
+                    }
+                })
+                .setNegativeButton("No",null);
 
-
+        dialogBuilder.create().show();
+    }
 
     public void setLocation(Location location){
         LatLng currentposition = new LatLng(location.getLatitude(),location.getLongitude());
