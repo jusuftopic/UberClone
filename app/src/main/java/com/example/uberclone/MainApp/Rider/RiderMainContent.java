@@ -7,6 +7,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -124,7 +125,6 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
 
     public void callUberOnDrive(View view) {
         if (String.valueOf(callUber.getText()).equalsIgnoreCase("Call uber")) {
-            changeButtonInfos(true, "Cancle call");
             ProgressDialog dialog = new ProgressDialog(this);
             dialog.setMessage("Please wait...");
             addRequestInDatabase(new RiderLocation(30, 30));
@@ -133,10 +133,14 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             }
             changeButtonInfos(true, "Cancle call");
 
+            //TODO intent to get infos for UberCar
+            Intent toPickCar = new Intent(RiderMainContent.this,ChooseUberCar.class);
+            toPickCar.putExtra("username from ridermain",nameOfRider);
+            startActivity(toPickCar);
+
         } else {
             setDialog();
             changeButtonInfos(false, "Call Uber");
-
 
         }
     }
@@ -149,14 +153,14 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    root.child("Requests").child("Rider Calls").child(nameOfRider).child("Location").setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Log.i("RiderRequest: ", "SUCCESEFULL ADDED IN DATABASE");
                         }
                     });
                 } else {
-                    root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    root.child("Requests").child("Rider Calls").child(nameOfRider).child("Location").setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Log.i("RiderRequest: ", "SUCCESEFULL ADDED IN DATABASE");
@@ -167,7 +171,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.e("DATABASE ERROR ",error.getMessage());
             }
         });
     }
