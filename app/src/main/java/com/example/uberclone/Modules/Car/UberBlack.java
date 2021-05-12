@@ -27,6 +27,20 @@ public class UberBlack extends Car {
         this.airportpermit = airportpermit;
     }
 
+    public boolean isValideEnterior(){
+        if (this.color_enterior.equalsIgnoreCase("black")){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isValideInterior(){
+        if (this.color_interior.equalsIgnoreCase("black")){
+            return true;
+        }
+        return false;
+    }
+
 
     public void setColorEnterior(String color_enterior){
         this.color_enterior = color_enterior;

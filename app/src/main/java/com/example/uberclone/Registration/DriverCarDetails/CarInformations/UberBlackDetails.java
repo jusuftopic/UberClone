@@ -251,7 +251,18 @@ public class UberBlackDetails extends AppCompatActivity {
 
     public boolean valideCarInfos(UberBlack uberBlack){
         if (uberBlack.isValidNumberOfDoors(UberBlack.MAX_NUMBER_OF_DOORS)){
-            if (uberBlack.isValidNumberOfPassangers(UberBlack.MAX))
+            if (uberBlack.isValidNumberOfPassangers(UberBlack.MAX_NUMBER_OF_PASSENGERS)){
+                if (uberBlack.isValidPrice(UberBlack.MIN_PRICE_RANGE,UberBlack.MAX_PRICE_RANGE)){
+
+
+                }
+                else{
+
+                }
+            }
+            else {
+
+            }
         }
         else{
 
