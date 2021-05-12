@@ -16,11 +16,11 @@ public class UberBlack extends Car {
     public static final double MIN_PRICE_RANGE = 2.2;
     public static final double MAX_PRICE_RANGE = 5.3;
 
-    private Color color_enterior;
-    private Color color_interior;
+    private String color_enterior;
+    private String color_interior;
     private boolean airportpermit;
 
-    public UberBlack(String autoname, int numberOfDoors, int maxPassengers,Color color_enterior, Color color_interior,boolean airportpermit,double price_per_km){
+    public UberBlack(String autoname, int numberOfDoors, int maxPassengers,String color_enterior, String color_interior,boolean airportpermit,double price_per_km){
         super(autoname, numberOfDoors, maxPassengers, price_per_km);
         this.color_enterior = color_enterior;
         this.color_interior = color_interior;
@@ -28,20 +28,20 @@ public class UberBlack extends Car {
     }
 
 
-    public void setColorEnterior(Color color_enterior){
+    public void setColorEnterior(String color_enterior){
         this.color_enterior = color_enterior;
     }
-    public void setColorInterior(Color color_interior){
+    public void setColorInterior(String color_interior){
         this.color_interior = color_interior;
     }
     public void setAirportpermit(boolean airportpermit){
         this.airportpermit = airportpermit;
     }
 
-    public Color getColor_enterior(){
+    public String getColor_enterior(){
         return this.color_enterior;
     }
-    public Color getColor_interior(){
+    public String  getColor_interior(){
         return this.color_interior;
     }
     public boolean getAirportPermit(){

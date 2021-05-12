@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.uberclone.Extras.Adapters.ColorAdapter;
 import com.example.uberclone.Modules.Car.CarMarks.CarMarks;
+import com.example.uberclone.Modules.Car.UberBlack;
 import com.example.uberclone.Modules.Color.Colors;
 import com.example.uberclone.R;
 
@@ -35,7 +36,7 @@ public class UberBlackDetails extends AppCompatActivity {
     private String colors[];
     private ColorAdapter colorAdapter;
 
-    private CheckBox airportPermit;
+    private CheckBox airportPermit_checkbox;
     private boolean airport_permit;
 
     private TextView warning;
@@ -63,7 +64,7 @@ public class UberBlackDetails extends AppCompatActivity {
         colors = getColors();
         colorAdapter = new ColorAdapter(UberBlackDetails.this,colors);
 
-        airportPermit = (CheckBox) findViewById(R.id.airport_permit);
+        airportPermit_checkbox = (CheckBox) findViewById(R.id.airport_permit);
         airport_permit = false;
 
         warning = (TextView) findViewById(R.id.warning_uberBlack);
@@ -180,11 +181,15 @@ public class UberBlackDetails extends AppCompatActivity {
         if (!fieldsEmpty()){
             if (isValidCarLength()){
                 if (CarMarks.isValideCarMarkt(String.valueOf(carname.getText()))){
-                    String uberBlack_markname;
-                    String uberBlack_numOfDoors;
-                    String uberBlack_numOfPassangers;
-                    String uberBlack_price;
-                    airport_permit = hasAirportPermit();
+                    String uberBlack_markname = String.valueOf(carname.getText());
+                    String uberBlack_numOfDoors = String.valueOf(max_num_of_doors.getText());
+                    String uberBlack_numOfPassangers = String.valueOf(max_num_of_passangers.getText());
+                    String uberBlack_price = String.valueOf(price.getText());
+                    String uberBlack_enterior = enterior_color_to_pick;
+                    String uberBlack_interior = interior_color_to_pick;
+                    boolean uberBlack_AirportPermit = airport_permit;
+
+                    UberBlack uberBlack = new UberBlack(uberBlack_markname,Integer.parseInt(uberBlack_numOfDoors),Integer.parseInt(uberBlack_numOfPassangers),uberBlack_enterior,uberBlack_interior,uberBlack_AirportPermit,Double.parseDouble(uberBlack_price))
 
                 }
                 else{
@@ -200,6 +205,13 @@ public class UberBlackDetails extends AppCompatActivity {
         }
         else {
             setWarning();
+        }
+    }
+
+    public void hasAirportPermit(){
+        if (airportPermit_checkbox.isChecked()){
+            airport_permit = true;
+            return;
         }
     }
 
