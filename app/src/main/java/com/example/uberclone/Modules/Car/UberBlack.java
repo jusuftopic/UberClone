@@ -4,7 +4,7 @@ import android.graphics.Color;
 
 public class UberBlack extends Car {
 
-    private static final int MAX_NUMBER_OF_PASSENGERS = 4;
+    public static final int MAX_NUMBER_OF_PASSENGERS = 4;
 
     public static final int MAX_NUMBER_OF_DOORS = 4;
 

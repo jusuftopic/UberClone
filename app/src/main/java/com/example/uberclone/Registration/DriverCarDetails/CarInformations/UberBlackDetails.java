@@ -1,7 +1,9 @@
 package com.example.uberclone.Registration.DriverCarDetails.CarInformations;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,10 +16,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.uberclone.Extras.Adapters.ColorAdapter;
+import com.example.uberclone.MainApp.Driver.DriverMainContent;
+import com.example.uberclone.MainApp.Rider.RiderMainContent;
 import com.example.uberclone.Modules.Car.CarMarks.CarMarks;
 import com.example.uberclone.Modules.Car.UberBlack;
 import com.example.uberclone.Modules.Color.Colors;
 import com.example.uberclone.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class UberBlackDetails extends AppCompatActivity {
 
@@ -189,23 +199,64 @@ public class UberBlackDetails extends AppCompatActivity {
                     String uberBlack_interior = interior_color_to_pick;
                     boolean uberBlack_AirportPermit = airport_permit;
 
-                    UberBlack uberBlack = new UberBlack(uberBlack_markname,Integer.parseInt(uberBlack_numOfDoors),Integer.parseInt(uberBlack_numOfPassangers),uberBlack_enterior,uberBlack_interior,uberBlack_AirportPermit,Double.parseDouble(uberBlack_price))
+                    UberBlack uberBlack = new UberBlack(uberBlack_markname,Integer.parseInt(uberBlack_numOfDoors),Integer.parseInt(uberBlack_numOfPassangers),uberBlack_enterior,uberBlack_interior,uberBlack_AirportPermit,Double.parseDouble(uberBlack_price));
+
+                    if (valideCarInfos(uberBlack)){
+                        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                        DatabaseReference root = firebaseDatabase.getReference();
+
+                        root.child("User").child("Driver").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()){
+                                    root.child("User").child("Driver").child(nameOfDriver).child("Car").child("UberBlack").setValue(uberBlack).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                         Log.i("UberBlackDetails: ","SUCCESEFULL IN DATABASE");
+                                            Intent toMainApp = new Intent(UberBlackDetails.this, DriverMainContent.class);
+                                            toMainApp.putExtra("drivername from cardetails",nameOfDriver);
+                                            startActivity(toMainApp);
+                                        }
+                                    });
+
+                                }
+                                else {
+                                    Log.e("UberBlackDetails: ","PROBLEM WITH USER'S RECOGNATION");
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("Database error", error.getMessage());
+                            }
+                        });
+                    }
 
                 }
                 else{
-                    setWarning();
+                    setWarning("Your car does not belong to this category!");
                 }
 
             }
             else{
-                setWarning();
+                setWarning("Car mark musst have minimum 3 latters!");
             }
 
 
         }
         else {
-            setWarning();
+            setWarning("Some fields are empty. Try again!");
         }
+    }
+
+    public boolean valideCarInfos(UberBlack uberBlack){
+        if (uberBlack.isValidNumberOfDoors(UberBlack.MAX_NUMBER_OF_DOORS)){
+            if (uberBlack.isValidNumberOfPassangers(UberBlack.MAX))
+        }
+        else{
+
+        }
+        return false;
     }
 
     public void hasAirportPermit(){
