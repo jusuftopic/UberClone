@@ -99,9 +99,11 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
 
 
     public void updateLocation(Location location){
-        LatLng current_position = new LatLng(location.getLatitude(),location.getLongitude());
-        mMap.addMarker(new MarkerOptions().title("My location").position(current_position).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_position,10f));
+        if (location != null) {
+            LatLng current_position = new LatLng(location.getLatitude(), location.getLongitude());
+            mMap.addMarker(new MarkerOptions().title("My location").position(current_position).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_position, 10f));
+        }
     }
 
     public String getNameOfDriver(){

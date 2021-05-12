@@ -80,6 +80,8 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
 
         isCalled = false;
 
+        callUber = (Button) findViewById(R.id.sendRequest);
+
         deleteRequestFromDatabase(nameOfRider);
     }
 
@@ -158,11 +160,12 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
                     root.child("Requests").child("Rider Calls").child(nameOfRider).child("Location").setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Log.i("RiderRequest: ", "SUCCESEFULL ADDED IN DATABASE");
+                            Log.i("LOG in Database: ","SUCCESEFULL");
+
                         }
                     });
                 } else {
-                    root.child("Requests").child("Rider Calls").child(nameOfRider).child("Location").setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+                   root.child("Requests").child("Rider Calls").child(nameOfRider).child("Location").setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Log.i("RiderRequest: ", "SUCCESEFULL ADDED IN DATABASE");
@@ -228,9 +231,8 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
     }
    //---------------------------------------------------------------------------------------------------------------------------------------
 
-    @RequiresApi(api = Build.VERSION_CODES.P)
     public void setLocation(Location location) {
-        if (locationManager.isLocationEnabled() && location != null){
+        if (location != null){
         LatLng currentposition = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.addMarker(new MarkerOptions().title("Your current location").position(currentposition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentposition, 10f));}
