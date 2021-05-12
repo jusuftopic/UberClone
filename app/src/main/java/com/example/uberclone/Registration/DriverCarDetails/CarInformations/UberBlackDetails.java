@@ -20,6 +20,7 @@ import com.example.uberclone.MainApp.Driver.DriverMainContent;
 import com.example.uberclone.MainApp.Rider.RiderMainContent;
 import com.example.uberclone.Modules.Car.CarMarks.CarMarks;
 import com.example.uberclone.Modules.Car.UberBlack;
+import com.example.uberclone.Modules.Car.UberSUV;
 import com.example.uberclone.Modules.Color.Colors;
 import com.example.uberclone.R;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -253,19 +254,28 @@ public class UberBlackDetails extends AppCompatActivity {
         if (uberBlack.isValidNumberOfDoors(UberBlack.MAX_NUMBER_OF_DOORS)){
             if (uberBlack.isValidNumberOfPassangers(UberBlack.MAX_NUMBER_OF_PASSENGERS)){
                 if (uberBlack.isValidPrice(UberBlack.MIN_PRICE_RANGE,UberBlack.MAX_PRICE_RANGE)){
+                    if (uberBlack.isValideEnterior() && uberBlack.isValideInterior()){
+                        if (uberBlack.getAirportPermit() == true){
 
-
+                        }
+                        else{
+                            setWarning("UberBlack musst have airport permit");
+                        }
+                    }
+                    else{
+                        setWarning("Interior/Enterior musst be black");
+                    }
                 }
                 else{
-
+                    setWarning("Price musst be between " + UberBlack.MIN_PRICE_RANGE + " and " + UberBlack.MAX_PRICE_RANGE);
                 }
             }
             else {
-
+                setWarning("UberBlack musst have maximum "+ UberBlack.MAX_NUMBER_OF_PASSENGERS +" passangers");
             }
         }
         else{
-
+            setWarning("SUV musst have minumum 1 and maximum "+ UberBlack.MAX_NUMBER_OF_DOORS+ " doors");
         }
         return false;
     }
