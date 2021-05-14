@@ -62,8 +62,12 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     Location lastKnownLocation = getLastKnownLocation();
+                    if (lastKnownLocation != null){
                     setCurrentLocation(lastKnownLocation);
-                    addCurrentLocationInDatabase(lastKnownLocation);
+                    addCurrentLocationInDatabase(lastKnownLocation);}
+                    else{
+                        Log.e("Last location ","Not recognized");
+                    }
                 }
             }
         }
@@ -128,14 +132,22 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         } else {
             Location lastKnownLocation = getLastKnownLocation();
-            setCurrentLocation(lastKnownLocation);
-            addCurrentLocationInDatabase(lastKnownLocation);
+            if (lastKnownLocation != null){
+                setCurrentLocation(lastKnownLocation);
+                addCurrentLocationInDatabase(lastKnownLocation);}
+            else{
+                Log.e("Last location ","Not recognized");
+            }
         }
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
+                endlocation.setRider_latitude(latLng.latitude);
+                endlocation.setRider_longitude(latLng.longitude);
 
+                mMap.addMarker(new MarkerOptions().title("Location to drive").position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             }
         });
     }
@@ -145,7 +157,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             ProgressDialog dialog = new ProgressDialog(this);
             dialog.setMessage("Please wait...");
 
-            addLocationInDatabase(nameOfRider,location_for_call);
+            addEndLocationToDatabase(endlocation);
 
             if (dialog.isShowing()) {
                 dialog.dismiss();
@@ -183,14 +195,30 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         dialogBuilder.create().show();
     }
 
-    public void addLocationInDatabase(String username, RiderLocation riderLocation){
+    public void addEndLocationToDatabase(RiderLocation location){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requests").child("Rider Calls").child(username).child("Location").setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+        root.child("Requests").child("Rider Calls").child(nameOfRider).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onSuccess(Void aVoid) {
-             Log.i("Location for rider: ","ADDED");
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    root.child("Requests").child("Rider Calls").child(nameOfRider).child("End location").setValue(location).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                         Log.i("End location","SUCCESEFULL ADDED");
+                        }
+                    });
+                }
+                else{
+                    Log.e("ERROR-END LOCATION",nameOfRider+" not recognized");
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("ERROR-END LOCATION",error.getMessage());
             }
         });
     }
@@ -206,7 +234,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
-                    root.child("Requests").child("Rider Calls").child(nameOfRider).child("Current Location").setValue(currentlocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    root.child("Requests").child("Rider Calls").child(nameOfRider).child("Current location").setValue(currentlocation).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Log.i("CURRENT LOCATION ","ADDED");
@@ -260,7 +288,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         if (location != null){
         LatLng currentposition = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.addMarker(new MarkerOptions().title("Your current location").position(currentposition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentposition, 10f));}
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentposition));}
 
     }
 
