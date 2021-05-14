@@ -1,7 +1,6 @@
 package com.example.uberclone.MainApp.Rider;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
@@ -13,13 +12,10 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.uberclone.Modules.Requests.RiderLocation;
 import com.example.uberclone.R;
@@ -29,6 +25,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -37,7 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class RiderMainContent extends FragmentActivity implements OnMapReadyCallback {
+public class RiderMainContent extends FragmentActivity implements OnMapReadyCallback{
 
     private GoogleMap mMap;
 
@@ -49,8 +46,14 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
     private LocationManager locationManager;
     private LocationListener locationListener;
 
-
     private Button callUber;
+
+    private Marker marker_currentlocation;
+    private Marker marker_endlocation;
+
+    private RiderLocation currentlocation;
+    private RiderLocation endlocation;
+
 
 
     @Override
@@ -58,9 +61,9 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         if (requestCode == 1) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-                    Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    setLocation(lastKnownLocation);
+                    Location lastKnownLocation = getLastKnownLocation();
+                    setCurrentLocation(lastKnownLocation);
+                    addCurrentLocationInDatabase(lastKnownLocation);
                 }
             }
         }
@@ -75,14 +78,17 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        String nameOfRider = getNameOfRider();
+        nameOfRider = getNameOfRider();
 
         isCalled = false;
 
         callUber = (Button) findViewById(R.id.sendRequest);
 
+        currentlocation = new RiderLocation();
+        endlocation = new RiderLocation();
+
         deleteRequestFromDatabase(nameOfRider);
+
     }
 
     /**
@@ -102,7 +108,9 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                setLocation(location);
+                setCurrentLocation(location);
+                currentlocation.setRider_latitude(location.getLatitude());
+                currentlocation.setRider_longitude(location.getLongitude());
             }
 
             @Override
@@ -119,20 +127,26 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         } else {
-
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            setLocation(lastKnownLocation);
-
+            Location lastKnownLocation = getLastKnownLocation();
+            setCurrentLocation(lastKnownLocation);
+            addCurrentLocationInDatabase(lastKnownLocation);
         }
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+
+            }
+        });
     }
 
     public void callUberOnDrive(View view) {
         if (String.valueOf(callUber.getText()).equalsIgnoreCase("Call uber")) {
             ProgressDialog dialog = new ProgressDialog(this);
             dialog.setMessage("Please wait...");
-            Location lastKnownLocation = getLastKnownLocation();
-            addRequestInDatabase(new RiderLocation(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude()));
+
+            addLocationInDatabase(nameOfRider,location_for_call);
+
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
@@ -147,38 +161,6 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             changeButtonInfos(false, "Call Uber");
 
         }
-    }
-
-    public void addRequestInDatabase(RiderLocation riderLocation) {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference();
-
-        root.child("Requests").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    root.child("Requests").child("Rider Calls").child(nameOfRider).child("Location").setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.i("LOG in Database: ","SUCCESEFULL");
-
-                        }
-                    });
-                } else {
-                   root.child("Requests").child("Rider Calls").child(nameOfRider).child("Location").setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.i("RiderRequest: ", "SUCCESEFULL ADDED IN DATABASE");
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("DATABASE ERROR ",error.getMessage());
-            }
-        });
     }
 
     public void changeButtonInfos(boolean called, String message) {
@@ -201,6 +183,50 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         dialogBuilder.create().show();
     }
 
+    public void addLocationInDatabase(String username, RiderLocation riderLocation){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").child(username).child("Location").setValue(riderLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+             Log.i("Location for rider: ","ADDED");
+            }
+        });
+    }
+
+    public void addCurrentLocationInDatabase(Location location){
+        currentlocation.setRider_latitude(location.getLatitude());
+        currentlocation.setRider_longitude(location.getLongitude());
+
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").child(nameOfRider).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    root.child("Requests").child("Rider Calls").child(nameOfRider).child("Current Location").setValue(currentlocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.i("CURRENT LOCATION ","ADDED");
+                        }
+                    });
+
+                    }
+                else{
+                    Log.e("ERROR-CURRENT LOCATION ",nameOfRider+" doesn't exists");
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("ERROR-CURRENT LOCATION ",error.getMessage());
+            }
+        });
+    }
+
     public void deleteRequestFromDatabase(String rider_username) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
@@ -208,7 +234,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.child(rider_username).exists()){
+                if (snapshot.hasChild(rider_username)){
                     root.child("Requests").child("Rider Calls").child(rider_username).setValue(null);
                 }
             }
@@ -220,7 +246,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         });
     }
 
-    //------------------------------------------------------------------------------------------------------------------------------------
+
     public Location getLastKnownLocation(){
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
@@ -229,9 +255,8 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         }
         return null;
     }
-   //---------------------------------------------------------------------------------------------------------------------------------------
 
-    public void setLocation(Location location) {
+    public void setCurrentLocation(Location location) {
         if (location != null){
         LatLng currentposition = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.addMarker(new MarkerOptions().title("Your current location").position(currentposition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));

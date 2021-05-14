@@ -1,13 +1,14 @@
 {
   "project_info": {
     "project_number": "897526484627",
+    "firebase_url": "https://uberclone-df004-default-rtdb.firebaseio.com",
     "project_id": "uberclone-df004",
     "storage_bucket": "uberclone-df004.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:897526484627:android:e3f0beb7542975b4668766",
+        "mobilesdk_app_id": "1:897526484627:android:de74592c3a2e65be668766",
         "android_client_info": {
           "package_name": "com.example.uberclone"
         }
