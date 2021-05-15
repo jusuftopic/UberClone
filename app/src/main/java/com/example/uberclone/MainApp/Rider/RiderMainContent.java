@@ -143,10 +143,11 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
+                mMap.clear();
                 endlocation.setRider_latitude(latLng.latitude);
                 endlocation.setRider_longitude(latLng.longitude);
 
-                mMap.addMarker(new MarkerOptions().title("Location to drive").position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+           marker_endlocation= mMap.addMarker(new MarkerOptions().title("Location to drive").position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             }
         });
@@ -170,8 +171,6 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
 
         } else {
             setDialog();
-            changeButtonInfos(false, "Call Uber");
-
         }
     }
 
@@ -182,15 +181,21 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
 
     public void setDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(RiderMainContent.this)
-                .setTitle("Already requested")
+                .setTitle("Cancle Uber?")
                 .setMessage("You already requested Uber.\nDo yo want to cancle and call again?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         deleteRequestFromDatabase(nameOfRider);
+                        changeButtonInfos(false, "Call Uber");
                     }
                 })
-                .setNegativeButton("No", null);
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        changeButtonInfos(true,"Cancle Uber");
+                    }
+                });
 
         dialogBuilder.create().show();
     }
@@ -199,7 +204,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requests").child("Rider Calls").child(nameOfRider).addValueEventListener(new ValueEventListener() {
+        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
@@ -230,7 +235,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requests").child("Rider Calls").child(nameOfRider).addValueEventListener(new ValueEventListener() {
+        root.child("Requests").child("Rider Calls").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
@@ -288,7 +293,8 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         if (location != null){
         LatLng currentposition = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.addMarker(new MarkerOptions().title("Your current location").position(currentposition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentposition));}
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentposition,30f));
+        }
 
     }
 
