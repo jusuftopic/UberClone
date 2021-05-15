@@ -11,15 +11,22 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.uberclone.Modules.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class DriverMainContent extends FragmentActivity implements OnMapReadyCallback {
 
@@ -29,6 +36,13 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
 
     private LocationManager locationManager;
     private LocationListener locationListener;
+
+    private ArrayList<String> riders_requesters;
+
+    private ArrayList<Double> latitudes;
+    private ArrayList<Double> longitudes;
+
+    private ArrayList<RiderLocation> ridersCurrentLocations;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -54,6 +68,13 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
 
         nameOfDriver = getNameOfDriver();
         Log.i("DriverMainContent name"," "+nameOfDriver);
+
+        riders_requesters = getRequestedUsers();
+
+        latitudes = getLatitudes();
+        longitudes = getLongitudes();
+
+        ridersCurrentLocations = formRidersCurrentLocation();
 
     }
 
@@ -106,6 +127,40 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         }
     }
 
+    public ArrayList<String> getRequestedUsers(){
+        ArrayList<String> usersFromDatabase = new ArrayList<>();
+
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider calls").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    Log.i("Requested ridders",String.valueOf(snapshot.getChildrenCount()));
+
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        usersFromDatabase.add(String.valueOf(dataSnapshot));
+                    }
+
+                    if (!usersFromDatabase.isEmpty()){
+                        Log.i("Test requests",usersFromDatabase.get(0));
+                    }
+                }
+                else {
+                    Log.e("Snapshot problem: ","Doesn't exists");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Driver Main: ",error.getMessage());
+            }
+        });
+
+        return usersFromDatabase;
+    }
+
     public String getNameOfDriver(){
         if (this.getIntent().getStringExtra("drivername from cardetails") == null){
             if (this.getIntent().getStringExtra("drivername from login") != null){
@@ -113,6 +168,129 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             }
         }
         return null;
+    }
+
+    private ArrayList<Double> getLatitudes(){
+        ArrayList<Double> latitudes_from_database = new ArrayList<>();
+
+        for (String riderreqester : riders_requesters){
+            double latitude_from_database = getLatitudeFromDatabase(riderreqester);
+            latitudes_from_database.add(latitude_from_database);
+        }
+        return latitudes_from_database;
+    }
+
+    public double getLatitudeFromDatabase(String username){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        final double[] currentlocation_cords = new double[1];
+
+        root.child("Requests").child("Rider Calls").child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    root.child("Requests").child("Rider Calls").child(username).child("Current location").child("rider_latitude").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()){
+                                currentlocation_cords[0] = Double.parseDouble(String.valueOf(snapshot.getValue()));
+                            }
+                            else {
+                                Log.e("Driver main","Problem with rider current location-latitude");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+                else {
+                    Log.e("Latitude problem",username+" didn't recognized");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        return currentlocation_cords[0];
+    }
+
+    private ArrayList<Double> getLongitudes(){
+        ArrayList<Double> longitudes_from_database = new ArrayList<>();
+
+        for (String riderreqester : riders_requesters){
+            double longitude_from_database = getLongitudeFromDatabase(riderreqester);
+            longitudes_from_database.add(longitude_from_database);
+        }
+        return longitudes;
+    }
+
+
+    public double getLongitudeFromDatabase(String username){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        final double[] currentlocation_cords = new double[1];
+
+        root.child("Requests").child("Rider Calls").child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    root.child("Requests").child("Rider Calls").child(username).child("Current location").child("rider_longitude").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()){
+                                currentlocation_cords[0] = Double.parseDouble(String.valueOf(snapshot.getValue()));
+                            }
+                            else {
+                                Log.e("Driver main","Problem with rider current location-longitude");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+                else {
+                    Log.e("Latitude problem",username+" didn't recognized");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        return currentlocation_cords[0];
+    }
+
+    private ArrayList<RiderLocation> formRidersCurrentLocation(){
+        ArrayList<RiderLocation> formedlist = new ArrayList<>();
+
+        if (latitudes.size() == longitudes.size()){
+            for (int i = 0; i < longitudes.size(); i++){
+                RiderLocation riderLocation = new RiderLocation(latitudes.get(i),longitudes.get(i));
+                formedlist.add(riderLocation);
+            }
+        }
+        else{
+            Log.e("DriverMain","Not equal number of latitudes ("+latitudes.size()+") and longitudes ("+longitudes.size()+") in database");
+        }
+       return formedlist;
+    }
+
+    public RiderLocation makeRiderLocation(double lat, double longt){
+        RiderLocation riderLoc = new RiderLocation(lat,longt);
+        return riderLoc;
     }
 }
 
