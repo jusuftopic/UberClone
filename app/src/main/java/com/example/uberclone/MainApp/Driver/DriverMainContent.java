@@ -48,11 +48,10 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 1){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-                    Location current_location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    updateLocation(current_location);
-                }
+                    if (getLastKnownLocation() != null){
+                        Location lastKnownLocation = getLastKnownLocation();
+                        updateLocation(lastKnownLocation);
+                    }
             }
         }
     }
@@ -112,9 +111,10 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
         }
         else{
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-            Location current_location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            updateLocation(current_location);
+            if (getLastKnownLocation() != null){
+                Location lastKnownLocation = getLastKnownLocation();
+                updateLocation(lastKnownLocation);
+            }
         }
     }
 
@@ -123,8 +123,16 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         if (location != null) {
             LatLng current_position = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.addMarker(new MarkerOptions().title("My location").position(current_position).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_position, 10f));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_position, 15f));
         }
+    }
+
+    public Location getLastKnownLocation(){
+       if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+           locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+           return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+       }
+       return null;
     }
 
     public ArrayList<String> getRequestedUsers(){
