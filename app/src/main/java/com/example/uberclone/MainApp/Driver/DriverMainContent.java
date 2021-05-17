@@ -11,6 +11,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.uberclone.Modules.Requests.DriverLocation;
 import com.example.uberclone.Modules.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,6 +21,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -51,6 +53,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                     if (getLastKnownLocation() != null){
                         Location lastKnownLocation = getLastKnownLocation();
                         updateLocation(lastKnownLocation);
+                        addRiderInDatabaseNoAccepted(lastKnownLocation,false);
                     }
             }
         }
@@ -114,6 +117,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             if (getLastKnownLocation() != null){
                 Location lastKnownLocation = getLastKnownLocation();
                 updateLocation(lastKnownLocation);
+                addRiderInDatabaseNoAccepted(lastKnownLocation,false);
             }
         }
     }
@@ -296,9 +300,35 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
        return formedlist;
     }
 
-    public RiderLocation makeRiderLocation(double lat, double longt){
-        RiderLocation riderLoc = new RiderLocation(lat,longt);
-        return riderLoc;
+
+    public void addRiderInDatabaseNoAccepted(Location location, boolean accpeted){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    DriverLocation driverLocation = new DriverLocation(location.getLatitude(),location.getLongitude(),false);
+
+                    root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).child("Current location").setValue(driverLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                         Log.i("Driver's location: ","Succesefull added");
+                        }
+                    });
+
+                }
+                else{
+                    Log.e("Probelm with path",snapshot.getValue()+" doent't exists");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("DATABASE PROBELEM",error.getMessage());
+            }
+        });
     }
 }
 
