@@ -118,8 +118,39 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                 Location lastKnownLocation = getLastKnownLocation();
                 updateLocation(lastKnownLocation);
                 addRiderInDatabaseNoAccepted(lastKnownLocation,false);
+                setRidersLocationInMap();
             }
         }
+    }
+
+    public void addRiderInDatabaseNoAccepted(Location location, boolean accpeted){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    DriverLocation driverLocation = new DriverLocation(location.getLatitude(),location.getLongitude(),false);
+
+                    root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).child("Current location").setValue(driverLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.i("Driver's location: ","Succesefull added");
+                        }
+                    });
+
+                }
+                else{
+                    Log.e("Probelm with path",snapshot.getValue()+" doent't exists");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("DATABASE PROBELEM",error.getMessage());
+            }
+        });
     }
 
 
@@ -137,6 +168,23 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
            return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
        }
        return null;
+    }
+
+    public void setRidersLocationInMap(){
+        if (riders_requesters.size() == ridersCurrentLocations.size()){
+            for (int i = 0; i < riders_requesters.size(); i++){
+                showMarkerOnMap(riders_requesters.get(i),ridersCurrentLocations.get(i));
+            }
+        }
+        else{
+            Log.i("Lists not equals","Size of rider's names ("+riders_requesters.size()+") not equal number of current locations ("+ridersCurrentLocations+")");
+        }
+    }
+
+    public void showMarkerOnMap(String username, RiderLocation riderLocation){
+        LatLng position = new LatLng(riderLocation.getRider_latitude(),riderLocation.getRider_longitude());
+        mMap.addMarker(new MarkerOptions().title(username).position(position).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
     }
 
     public ArrayList<String> getRequestedUsers(){
@@ -171,15 +219,6 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         });
 
         return usersFromDatabase;
-    }
-
-    public String getNameOfDriver(){
-        if (this.getIntent().getStringExtra("drivername from cardetails") == null){
-            if (this.getIntent().getStringExtra("drivername from login") != null){
-                return this.getIntent().getStringExtra("drivername from login");
-            }
-        }
-        return null;
     }
 
     private ArrayList<Double> getLatitudes(){
@@ -301,34 +340,14 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     }
 
 
-    public void addRiderInDatabaseNoAccepted(Location location, boolean accpeted){
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference();
-
-        root.child("Requests").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    DriverLocation driverLocation = new DriverLocation(location.getLatitude(),location.getLongitude(),false);
-
-                    root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).child("Current location").setValue(driverLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                         Log.i("Driver's location: ","Succesefull added");
-                        }
-                    });
-
-                }
-                else{
-                    Log.e("Probelm with path",snapshot.getValue()+" doent't exists");
-                }
+    public String getNameOfDriver(){
+        if (this.getIntent().getStringExtra("drivername from cardetails") == null){
+            if (this.getIntent().getStringExtra("drivername from login") != null){
+                return this.getIntent().getStringExtra("drivername from login");
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("DATABASE PROBELEM",error.getMessage());
-            }
-        });
+        }
+        return null;
     }
+
 }
 
