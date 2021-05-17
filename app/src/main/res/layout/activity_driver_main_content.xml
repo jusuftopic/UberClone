@@ -15,9 +15,28 @@ tools:context=".MainApp.Driver.DriverMainContent">
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainApp.Rider.RiderMainContent" >
-
+    tools:context=".MainApp.Driver.DriverMainContent" >
 </fragment>
+
+    <Button
+        android:id="@+id/acceptRequest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="262dp"
+        android:layout_marginTop="435dp"
+        android:background="@drawable/borders"
+        android:shadowColor="#977979"
+        android:text="Accept Request" />
+
+    <Button
+        android:id="@+id/viewInList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="22dp"
+        android:layout_marginTop="435dp"
+        android:background="@drawable/borders"
+        android:shadowColor="#977979"
+        android:text="Show list" />
 
 </RelativeLayout>
 
