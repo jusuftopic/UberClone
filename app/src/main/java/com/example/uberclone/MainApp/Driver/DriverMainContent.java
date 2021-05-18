@@ -10,10 +10,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLatitude;
+import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
 import com.example.uberclone.Modules.Requests.DriverLocation;
 import com.example.uberclone.Modules.Requests.RiderLocation;
 import com.example.uberclone.R;
@@ -23,7 +24,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -79,25 +79,22 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
 
         nameOfDriver = getNameOfDriver();
 
-         riders_requesters = new ArrayList<>();
+        riders_requesters = new ArrayList<>();
+        latitudes = new ArrayList<>();
+        longitudes = new ArrayList<>();
 
-        getRiderRequesters(new FireBaseCallback() {
-            @Override
-            public void onCallbackUsername(ArrayList<String> requestes) {
-                riders_requesters = requestes;
-                Log.i("Rider name ",riders_requesters.get(0));
-            }
-        });
+        ridersCurrentLocations = new ArrayList<>();
+
+        acceptRequestButton = (Button) findViewById(R.id.acceptRequest);
+        showInListButton = (Button) findViewById(R.id.viewInList);
+
 
       /*  getRequestedUsers();
 
         latitudes = getLatitudes();
         longitudes = getLongitudes();
 
-        ridersCurrentLocations = formRidersCurrentLocation();
-
-        acceptRequestButton = (Button) findViewById(R.id.acceptRequest);
-        showInListButton = (Button) findViewById(R.id.viewInList);*/
+        ridersCurrentLocations = formRidersCurrentLocation();*/
 
     }
 
@@ -139,7 +136,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             if (getLastKnownLocation() != null){
                 lastKnownLocation = getLastKnownLocation();
                 updateLocation(lastKnownLocation);
-             //   addRiderInDatabaseNoAccepted(lastKnownLocation,false);
+                addDriverInDatabaseNoAccepted(lastKnownLocation,false);
               //  setRidersLocationInMap();
             }
         }
@@ -194,7 +191,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
        return null;
     }
 
-    public void getRiderRequesters(FireBaseCallback fireBaseCallback){
+    public void getRiderRequesters(FireBaseCallbackUsername fireBaseCallback){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
@@ -203,12 +200,11 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
 
-                    ArrayList<String> riderFromDatabase = new ArrayList<>();
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                       riderFromDatabase.add(String.valueOf(dataSnapshot.getKey()));
+                       riders_requesters.add(String.valueOf(dataSnapshot.getKey()));
                     }
 
-                    fireBaseCallback.onCallbackUsername(riderFromDatabase);
+                    fireBaseCallback.onCallbackUsername(riders_requesters);
                 }
                 else{
                     Log.e("Database problem","Can not find Rider Calls path");
@@ -223,7 +219,36 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
 
     }
 
-   /* public void setRidersLocationInMap(){
+    public void getRiderLatitudes(FireBaseCallbackLatitude fireBaseCallbackLatitude){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference("Rider Calls");
+
+        getRiderRequesters(new FireBaseCallbackUsername() {
+            @Override
+            public void onCallbackUsername(ArrayList<String> requestes) {
+                if (!requestes.isEmpty()){
+                    for (String username : requestes){
+                        root.child(username).child("Current location").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+                }
+                else{
+                    Log.e("Username callback: ","Problem with username list (size: "+requestes.size()+")");
+                }
+            }
+        });
+    }
+
+    /* public void setRidersLocationInMap(){
         if (riders_requesters.size() == ridersCurrentLocations.size()){
             for (int i = 0; i < riders_requesters.size(); i++){
                 showMarkerOnMap(riders_requesters.get(i),ridersCurrentLocations.get(i));
