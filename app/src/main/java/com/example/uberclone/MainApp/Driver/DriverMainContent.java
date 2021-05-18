@@ -62,7 +62,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                     if (getLastKnownLocation() != null){
                         lastKnownLocation = getLastKnownLocation();
                         updateLocation(lastKnownLocation);
-                        addRiderInDatabaseNoAccepted(lastKnownLocation,false);
+                        addDriverInDatabaseNoAccepted(lastKnownLocation,false);
                     }
             }
         }
@@ -78,9 +78,18 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         mapFragment.getMapAsync(this);
 
         nameOfDriver = getNameOfDriver();
-        Log.i("DriverMainContent name"," "+nameOfDriver);
 
-      /* getRequestedUsers();
+         riders_requesters = new ArrayList<>();
+
+        getRiderRequesters(new FireBaseCallback() {
+            @Override
+            public void onCallbackUsername(ArrayList<String> requestes) {
+                riders_requesters = requestes;
+                Log.i("Rider name ",riders_requesters.get(0));
+            }
+        });
+
+      /*  getRequestedUsers();
 
         latitudes = getLatitudes();
         longitudes = getLongitudes();
@@ -130,15 +139,15 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             if (getLastKnownLocation() != null){
                 lastKnownLocation = getLastKnownLocation();
                 updateLocation(lastKnownLocation);
-                addRiderInDatabaseNoAccepted(lastKnownLocation,false);
-                setRidersLocationInMap();
+             //   addRiderInDatabaseNoAccepted(lastKnownLocation,false);
+              //  setRidersLocationInMap();
             }
         }
 
         mMap.setOnMapClickListener(latLng -> Toast.makeText(DriverMainContent.this,"Marker clicked",Toast.LENGTH_LONG).show());
     }
 
-    public void addRiderInDatabaseNoAccepted(Location location, boolean accpeted){
+    public void addDriverInDatabaseNoAccepted(Location location, boolean accpeted){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
@@ -185,7 +194,36 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
        return null;
     }
 
-    public void setRidersLocationInMap(){
+    public void getRiderRequesters(FireBaseCallback fireBaseCallback){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+
+                    ArrayList<String> riderFromDatabase = new ArrayList<>();
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                       riderFromDatabase.add(String.valueOf(dataSnapshot.getKey()));
+                    }
+
+                    fireBaseCallback.onCallbackUsername(riderFromDatabase);
+                }
+                else{
+                    Log.e("Database problem","Can not find Rider Calls path");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Database problem",error.getMessage());
+            }
+        });
+
+    }
+
+   /* public void setRidersLocationInMap(){
         if (riders_requesters.size() == ridersCurrentLocations.size()){
             for (int i = 0; i < riders_requesters.size(); i++){
                 showMarkerOnMap(riders_requesters.get(i),ridersCurrentLocations.get(i));
@@ -203,39 +241,16 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     }
 
     public void getRequestedUsers(){
-
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference();
-
-        root.child("Requests").child("Rider calls").addValueEventListener(new ValueEventListener() {
+        databaseUsers(new FireBaseCallback() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
-
-                    ArrayList<String> usersFromDatabase = new ArrayList<>();
-
-                    Log.i("Requested ridders",String.valueOf(snapshot.getChildrenCount()));
-
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                        usersFromDatabase.add(String.valueOf(dataSnapshot));
-                    }
-
-                    if (!usersFromDatabase.isEmpty()){
-                        Log.i("Test requests",usersFromDatabase.get(0));
-                    }
-                    else{
-                        Toast.makeText(DriverMainContent.this,"Empty requests",Toast.LENGTH_LONG).show();
-                    }
-
-                    riders_requesters = usersFromDatabase;
-
-                }
-                else {
-                    Log.e("Snapshot problem: ","Doesn't exists");
-                }
+            public void onCallback(ArrayList<String> requestes) {
+                riders_requesters = requestes;
+                        }
+                    });
             }
 
-            public void getUsersFromDatabas(FireBaseCallback fireBaseCallback){
+
+            public void databaseUsers(FireBaseCallback fireBaseCallback){
                 FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                 DatabaseReference root = firebaseDatabase.getReference();
 
@@ -243,7 +258,17 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()){
+                            Log.i("Number of requesters",String.valueOf(snapshot.getChildrenCount()));
+                            ArrayList<String> usernames = new ArrayList<>();
 
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                                String username = String.valueOf(dataSnapshot.getValue());
+
+                                Log.i("Added: ",username);
+                                usernames.add(username);
+                            }
+
+                            fireBaseCallback.onCallback(usernames);
                         }
                         else{
                             Log.i("Database problem","can't find path");
@@ -258,16 +283,10 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                 });
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Driver Main: ",error.getMessage());
-            }
-        });
-
-    }
 
     private ArrayList<Double> getLatitudes(){
         ArrayList<Double> latitudes_from_database = new ArrayList<>();
+
 
         for (String riderreqester : riders_requesters){
             double latitude_from_database = getLatitudeFromDatabase(riderreqester);
@@ -383,7 +402,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             Log.e("DriverMain","Not equal number of latitudes ("+latitudes.size()+") and longitudes ("+longitudes.size()+") in database");
         }
        return formedlist;
-    }
+    }*/
 
 
     public String getNameOfDriver(){
