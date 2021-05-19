@@ -83,6 +83,13 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         latitudes = new ArrayList<>();
         longitudes = new ArrayList<>();
 
+        getRiderLatitudes(new FireBaseCallbackLatitude() {
+            @Override
+            public void onCallbackLatitude(ArrayList<Double> latitudes) {
+                Log.i("latitudes test",String.valueOf(latitudes.get(0)));
+            }
+        });
+
         ridersCurrentLocations = new ArrayList<>();
 
         acceptRequestButton = (Button) findViewById(R.id.acceptRequest);
@@ -223,20 +230,56 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference("Rider Calls");
 
+        root.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        Log.i("User in latitude",dataSnapshot.getKey());
+                     double latitude = Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_latitude").getValue()));
+                     Log.i("Latitude check",dataSnapshot.getKey()+" -> Latitude: "+latitude);
+                     latitudes.add(latitude);
+                    }
+
+                    fireBaseCallbackLatitude.onCallbackLatitude(latitudes);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    /*public void getRiderLatitudes(FireBaseCallbackLatitude fireBaseCallbackLatitude){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference("Rider Calls");
+
         getRiderRequesters(new FireBaseCallbackUsername() {
             @Override
             public void onCallbackUsername(ArrayList<String> requestes) {
                 if (!requestes.isEmpty()){
                     for (String username : requestes){
-                        root.child(username).child("Current location").addListenerForSingleValueEvent(new ValueEventListener() {
+                        Log.i("Test username",username);
+                        Log.i("Root: ",root.getKey());
+                        root.child(username).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                                if (snapshot.exists()){
+                                    int i = 0;
+                                    latitudes.add(Double.parseDouble(String.valueOf(snapshot.getValue())));
+                                    latitudes.add((double) i++);
+                                    fireBaseCallbackLatitude.onCallbackLatitude(latitudes);
+                                }
+                                else{
+                                    Log.e("Rider's latitude","Can not find rider latitude");
+                                }
                             }
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
-
+                                Log.e("Database problem",error.getMessage());
                             }
                         });
                     }
@@ -246,7 +289,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                 }
             }
         });
-    }
+    }*/
 
     /* public void setRidersLocationInMap(){
         if (riders_requesters.size() == ridersCurrentLocations.size()){
