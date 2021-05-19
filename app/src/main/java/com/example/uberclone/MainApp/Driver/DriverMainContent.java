@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLatitude;
+import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLongitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
 import com.example.uberclone.Modules.Requests.DriverLocation;
 import com.example.uberclone.Modules.Requests.RiderLocation;
@@ -83,12 +84,26 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         latitudes = new ArrayList<>();
         longitudes = new ArrayList<>();
 
-        getRiderLatitudes(new FireBaseCallbackLatitude() {
+        getRiderRequesters(new FireBaseCallbackUsername() {
             @Override
-            public void onCallbackLatitude(ArrayList<Double> latitudes) {
-                Log.i("latitudes test",String.valueOf(latitudes.get(0)));
+            public void onCallbackUsername(ArrayList<String> requestes) {
+                Log.i("Requesters",requestes.toString());
             }
         });
+
+       getRiderLatitudes(new FireBaseCallbackLatitude() {
+           @Override
+           public void onCallbackLatitude(ArrayList<Double> latitudes) {
+               Log.i("latitudes",latitudes.toString());
+           }
+       });
+
+       getRiderLongitude(new FireBaseCallbackLongitude() {
+           @Override
+           public void onCallBackLongitude(ArrayList<Double> longitudes) {
+               Log.i("Longitudes",longitudes.toString());
+           }
+       });
 
         ridersCurrentLocations = new ArrayList<>();
 
@@ -242,6 +257,39 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                     }
 
                     fireBaseCallbackLatitude.onCallbackLatitude(latitudes);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Database problem",error.getMessage());
+            }
+        });
+    }
+
+    public void getRiderLongitude(FireBaseCallbackLongitude fireBaseCallbackLongitude){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    Log.i("Number of users",String.valueOf(snapshot.getChildrenCount()));
+
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        Log.i("Requester",dataSnapshot.getKey());
+                        double longitude =  Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_longitude").getValue()));
+                        Log.i("Longitude added",longitude +" added in database");
+                        longitudes.add(longitude);
+                        Log.i("Check",longitudes.get(0).toString());
+                    }
+
+                    Log.i("Check2",longitudes.toString());
+                    fireBaseCallbackLongitude.onCallBackLongitude(longitudes);
+                }
+                else{
+                    Log.e("Database problem","Path Rider Calls not recognized");
                 }
             }
 
