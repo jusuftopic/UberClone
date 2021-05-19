@@ -25,6 +25,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +36,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class DriverMainContent extends FragmentActivity implements OnMapReadyCallback{
+public class DriverMainContent extends FragmentActivity implements OnMapReadyCallback {
 
     private String nameOfDriver;
 
@@ -56,16 +57,19 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     private Button acceptRequestButton;
     private Button showInListButton;
 
+    private String acceptedRider;
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 1){
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    if (getLastKnownLocation() != null){
-                        lastKnownLocation = getLastKnownLocation();
-                        updateLocation(lastKnownLocation);
-                        addDriverInDatabaseNoAccepted(lastKnownLocation,false);
-                        setMarkersOnMap();
-                    }
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (getLastKnownLocation() != null) {
+                    lastKnownLocation = getLastKnownLocation();
+                    updateLocation(lastKnownLocation);
+                    addDriverInDatabaseNoAccepted(lastKnownLocation, false);
+                    setMarkersOnMap();
+                    setClickListenerOnMarker();
+                }
             }
         }
     }
@@ -85,31 +89,14 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         latitudes = new ArrayList<>();
         longitudes = new ArrayList<>();
 
-        getRiderRequesters(new FireBaseCallbackUsername() {
-            @Override
-            public void onCallbackUsername(ArrayList<String> requestes) {
-                Log.i("Requesters",requestes.toString());
-            }
-        });
-
-       getRiderLatitudes(new FireBaseCallbackLatitude() {
-           @Override
-           public void onCallbackLatitude(ArrayList<Double> latitudes) {
-               Log.i("latitudes",latitudes.toString());
-           }
-       });
-
-       getRiderLongitude(new FireBaseCallbackLongitude() {
-           @Override
-           public void onCallBackLongitude(ArrayList<Double> longitudes) {
-               Log.i("Longitudes",longitudes.toString());
-           }
-       });
-
         ridersCurrentLocations = new ArrayList<>();
 
         acceptRequestButton = (Button) findViewById(R.id.acceptRequest);
+        acceptRequestButton.setEnabled(false);
+
         showInListButton = (Button) findViewById(R.id.viewInList);
+
+        acceptedRider = "";
 
 
       /*  getRequestedUsers();
@@ -141,6 +128,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                 updateLocation(location);
                 lastKnownLocation = location;
             }
+
             @Override
             public void onProviderDisabled(@NonNull String provider) {
 
@@ -152,20 +140,20 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             }
         };
 
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-        }
-        else{
-            if (getLastKnownLocation() != null){
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        } else {
+            if (getLastKnownLocation() != null) {
                 lastKnownLocation = getLastKnownLocation();
                 updateLocation(lastKnownLocation);
-                addDriverInDatabaseNoAccepted(lastKnownLocation,false);
+                addDriverInDatabaseNoAccepted(lastKnownLocation, false);
                 setMarkersOnMap();
+                setClickListenerOnMarker();
             }
         }
     }
 
-    public void setMarkersOnMap(){
+    public void setMarkersOnMap() {
         getRiderRequesters(new FireBaseCallbackUsername() {
             @Override
             public void onCallbackUsername(ArrayList<String> requestes) {
@@ -175,19 +163,18 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                         getRiderLongitude(new FireBaseCallbackLongitude() {
                             @Override
                             public void onCallBackLongitude(ArrayList<Double> longitudes) {
-                                if (requestes.size() == latitudes.size() && latitudes.size() == longitudes.size()){
-                                    Log.i("Size check","Requesters: "+requestes.size()+"\nLatitudes: "+latitudes.size()+"\nLongitudes: "+longitudes.size());
+                                if (requestes.size() == latitudes.size() && latitudes.size() == longitudes.size()) {
+                                    Log.i("Size check", "Requesters: " + requestes.size() + "\nLatitudes: " + latitudes.size() + "\nLongitudes: " + longitudes.size());
 
-                                    for (int i = 0; i < requestes.size(); i++){
-                                        Log.i("Marker to add",requestes.get(i)+" Position: "+latitudes.get(i)+":"+longitudes.get(i));
-                                        LatLng position = new LatLng(latitudes.get(i),longitudes.get(i));
+                                    for (int i = 0; i < requestes.size(); i++) {
+                                        Log.i("Marker to add", requestes.get(i) + " Position: " + latitudes.get(i) + ":" + longitudes.get(i));
+                                        LatLng position = new LatLng(latitudes.get(i), longitudes.get(i));
                                         mMap.addMarker(new MarkerOptions().position(position).title(requestes.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
                                         mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
                                     }
 
-                                }
-                                else{
-                                    Log.e("Problem with callback","List not same size->Requesters: "+requestes.size()+"\nLatitudes: "+latitudes.size()+"\nLongitudes: "+longitudes.size());
+                                } else {
+                                    Log.e("Problem with callback", "List not same size->Requesters: " + requestes.size() + "\nLatitudes: " + latitudes.size() + "\nLongitudes: " + longitudes.size());
                                 }
                             }
                         });
@@ -197,38 +184,52 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         });
     }
 
-    public void addDriverInDatabaseNoAccepted(Location location, boolean accpeted){
+    public void setClickListenerOnMarker() {
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                acceptRequestButton.setEnabled(true);
+                if (marker.getTitle() != null && !marker.getTitle().equals("")) {
+                    acceptedRider = marker.getTitle();
+                } else {
+                    Log.e("Marker title", "Problem to find marker title for accept\nMarker title: " + marker.getTitle());
+                }
+                return true;
+            }
+        });
+    }
+
+    public void addDriverInDatabaseNoAccepted(Location location, boolean accpeted) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
         root.child("Requests").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    DriverLocation driverLocation = new DriverLocation(location.getLatitude(),location.getLongitude(),false);
+                if (snapshot.exists()) {
+                    DriverLocation driverLocation = new DriverLocation(location.getLatitude(), location.getLongitude(), false);
 
                     root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).child("Current location").setValue(driverLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Log.i("Driver's location: ","Succesefull added");
+                            Log.i("Driver's location: ", "Succesefull added");
                         }
                     });
 
-                }
-                else{
-                    Log.e("Probelm with path",snapshot.getValue()+" doent't exists");
+                } else {
+                    Log.e("Probelm with path", snapshot.getValue() + " doent't exists");
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("DATABASE PROBELEM",error.getMessage());
+                Log.e("DATABASE PROBELEM", error.getMessage());
             }
         });
     }
 
 
-    public void updateLocation(Location location){
+    public void updateLocation(Location location) {
         if (location != null) {
             LatLng current_position = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.addMarker(new MarkerOptions().title("My location").position(current_position).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
@@ -236,65 +237,63 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         }
     }
 
-    public Location getLastKnownLocation(){
-       if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-           locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-           return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-       }
-       return null;
+    public Location getLastKnownLocation() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        }
+        return null;
     }
 
-    public void getRiderRequesters(FireBaseCallbackUsername fireBaseCallback){
+    public void getRiderRequesters(FireBaseCallbackUsername fireBaseCallback) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
         root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
+                if (snapshot.exists()) {
 
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                       riders_requesters.add(String.valueOf(dataSnapshot.getKey()));
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        riders_requesters.add(String.valueOf(dataSnapshot.getKey()));
                     }
 
                     fireBaseCallback.onCallbackUsername(riders_requesters);
-                }
-                else{
-                    Log.e("Database problem","Can not find Rider Calls path");
+                } else {
+                    Log.e("Database problem", "Can not find Rider Calls path");
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Database problem",error.getMessage());
+                Log.e("Database problem", error.getMessage());
             }
         });
 
     }
 
-    public void getRiderLatitudes(FireBaseCallbackLatitude fireBaseCallbackLatitude){
+    public void getRiderLatitudes(FireBaseCallbackLatitude fireBaseCallbackLatitude) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
         root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    Log.i("Number of users",String.valueOf(snapshot.getChildrenCount()));
+                if (snapshot.exists()) {
+                    Log.i("Number of users", String.valueOf(snapshot.getChildrenCount()));
 
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                        Log.i("Requester",dataSnapshot.getKey());
-                        double latitude =  Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_latitude").getValue()));
-                        Log.i("Longitude added",latitude +" added in database");
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Log.i("Requester", dataSnapshot.getKey());
+                        double latitude = Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_latitude").getValue()));
+                        Log.i("Longitude added", latitude + " added in database");
                         latitudes.add(latitude);
-                        Log.i("Check",latitudes.get(0).toString());
+                        Log.i("Check", latitudes.get(0).toString());
                     }
 
-                    Log.i("Check2",latitudes.toString());
+                    Log.i("Check2", latitudes.toString());
                     fireBaseCallbackLatitude.onCallbackLatitude(latitudes);
-                }
-                else{
-                    Log.e("Database problem","Path Rider Calls not recognized");
+                } else {
+                    Log.e("Database problem", "Path Rider Calls not recognized");
                 }
             }
 
@@ -307,71 +306,41 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
 
     }
 
-    public void getRiderLongitude(FireBaseCallbackLongitude fireBaseCallbackLongitude){
+    public void getRiderLongitude(FireBaseCallbackLongitude fireBaseCallbackLongitude) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
         root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    Log.i("Number of users",String.valueOf(snapshot.getChildrenCount()));
+                if (snapshot.exists()) {
+                    Log.i("Number of users", String.valueOf(snapshot.getChildrenCount()));
 
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                        Log.i("Requester",dataSnapshot.getKey());
-                        double longitude =  Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_longitude").getValue()));
-                        Log.i("Longitude added",longitude +" added in database");
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Log.i("Requester", dataSnapshot.getKey());
+                        double longitude = Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_longitude").getValue()));
+                        Log.i("Longitude added", longitude + " added in database");
                         longitudes.add(longitude);
-                        Log.i("Check",longitudes.get(0).toString());
+                        Log.i("Check", longitudes.get(0).toString());
                     }
 
-                    Log.i("Check2",longitudes.toString());
+                    Log.i("Check2", longitudes.toString());
                     fireBaseCallbackLongitude.onCallBackLongitude(longitudes);
-                }
-                else{
-                    Log.e("Database problem","Path Rider Calls not recognized");
+                } else {
+                    Log.e("Database problem", "Path Rider Calls not recognized");
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Database error",error.getMessage());
+                Log.e("Database error", error.getMessage());
             }
         });
     }
 
-
-
-    /* public void setRidersLocationInMap(){
-        if (riders_requesters.size() == ridersCurrentLocations.size()){
-            for (int i = 0; i < riders_requesters.size(); i++){
-                showMarkerOnMap(riders_requesters.get(i),ridersCurrentLocations.get(i));
-            }
-        }
-        else{
-            Log.i("Lists not equals","Size of rider's names ("+riders_requesters.size()+") not equal number of current locations ("+ridersCurrentLocations+")");
-        }
-    }
-
-    public void showMarkerOnMap(String username, RiderLocation riderLocation){
-        LatLng position = new LatLng(riderLocation.getRider_latitude(),riderLocation.getRider_longitude());
-        mMap.addMarker(new MarkerOptions().title(username).position(position).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
-    }
-
-    public void getRequestedUsers(){
-        databaseUsers(new FireBaseCallback() {
-            @Override
-            public void onCallback(ArrayList<String> requestes) {
-                riders_requesters = requestes;
-                        }
-                    });
-            }*/
-
-
-    public String getNameOfDriver(){
-        if (this.getIntent().getStringExtra("drivername from cardetails") == null){
-            if (this.getIntent().getStringExtra("drivername from login") != null){
+    public String getNameOfDriver() {
+        if (this.getIntent().getStringExtra("drivername from cardetails") == null) {
+            if (this.getIntent().getStringExtra("drivername from login") != null) {
                 return this.getIntent().getStringExtra("drivername from login");
             }
         }
