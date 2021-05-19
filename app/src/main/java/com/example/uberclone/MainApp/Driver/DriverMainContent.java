@@ -10,6 +10,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -151,6 +152,24 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                 setClickListenerOnMarker();
             }
         }
+    }
+
+    public void onAcceptRequest(View view){
+        if (acceptRequestButton.isEnabled()){
+          //  acceptRequest();
+            deleteRiderFromRequests(acceptedRider);
+        }
+        else{
+            Toast.makeText(DriverMainContent.this,"First select drive, you want to accept",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void deleteRiderFromRequests(String username){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").child(username).setValue(null);
+
     }
 
     public void setMarkersOnMap() {
