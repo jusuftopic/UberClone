@@ -71,7 +71,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                     updateLocation(lastKnownLocation);
                     addDriverInDatabaseNoAccepted(lastKnownLocation);
                     setMarkersOnMap();
-                    setClickListenerOnMarker();
+                    //setClickListenerOnMarker();
                 }
             }
         }
@@ -87,6 +87,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         mapFragment.getMapAsync(this);
 
         nameOfDriver = getNameOfDriver();
+        Log.i("Name of driver ",nameOfDriver);
 
         riders_requesters = new ArrayList<>();
         latitudes = new ArrayList<>();
@@ -147,7 +148,19 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                 updateLocation(lastKnownLocation);
                 addDriverInDatabaseNoAccepted(lastKnownLocation);
                 setMarkersOnMap();
-                setClickListenerOnMarker();
+              //  setClickListenerOnMarker();
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        if (marker.getTitle().equals("My location")){
+                            acceptedRider = marker.getTitle();
+                            acceptedLocation = marker.getPosition();
+                            acceptRequestButton.setEnabled(true);
+                        }
+
+                        return true;
+                    }
+                });
             }
         }
     }
@@ -169,7 +182,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
 
     public void acceptRequest(LatLng acceptedLoc){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference("Driver's Acceptance");
+        DatabaseReference root = firebaseDatabase.getReference();
 
         double latitude = acceptedLoc.latitude;
         double longitude = acceptedLoc.longitude;
@@ -177,11 +190,11 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         RiderLocation riderLocation = new RiderLocation(latitude,longitude);
         DriverLocation driverLocationAccept = new DriverLocation(true,riderLocation);
 
-        root.child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
-                    root.child(nameOfDriver).child("AcceptedRequest").setValue(driverLocationAccept).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).child("AcceptedRequest").setValue(driverLocationAccept).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                          Log.i("User Accepted","Driver: "+nameOfDriver+" accpeted rider location");
@@ -239,7 +252,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         });
     }
 
-    public void setClickListenerOnMarker() {
+  /*  public void setClickListenerOnMarker() {
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -253,7 +266,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                 return true;
             }
         });
-    }
+    }*/
 
     public void addDriverInDatabaseNoAccepted(Location location) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -290,6 +303,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             LatLng current_position = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.addMarker(new MarkerOptions().title("My location").position(current_position).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(current_position));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_position,5f));
         }
     }
 
