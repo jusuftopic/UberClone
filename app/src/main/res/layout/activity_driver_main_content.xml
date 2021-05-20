@@ -25,6 +25,7 @@ tools:context=".MainApp.Driver.DriverMainContent">
         android:layout_marginLeft="262dp"
         android:layout_marginTop="435dp"
         android:background="@drawable/borders"
+        android:onClick="onAcceptRequest"
         android:shadowColor="#977979"
         android:text="Accept Request" />
 

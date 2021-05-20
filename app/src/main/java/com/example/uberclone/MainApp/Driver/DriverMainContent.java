@@ -58,7 +58,9 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     private Button acceptRequestButton;
     private Button showInListButton;
 
+
     private String acceptedRider;
+    private LatLng acceptedLocation;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -67,7 +69,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                 if (getLastKnownLocation() != null) {
                     lastKnownLocation = getLastKnownLocation();
                     updateLocation(lastKnownLocation);
-                    addDriverInDatabaseNoAccepted(lastKnownLocation, false);
+                    addDriverInDatabaseNoAccepted(lastKnownLocation);
                     setMarkersOnMap();
                     setClickListenerOnMarker();
                 }
@@ -98,14 +100,10 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         showInListButton = (Button) findViewById(R.id.viewInList);
 
         acceptedRider = "";
+        acceptedLocation = new LatLng(-1,-1);
 
 
-      /*  getRequestedUsers();
 
-        latitudes = getLatitudes();
-        longitudes = getLongitudes();
-
-        ridersCurrentLocations = formRidersCurrentLocation();*/
 
     }
 
@@ -147,7 +145,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             if (getLastKnownLocation() != null) {
                 lastKnownLocation = getLastKnownLocation();
                 updateLocation(lastKnownLocation);
-                addDriverInDatabaseNoAccepted(lastKnownLocation, false);
+                addDriverInDatabaseNoAccepted(lastKnownLocation);
                 setMarkersOnMap();
                 setClickListenerOnMarker();
             }
@@ -156,12 +154,50 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
 
     public void onAcceptRequest(View view){
         if (acceptRequestButton.isEnabled()){
-          //  acceptRequest();
-            deleteRiderFromRequests(acceptedRider);
+            if (acceptedLocation.latitude != -1 && acceptedLocation.longitude != -1){
+                acceptRequest(acceptedLocation);
+                deleteRiderFromRequests(acceptedRider);
+            }
+            else{
+                Log.e("LatLng problem: ",acceptedLocation.toString() + " didn't recognized in on marker click");
+            }
         }
         else{
             Toast.makeText(DriverMainContent.this,"First select drive, you want to accept",Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void acceptRequest(LatLng acceptedLoc){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference("Driver's Acceptance");
+
+        double latitude = acceptedLoc.latitude;
+        double longitude = acceptedLoc.longitude;
+
+        RiderLocation riderLocation = new RiderLocation(latitude,longitude);
+        DriverLocation driverLocationAccept = new DriverLocation(true,riderLocation);
+
+        root.child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    root.child(nameOfDriver).child("AcceptedRequest").setValue(driverLocationAccept).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                         Log.i("User Accepted","Driver: "+nameOfDriver+" accpeted rider location");
+                        }
+                    });
+                }
+                else{
+                    Log.e("Problem with name", nameOfDriver +" didn't recognized in acceptRequstMethod");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Database problem",error.getMessage());
+            }
+        });
     }
 
     public void deleteRiderFromRequests(String username){
@@ -210,6 +246,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                 acceptRequestButton.setEnabled(true);
                 if (marker.getTitle() != null && !marker.getTitle().equals("")) {
                     acceptedRider = marker.getTitle();
+                    acceptedLocation = marker.getPosition();
                 } else {
                     Log.e("Marker title", "Problem to find marker title for accept\nMarker title: " + marker.getTitle());
                 }
@@ -218,7 +255,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         });
     }
 
-    public void addDriverInDatabaseNoAccepted(Location location, boolean accpeted) {
+    public void addDriverInDatabaseNoAccepted(Location location) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
@@ -226,7 +263,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    DriverLocation driverLocation = new DriverLocation(location.getLatitude(), location.getLongitude(), false);
+                    DriverLocation driverLocation = new DriverLocation(location.getLatitude(), location.getLongitude());
 
                     root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).child("Current location").setValue(driverLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
