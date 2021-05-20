@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -36,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DriverMainContent extends FragmentActivity implements OnMapReadyCallback {
 
@@ -152,7 +154,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
-                        if (marker.getTitle().equals("My location")){
+                        if (!marker.getTitle().equals("My location")){
                             acceptedRider = marker.getTitle();
                             acceptedLocation = marker.getPosition();
                             acceptRequestButton.setEnabled(true);
@@ -219,6 +221,12 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
 
         root.child("Requests").child("Rider Calls").child(username).setValue(null);
 
+    }
+
+    public void showListOfNearestLocations(View view){
+        Intent toListOfRequests = new Intent(DriverMainContent.this,ShowNearestRequesters.class);
+        toListOfRequests.putExtra("driver name from main",nameOfDriver);
+        startActivity(toListOfRequests);
     }
 
     public void setMarkersOnMap() {
@@ -303,7 +311,6 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             LatLng current_position = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.addMarker(new MarkerOptions().title("My location").position(current_position).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(current_position));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_position,5f));
         }
     }
 
@@ -325,7 +332,8 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                 if (snapshot.exists()) {
 
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        riders_requesters.add(String.valueOf(dataSnapshot.getKey()));
+                        if (!dataSnapshot.getKey().equals("test")){
+                        riders_requesters.add(String.valueOf(dataSnapshot.getKey()));}
                     }
 
                     fireBaseCallback.onCallbackUsername(riders_requesters);
@@ -353,11 +361,12 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                     Log.i("Number of users", String.valueOf(snapshot.getChildrenCount()));
 
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        if (!dataSnapshot.getKey().equals("test")){
                         Log.i("Requester", dataSnapshot.getKey());
                         double latitude = Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_latitude").getValue()));
-                        Log.i("Longitude added", latitude + " added in database");
+                        Log.i("Latitude added", latitude + " added in database");
                         latitudes.add(latitude);
-                        Log.i("Check", latitudes.get(0).toString());
+                        Log.i("Check", latitudes.get(0).toString());}
                     }
 
                     Log.i("Check2", latitudes.toString());
@@ -387,11 +396,12 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                     Log.i("Number of users", String.valueOf(snapshot.getChildrenCount()));
 
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        if (!dataSnapshot.getKey().equals("test")){
                         Log.i("Requester", dataSnapshot.getKey());
                         double longitude = Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_longitude").getValue()));
                         Log.i("Longitude added", longitude + " added in database");
                         longitudes.add(longitude);
-                        Log.i("Check", longitudes.get(0).toString());
+                        Log.i("Check", longitudes.get(0).toString());}
                     }
 
                     Log.i("Check2", longitudes.toString());

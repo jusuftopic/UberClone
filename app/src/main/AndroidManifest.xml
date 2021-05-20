@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UberClone">
-        <activity android:name=".Registration.DriverCarDetails.CarInformations.UberBlackDetails"></activity>
+        <activity android:name=".MainApp.Driver.ShowNearestRequesters"></activity>
+        <activity android:name=".Registration.DriverCarDetails.CarInformations.UberBlackDetails" />
         <activity android:name=".MainApp.Rider.ChooseUberCar" />
         <activity android:name=".Registration.DriverCarDetails.CarInformations.UberSelectDetails" />
         <!--
