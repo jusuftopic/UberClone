@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLatitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
 import com.example.uberclone.R;
 import com.google.firebase.database.DataSnapshot;
@@ -15,15 +16,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ShowNearestRequesters extends AppCompatActivity {
 
     private String nameOfDriver;
 
     private ArrayList<String> requesters;
-    private ArrayList<String> latitudes;
-    private ArrayList<String> longitudes;
+    private ArrayList<Double> latitudes;
+    private ArrayList<Double> longitudes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +33,8 @@ public class ShowNearestRequesters extends AppCompatActivity {
         nameOfDriver = getNameOfDriver();
 
         requesters = new ArrayList<>();
-        latitudes = new ArrayList<>();
-        longitudes = new ArrayList<>();
+        latitudes = new ArrayList<Double>();
+        longitudes = new ArrayList<Double>();
     }
 
     public void getAllRequesters(FireBaseCallbackUsername fireBaseCallbackUsername){
@@ -65,6 +65,37 @@ public class ShowNearestRequesters extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("Database error",error.getMessage());
+            }
+        });
+    }
+
+    public void getLatitudesOfRequesters(FireBaseCallbackLatitude fireBaseCallbackLatitude){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        if (!dataSnapshot.getKey().equalsIgnoreCase("test")){
+                            double latitude = Double.parseDouble(String.valueOf(dataSnapshot.child("Current location").child("rider_latitude").getValue()));
+                            Log.i("Check-latitude",dataSnapshot.getKey()+"'s latitude: "+latitude+" is going to be added in database");
+
+                            latitudes.add(latitude);
+                        }
+                    }
+                    fireBaseCallbackLatitude.onCallbackLatitude(latitudes);
+                }
+                else{
+                    Log.w("Request list", "Check path to find user in database");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Database problem",error.getMessage());
             }
         });
     }
