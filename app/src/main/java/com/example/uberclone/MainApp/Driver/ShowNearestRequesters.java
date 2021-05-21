@@ -8,9 +8,11 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver.FireBaseCallBackDriverLocation;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackEndRiderLocation;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FirebaseCallBackCurrentRiderLocation;
+import com.example.uberclone.Modules.Requests.DriverLocation;
 import com.example.uberclone.Modules.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.google.firebase.database.DataSnapshot;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 public class ShowNearestRequesters extends AppCompatActivity {
 
     private String nameOfDriver;
+
 
     private ArrayList<String> requesters;
     private ArrayList<RiderLocation> currentRiderLocs;
@@ -203,4 +206,8 @@ public class ShowNearestRequesters extends AppCompatActivity {
             return null;
         }
     }
+
+   /* public DriverLocation getDriverLocation(FireBaseCallBackDriverLocation fireBaseCallBackDriverLocation){
+
+    }*/
 }
