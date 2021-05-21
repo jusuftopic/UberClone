@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackEndRiderLocation;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLatitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLongitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
@@ -98,6 +99,43 @@ public class ShowNearestRequesters extends AppCompatActivity {
                     }
 
                     firebaseCallBackCurrentRiderLocation.onCallbackCurrentRiderLocation(currentRiderLocs);
+                }
+                else{
+                    Log.w("Request list", "Check path to find user in database");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Database problem",error.getMessage());
+            }
+        });
+
+    }
+
+    public void getAllEndLocations(FireBaseCallbackEndRiderLocation firebaseCallBackEndRiderLocation){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        if (!dataSnapshot.getKey().equalsIgnoreCase("test")){
+                            double latitude = Double.parseDouble(String.valueOf(dataSnapshot.child("End location").child("rider_latitude").getValue()));
+                            double longitude = Double.parseDouble(String.valueOf(dataSnapshot.child("End location").child("rider_longitude").getValue()));
+
+                            RiderLocation endRiderLocation = new RiderLocation(latitude,longitude);
+
+                            Log.i("Check current location",dataSnapshot.getKey()+"'s current location ["+endRiderLocation.getRider_latitude()+";"+endRiderLocation.getRider_longitude()+"] added in list");
+
+                           endRiderLocs.add(endRiderLocation);
+                        }
+                    }
+
+                    firebaseCallBackEndRiderLocation.onCallbackCurrentRiderLocation(endRiderLocs);
                 }
                 else{
                     Log.w("Request list", "Check path to find user in database");
