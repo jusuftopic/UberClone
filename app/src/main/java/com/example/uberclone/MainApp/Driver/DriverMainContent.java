@@ -49,8 +49,8 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
 
     private ArrayList<String> riders_requesters;
 
-    private ArrayList<RiderLocation> latitudes;
-    private ArrayList<RiderLocation> longitudes;
+    private ArrayList<java.lang.Double> latitudes;
+    private ArrayList<java.lang.Double> longitudes;
 
     private ArrayList<RiderLocation> ridersCurrentLocations;
 
@@ -91,8 +91,8 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         Log.i("Name of driver ",nameOfDriver);
 
         riders_requesters = new ArrayList<>();
-        latitudes = new ArrayList<RiderLocation>();
-        longitudes = new ArrayList<RiderLocation>();
+        latitudes = new ArrayList<java.lang.Double>();
+        longitudes = new ArrayList<java.lang.Double>();
 
         ridersCurrentLocations = new ArrayList<>();
 
@@ -188,8 +188,8 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         double latitude = acceptedLoc.latitude;
         double longitude = acceptedLoc.longitude;
 
-        RiderLocation riderLocation = new RiderLocation(latitude,longitude);
-        DriverLocation driverLocationAccept = new DriverLocation(true,riderLocation);
+        RiderLocation aRiderLocation = new RiderLocation(latitude,longitude);
+        DriverLocation driverLocationAccept = new DriverLocation(true, aRiderLocation);
 
         root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -234,10 +234,10 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             public void onCallbackUsername(ArrayList<String> requestes) {
                 getRiderLatitudes(new FireBaseCallbackLatitude() {
                     @Override
-                    public void onCallbackLatitude(ArrayList<RiderLocation> latitudes) {
+                    public void onCallbackLatitude(ArrayList<java.lang.Double> latitudes) {
                         getRiderLongitude(new FireBaseCallbackLongitude() {
                             @Override
-                            public void onCallBackLongitude(ArrayList<RiderLocation> longitudes) {
+                            public void onCallBackLongitude(ArrayList<Double> longitudes) {
                                 if (requestes.size() == latitudes.size() && latitudes.size() == longitudes.size()) {
                                     Log.i("Size check", "Requesters: " + requestes.size() + "\nLatitudes: " + latitudes.size() + "\nLongitudes: " + longitudes.size());
 
@@ -362,7 +362,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         if (!dataSnapshot.getKey().equals("test")){
                         Log.i("Requester", dataSnapshot.getKey());
-                        RiderLocation latitude = Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_latitude").getValue()));
+                        java.lang.Double latitude = java.lang.Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_latitude").getValue()));
                         Log.i("Latitude added", latitude + " added in database");
                         latitudes.add(latitude);
                         Log.i("Check", latitudes.get(0).toString());}
@@ -397,7 +397,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         if (!dataSnapshot.getKey().equals("test")){
                         Log.i("Requester", dataSnapshot.getKey());
-                        RiderLocation longitude = Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_longitude").getValue()));
+                        java.lang.Double longitude = java.lang.Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_longitude").getValue()));
                         Log.i("Longitude added", longitude + " added in database");
                         longitudes.add(longitude);
                         Log.i("Check", longitudes.get(0).toString());}

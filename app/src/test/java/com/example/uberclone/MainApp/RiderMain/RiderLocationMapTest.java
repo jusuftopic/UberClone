@@ -4,25 +4,24 @@ import com.example.uberclone.MainApp.Rider.RiderMainContent;
 import com.example.uberclone.Modules.Requests.RiderLocation;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 public class RiderLocationMapTest {
 
     private RiderMainContent riderMainContent;
-    private RiderLocation riderLocation;
+    private RiderLocation aRiderLocation;
 
     @Before
     public void setUp(){
         riderMainContent = new RiderMainContent();
-        riderLocation = new RiderLocation(30,30);
+        aRiderLocation = new RiderLocation(30,30);
     }
 
     @After
     public void tearDown(){
         riderMainContent = null;
-        riderLocation = null;
+        aRiderLocation = null;
     }
 
     @Test

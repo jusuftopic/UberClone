@@ -7,7 +7,7 @@ public class RiderLocation {
 
     public RiderLocation(){}
 
-    public RiderLocation(double latitude,double longitude){
+    public RiderLocation(double latitude, double longitude){
         this.rider_latitude = latitude;
         this.rider_longitude = longitude;
     }

@@ -15,12 +15,12 @@ public class DriverLocation {
         this.driver_longitude = longitude;
     }
 
-    public DriverLocation( boolean acceptedCall,RiderLocation rider_currentlocation){
+    public DriverLocation(boolean acceptedCall, RiderLocation rider_currentlocation){
         this.acceptedCall = acceptedCall;
         this.rider_currentlocation = rider_currentlocation;
 
     }
-    public DriverLocation(double latitude,double longitude, boolean acceptedCall,RiderLocation rider_currentlocation,RiderLocation rider_endlocation){
+    public DriverLocation(double latitude, double longitude, boolean acceptedCall, RiderLocation rider_currentlocation, RiderLocation rider_endlocation){
         this.driver_latitude = latitude;
         this.driver_longitude = longitude;
         this.acceptedCall = acceptedCall;

@@ -5,5 +5,5 @@ import com.example.uberclone.Modules.Requests.RiderLocation;
 import java.util.ArrayList;
 
 public interface FireBaseCallbackEndRiderLocation {
-    public void onCallbackCurrentRiderLocation(ArrayList<RiderLocation> endlocation);
+    public void onCallbackCurrentRiderLocation(ArrayList<RiderLocation> endlocations);
 }

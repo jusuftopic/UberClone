@@ -6,5 +6,5 @@ import java.util.ArrayList;
 
 public interface FirebaseCallBackCurrentRiderLocation {
 
-    public void onCallbackCurrentRiderLocation(ArrayList<RiderLocation> currentlocation);
+    public void onCallbackCurrentRiderLocation(ArrayList<RiderLocation> currentlocations);
 }

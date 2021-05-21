@@ -5,10 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackEndRiderLocation;
-import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLatitude;
-import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLongitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FirebaseCallBackCurrentRiderLocation;
 import com.example.uberclone.Modules.Requests.RiderLocation;
@@ -29,6 +29,12 @@ public class ShowNearestRequesters extends AppCompatActivity {
     private ArrayList<RiderLocation> currentRiderLocs;
     private ArrayList<RiderLocation> endRiderLocs;
 
+    //temporary
+    //TODO make custom Adater to make better list
+    private ArrayList<String> listContent;
+    private ListView nearestListView;
+    private ArrayAdapter<String> listAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +46,44 @@ public class ShowNearestRequesters extends AppCompatActivity {
         currentRiderLocs = new ArrayList<RiderLocation>();
         endRiderLocs = new ArrayList<RiderLocation>();
 
+        //temporary
+        listContent = new ArrayList<>();
+        nearestListView = (ListView) findViewById(R.id.nearestRequestsList);
+        listAdapter = new ArrayAdapter<>(ShowNearestRequesters.this, android.R.layout.simple_list_item_1,listContent);
+        nearestListView.setAdapter(listAdapter);
 
+        setContentOfList();
+
+
+    }
+
+    public void setContentOfList(){
+        getAllRequesters(new FireBaseCallbackUsername() {
+            @Override
+            public void onCallbackUsername(ArrayList<String> requestes) {
+                getAllCurrentLocations(new FirebaseCallBackCurrentRiderLocation() {
+                    @Override
+                    public void onCallbackCurrentRiderLocation(ArrayList<RiderLocation> currentlocations) {
+                        getAllEndLocations(new FireBaseCallbackEndRiderLocation() {
+                            @Override
+                            public void onCallbackCurrentRiderLocation(ArrayList<RiderLocation> endlocations) {
+                                if (requestes.size() == currentlocations.size() && requestes.size() == endlocations.size()){
+
+                                    for (int i = 0; i < requestes.size(); i++){
+                                        listContent.add(requestes.get(i)+" - Current location: ["+currentlocations.get(i).getRider_latitude()+";"+currentlocations.get(i).getRider_longitude()+"]");
+                                    }
+
+                                    listAdapter.notifyDataSetChanged();
+                                }
+                                else {
+                                    Log.w("Lists problem","Requsters list ["+requestes.size()+"], current locations list ["+currentlocations.size()+"] and end locations list ["+endlocations.size()+"]  not same size");
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
 
     public void getAllRequesters(FireBaseCallbackUsername fireBaseCallbackUsername){
@@ -86,12 +129,12 @@ public class ShowNearestRequesters extends AppCompatActivity {
 
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()){
                         if (!dataSnapshot.getKey().equalsIgnoreCase("test")){
-                            double latitude = Double.parseDouble(String.valueOf(dataSnapshot.child("Current location").child("rider_latitude").getValue()));
-                            double longitude = Double.parseDouble(String.valueOf(dataSnapshot.child("Current location").child("rider_longitude").getValue()));
+                            double latitude = java.lang.Double.parseDouble(String.valueOf(dataSnapshot.child("Current location").child("rider_latitude").getValue()));
+                            double longitude = java.lang.Double.parseDouble(String.valueOf(dataSnapshot.child("Current location").child("rider_longitude").getValue()));
 
                             RiderLocation currentRiderLocation = new RiderLocation(latitude,longitude);
 
-                            Log.i("Check current location",dataSnapshot.getKey()+"'s current location ["+currentRiderLocation.getRider_latitude()+";"+currentRiderLocation.getRider_longitude()+"] added in list");
+                            Log.i("Check current location",dataSnapshot.getKey()+"'s current location ["+ currentRiderLocation.getRider_latitude()+";"+ currentRiderLocation.getRider_longitude()+"] added in list");
 
                             currentRiderLocs.add(currentRiderLocation);
 
@@ -124,12 +167,12 @@ public class ShowNearestRequesters extends AppCompatActivity {
 
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()){
                         if (!dataSnapshot.getKey().equalsIgnoreCase("test")){
-                            double latitude = Double.parseDouble(String.valueOf(dataSnapshot.child("End location").child("rider_latitude").getValue()));
-                            double longitude = Double.parseDouble(String.valueOf(dataSnapshot.child("End location").child("rider_longitude").getValue()));
+                            double latitude = java.lang.Double.parseDouble(String.valueOf(dataSnapshot.child("End location").child("rider_latitude").getValue()));
+                            double longitude = java.lang.Double.parseDouble(String.valueOf(dataSnapshot.child("End location").child("rider_longitude").getValue()));
 
                             RiderLocation endRiderLocation = new RiderLocation(latitude,longitude);
 
-                            Log.i("Check current location",dataSnapshot.getKey()+"'s current location ["+endRiderLocation.getRider_latitude()+";"+endRiderLocation.getRider_longitude()+"] added in list");
+                            Log.i("Check current location",dataSnapshot.getKey()+"'s current location ["+ endRiderLocation.getRider_latitude()+";"+ endRiderLocation.getRider_longitude()+"] added in list");
 
                            endRiderLocs.add(endRiderLocation);
                         }
