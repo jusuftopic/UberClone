@@ -37,7 +37,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class DriverMainContent extends FragmentActivity implements OnMapReadyCallback {
 
@@ -50,8 +49,8 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
 
     private ArrayList<String> riders_requesters;
 
-    private ArrayList<Double> latitudes;
-    private ArrayList<Double> longitudes;
+    private ArrayList<RiderLocation> latitudes;
+    private ArrayList<RiderLocation> longitudes;
 
     private ArrayList<RiderLocation> ridersCurrentLocations;
 
@@ -92,8 +91,8 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         Log.i("Name of driver ",nameOfDriver);
 
         riders_requesters = new ArrayList<>();
-        latitudes = new ArrayList<>();
-        longitudes = new ArrayList<>();
+        latitudes = new ArrayList<RiderLocation>();
+        longitudes = new ArrayList<RiderLocation>();
 
         ridersCurrentLocations = new ArrayList<>();
 
@@ -235,10 +234,10 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             public void onCallbackUsername(ArrayList<String> requestes) {
                 getRiderLatitudes(new FireBaseCallbackLatitude() {
                     @Override
-                    public void onCallbackLatitude(ArrayList<Double> latitudes) {
+                    public void onCallbackLatitude(ArrayList<RiderLocation> latitudes) {
                         getRiderLongitude(new FireBaseCallbackLongitude() {
                             @Override
-                            public void onCallBackLongitude(ArrayList<Double> longitudes) {
+                            public void onCallBackLongitude(ArrayList<RiderLocation> longitudes) {
                                 if (requestes.size() == latitudes.size() && latitudes.size() == longitudes.size()) {
                                     Log.i("Size check", "Requesters: " + requestes.size() + "\nLatitudes: " + latitudes.size() + "\nLongitudes: " + longitudes.size());
 
@@ -363,7 +362,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         if (!dataSnapshot.getKey().equals("test")){
                         Log.i("Requester", dataSnapshot.getKey());
-                        double latitude = Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_latitude").getValue()));
+                        RiderLocation latitude = Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_latitude").getValue()));
                         Log.i("Latitude added", latitude + " added in database");
                         latitudes.add(latitude);
                         Log.i("Check", latitudes.get(0).toString());}
@@ -398,7 +397,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         if (!dataSnapshot.getKey().equals("test")){
                         Log.i("Requester", dataSnapshot.getKey());
-                        double longitude = Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_longitude").getValue()));
+                        RiderLocation longitude = Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_longitude").getValue()));
                         Log.i("Longitude added", longitude + " added in database");
                         longitudes.add(longitude);
                         Log.i("Check", longitudes.get(0).toString());}

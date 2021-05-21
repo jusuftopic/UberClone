@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLatitude;
+import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLongitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
+import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FirebaseCallBackCurrentRiderLocation;
+import com.example.uberclone.Modules.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,8 +25,8 @@ public class ShowNearestRequesters extends AppCompatActivity {
     private String nameOfDriver;
 
     private ArrayList<String> requesters;
-    private ArrayList<Double> latitudes;
-    private ArrayList<Double> longitudes;
+    private ArrayList<RiderLocation> currentRiderLocs;
+    private ArrayList<RiderLocation> endRiderLocs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +36,10 @@ public class ShowNearestRequesters extends AppCompatActivity {
         nameOfDriver = getNameOfDriver();
 
         requesters = new ArrayList<>();
-        latitudes = new ArrayList<Double>();
-        longitudes = new ArrayList<Double>();
+        currentRiderLocs = new ArrayList<RiderLocation>();
+        endRiderLocs = new ArrayList<RiderLocation>();
+
+
     }
 
     public void getAllRequesters(FireBaseCallbackUsername fireBaseCallbackUsername){
@@ -69,7 +74,7 @@ public class ShowNearestRequesters extends AppCompatActivity {
         });
     }
 
-    public void getLatitudesOfRequesters(FireBaseCallbackLatitude fireBaseCallbackLatitude){
+    public void getAllCurrentLocations(FirebaseCallBackCurrentRiderLocation firebaseCallBackCurrentRiderLocation){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
@@ -81,12 +86,18 @@ public class ShowNearestRequesters extends AppCompatActivity {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()){
                         if (!dataSnapshot.getKey().equalsIgnoreCase("test")){
                             double latitude = Double.parseDouble(String.valueOf(dataSnapshot.child("Current location").child("rider_latitude").getValue()));
-                            Log.i("Check-latitude",dataSnapshot.getKey()+"'s latitude: "+latitude+" is going to be added in database");
+                            double longitude = Double.parseDouble(String.valueOf(dataSnapshot.child("Current location").child("rider_longitude").getValue()));
 
-                            latitudes.add(latitude);
+                            RiderLocation currentRiderLocation = new RiderLocation(latitude,longitude);
+
+                            Log.i("Check current location",dataSnapshot.getKey()+"'s current location ["+currentRiderLocation.getRider_latitude()+";"+currentRiderLocation.getRider_longitude()+"] added in list");
+
+                            currentRiderLocs.add(currentRiderLocation);
+
                         }
                     }
-                    fireBaseCallbackLatitude.onCallbackLatitude(latitudes);
+
+                    firebaseCallBackCurrentRiderLocation.onCallbackCurrentRiderLocation(currentRiderLocs);
                 }
                 else{
                     Log.w("Request list", "Check path to find user in database");
@@ -98,7 +109,9 @@ public class ShowNearestRequesters extends AppCompatActivity {
                 Log.e("Database problem",error.getMessage());
             }
         });
+
     }
+
 
     public String getNameOfDriver(){
         if (this.getIntent().getStringExtra("driver name from main") != null){
