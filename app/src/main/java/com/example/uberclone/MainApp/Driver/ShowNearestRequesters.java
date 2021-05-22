@@ -98,6 +98,7 @@ public class ShowNearestRequesters extends AppCompatActivity {
                 Location location_rider = switchRiderLocationToLocation(currentlocations_rider.get(0));
 
                 float nearestRequest = location_driver.distanceTo(location_rider);
+                Log.i("Distance: ","Distance between driver and first "+nearestRequest);
                 int counter = 0;
                 int indexOfNearste = 0;
 
@@ -105,6 +106,7 @@ public class ShowNearestRequesters extends AppCompatActivity {
                     for (int i = 1; i < requesters.size(); i++){
                         if (indexOfNearste != i){
                             float newDistance = location_driver.distanceTo(switchRiderLocationToLocation(currentlocations_rider.get(i)));
+                            Log.i("Distance: ","Distance beetween "+nameOfDriver+" and "+requesters.get(indexOfNearste)+" is "+newDistance);
 
                             if (newDistance < nearestRequest){
                                 nearestRequest = newDistance;
@@ -262,7 +264,7 @@ public class ShowNearestRequesters extends AppCompatActivity {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requsts").child("Driver's Acceptance").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.exists()) {
