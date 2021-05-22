@@ -27,6 +27,8 @@ public class ShowNearestRequesters extends AppCompatActivity {
 
     private String nameOfDriver;
 
+    private DriverLocation driverLocation;
+
 
     private ArrayList<String> requesters;
     private ArrayList<RiderLocation> currentRiderLocs;
@@ -44,6 +46,8 @@ public class ShowNearestRequesters extends AppCompatActivity {
         setContentView(R.layout.activity_show_nearest_requesters);
 
         nameOfDriver = getNameOfDriver();
+
+        driverLocation = new DriverLocation();
 
         requesters = new ArrayList<>();
         currentRiderLocs = new ArrayList<RiderLocation>();
@@ -207,7 +211,33 @@ public class ShowNearestRequesters extends AppCompatActivity {
         }
     }
 
-   /* public DriverLocation getDriverLocation(FireBaseCallBackDriverLocation fireBaseCallBackDriverLocation){
+    public void getDriverLocation(FireBaseCallBackDriverLocation fireBaseCallBackDriverLocation){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
 
-    }*/
+        root.child("Requsts").child("Driver's Acceptance").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    double latitude = Double.parseDouble(String.valueOf(snapshot.child("Current location").child("driver_latitude").getValue()));
+                    double longitude = Double.parseDouble(String.valueOf(snapshot.child("Current location").child("driver_longitude").getValue()));
+
+                    Log.i("Driver location","["+String.valueOf(latitude+";"+String.valueOf(longitude)+"]"));
+
+                    driverLocation = new DriverLocation(false,latitude,longitude);
+
+                    fireBaseCallBackDriverLocation.onCallBackDriverLocation(driverLocation);
+                }
+                else{
+                    Log.e("Path problem","Can not find path to "+nameOfDriver);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e("Database problem",error.getMessage());
+            }
+        });
+
+    }
 }

@@ -283,7 +283,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    DriverLocation driverLocation = new DriverLocation(location.getLatitude(), location.getLongitude());
+                    DriverLocation driverLocation = new DriverLocation(false, location.getLatitude(), location.getLongitude());
 
                     root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).child("Current location").setValue(driverLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
