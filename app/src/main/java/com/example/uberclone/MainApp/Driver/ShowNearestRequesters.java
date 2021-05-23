@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.uberclone.Extras.Adapters.RequestsAdapter;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver.FireBaseCallBackDriverLocation;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackEndRiderLocation;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
@@ -49,6 +50,11 @@ public class ShowNearestRequesters extends AppCompatActivity {
     private ListView nearestListView;
     private ArrayAdapter<String> listAdapter;
 
+    private String[] riders;
+    private String[] addresses;
+    private int[] imgs;
+    private RequestsAdapter requestsAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,11 +70,14 @@ public class ShowNearestRequesters extends AppCompatActivity {
         currentRiderLocs = new ArrayList<RiderLocation>();
         endRiderLocs = new ArrayList<RiderLocation>();
 
-        //temporary
         listContent = new ArrayList<>();
         nearestListView = (ListView) findViewById(R.id.nearestRequestsList);
-        listAdapter = new ArrayAdapter<>(ShowNearestRequesters.this, android.R.layout.simple_list_item_1, listContent);
+        listAdapter = new ArrayAdapter<>(ShowNearestRequesters.this, android.R.layout.simple_list_item_1,listContent);
         nearestListView.setAdapter(listAdapter);
+
+        //TODO swap with current list adapter
+        requestsAdapter = new RequestsAdapter(ShowNearestRequesters.this,riders,addresses,imgs);
+        nearestListView.setAdapter(requestsAdapter);
 
         setContentOfList();
 
