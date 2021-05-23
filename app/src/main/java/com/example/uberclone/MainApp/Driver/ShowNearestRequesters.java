@@ -3,6 +3,8 @@ package com.example.uberclone.MainApp.Driver;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -17,14 +19,18 @@ import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FirebaseCallBackCu
 import com.example.uberclone.Modules.Requests.DriverLocation;
 import com.example.uberclone.Modules.Requests.RiderLocation;
 import com.example.uberclone.R;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 public class ShowNearestRequesters extends AppCompatActivity {
 
@@ -47,6 +53,8 @@ public class ShowNearestRequesters extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_nearest_requesters);
+
+        this.getSupportActionBar().hide();
 
         nameOfDriver = getNameOfDriver();
 
@@ -104,15 +112,22 @@ public class ShowNearestRequesters extends AppCompatActivity {
                 int indexOfNearste = 0;
 
                 if (requesters.size() == 2){
+
+                    String address1 = "";
+                    String address2 = "";
                     float newDistance = location_driver.distanceTo(switchRiderLocationToLocation(currentlocations_rider.get(1)));
 
                     if (nearestRequest < newDistance){
-                        listContent.add(requesters.get(0)+" ["+currentlocations_rider.get(0).getRider_latitude()+":"+currentlocations_rider.get(0).getRider_longitude()+"]");
-                        listContent.add(requesters.get(1)+" ["+currentlocations_rider.get(1).getRider_latitude()+":"+currentlocations_rider.get(1).getRider_longitude()+"]");
+                        address1 = getAdressFromLocation(currentlocations_rider.get(0));
+                        address2 = getAdressFromLocation(currentlocations_rider.get(1));
+                        listContent.add(requesters.get(0)+" ["+address1+"]");
+                        listContent.add(requesters.get(1)+" ["+address2+"]");
                     }
                     else{
-                        listContent.add(requesters.get(1)+" ["+currentlocations_rider.get(1).getRider_latitude()+":"+currentlocations_rider.get(1).getRider_longitude()+"]");
-                        listContent.add(requesters.get(0)+" ["+currentlocations_rider.get(0).getRider_latitude()+":"+currentlocations_rider.get(0).getRider_longitude()+"]");
+                        address1 = getAdressFromLocation(currentlocations_rider.get(1));
+                        address2 = getAdressFromLocation(currentlocations_rider.get(0));
+                        listContent.add(requesters.get(1)+" ["+address1+"]");
+                        listContent.add(requesters.get(0)+" ["+address2+"]");
                 }
                 listAdapter.notifyDataSetChanged();
                 }
@@ -132,19 +147,55 @@ public class ShowNearestRequesters extends AppCompatActivity {
                         }
 
                         counter++;
-                        listContent.add(requesters.get(indexOfNearste)+" ["+currentlocations_rider.get(indexOfNearste).getRider_latitude()+":"+currentlocations_rider.get(indexOfNearste).getRider_longitude()+"]");
+                        String address = getAdressFromLocation(currentlocations_rider.get(indexOfNearste));
+                        listContent.add(requesters.get(indexOfNearste)+" ["+address+"]");
                     }
                     listAdapter.notifyDataSetChanged();
                 }
             }
             else{
-                this.listContent.add(requesters.get(0)+"- ["+currentlocations_rider.get(0).getRider_latitude()+":"+currentlocations_rider.get(0).getRider_longitude()+"]");
+                String address = getAdressFromLocation(currentlocations_rider.get(0));
+                this.listContent.add(requesters.get(0)+"- ["+address+"]");
             }
         }
         else{
             Log.w("Problem withs lists","Requests list ("+requesters.size()+"), current locations list ("+currentlocations_rider.size()+"), end locations list ("+endlocations_rider.size()+") not same size");
         }
 
+    }
+
+    public String getAdressFromLocation(RiderLocation riderLocation){
+        LatLng currentRiderPosition = new LatLng(riderLocation.getRider_latitude(),riderLocation.getRider_longitude());
+
+        String addressInfos = "";
+
+        Geocoder geocoder = new Geocoder(ShowNearestRequesters.this,Locale.getDefault());
+        List<Address> addresses = new ArrayList<>();
+
+        try {
+            addresses = geocoder.getFromLocation(currentRiderPosition.latitude,currentRiderPosition.longitude,1);
+
+            if (addresses.size() > 0 && addresses != null){
+                addressInfos += addresses.get(0).getAddressLine(0)+", ";
+                addressInfos += addresses.get(0).getLocality()+", ";
+                addressInfos += addresses.get(0).getAdminArea();
+
+            }
+            else{
+                Log.w("Geocoder problem","Failed to get address from geocoder- (List empty or null)");
+                addressInfos = "["+currentRiderPosition.latitude+"; "+currentRiderPosition.longitude+"]";
+            }
+
+        }
+        catch (IOException ioException){
+            ioException.printStackTrace();
+        }
+
+        if (addressInfos.equals("")){
+            Log.w("Address problem", "Problem to get addreses infos from geocoder");
+        }
+
+        return addressInfos;
     }
 
     public Location switchDriverLocationToLocation(DriverLocation driverLocation){
