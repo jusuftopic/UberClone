@@ -22,6 +22,8 @@ public class RequestsAdapter extends ArrayAdapter<String> {
 
     public RequestsAdapter(Context c, String[] riders,String[] addresses,int[] imgs){
         super(c,R.layout.riderslist,riders);
+        this.c = c;
+        this.riders = riders;
         this.addresses = addresses;
         this.imgs = imgs;
     }

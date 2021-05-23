@@ -29,7 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,17 +41,18 @@ public class ShowNearestRequesters extends AppCompatActivity {
 
 
     private ArrayList<String> requesters;
+
     private ArrayList<RiderLocation> currentRiderLocs;
+    private ArrayList<Location> sortedRiderLocs;
     private ArrayList<RiderLocation> endRiderLocs;
 
-    //temporary
-    //TODO make custom Adater to make better list
-    private ArrayList<String> listContent;
+
     private ListView nearestListView;
-    private ArrayAdapter<String> listAdapter;
+
 
     private String[] riders;
-    private String[] addresses;
+    private String[] addresses_currentLocation;
+    private String[] addresses_endLocations;
     private int[] imgs;
     private RequestsAdapter requestsAdapter;
 
@@ -67,22 +68,20 @@ public class ShowNearestRequesters extends AppCompatActivity {
         driverLocation = new DriverLocation();
 
         requesters = new ArrayList<>();
+
         currentRiderLocs = new ArrayList<RiderLocation>();
+        sortedRiderLocs = new ArrayList<>();
+
         endRiderLocs = new ArrayList<RiderLocation>();
 
-        listContent = new ArrayList<>();
-        nearestListView = (ListView) findViewById(R.id.nearestRequestsList);
-        listAdapter = new ArrayAdapter<>(ShowNearestRequesters.this, android.R.layout.simple_list_item_1,listContent);
-        nearestListView.setAdapter(listAdapter);
+        riders = new String[0];
+        addresses_currentLocation = new String[0];
+        imgs = new int[0];
 
-        //TODO swap with current list adapter
-        requestsAdapter = new RequestsAdapter(ShowNearestRequesters.this,riders,addresses,imgs);
-        nearestListView.setAdapter(requestsAdapter);
+
+        nearestListView = (ListView) findViewById(R.id.nearestRequestsList);
 
         setContentOfList();
-
-
-
     }
 
     public void setContentOfList() {
@@ -98,7 +97,19 @@ public class ShowNearestRequesters extends AppCompatActivity {
                                 getDriverLocation(new FireBaseCallBackDriverLocation() {
                                     @Override
                                     public void onCallBackDriverLocation(DriverLocation driverLocation) {
-                                        handelList(requestes,currentlocations,endlocations,driverLocation);
+                                        if (requestes.size() == currentlocations.size() && requestes.size() == endlocations.size() && requestes.size() > 0){
+                                            riders = getRiders(requestes);
+                                            addresses_currentLocation = getAddressesFromList(currentlocations);
+                                          //  addresses_currentLocation = getAddressesForEndLocation(endlocations);
+                                            imgs = getImgs(requestes.size());
+                                            requestsAdapter = new RequestsAdapter(ShowNearestRequesters.this,riders, addresses_currentLocation,imgs);
+                                            nearestListView.setAdapter(requestsAdapter);
+                                          //  addClickListenerOnList(nearestListView,riders, addresses_currentLocation,);
+
+                                        }
+                                        else{
+                                            Log.w("Problem withs lists","Requests list ("+requestes.size()+"), current locations list ("+currentlocations.size()+"), end locations list ("+endlocations.size()+") not same size");
+                                        }
                                     }
                                 });
                             }
@@ -109,103 +120,74 @@ public class ShowNearestRequesters extends AppCompatActivity {
         });
     }
 
-    public void handelList(ArrayList<String> requesters,ArrayList<RiderLocation> currentlocations_rider,ArrayList<RiderLocation> endlocations_rider,DriverLocation driverLocation){
-        if (requesters.size() == currentlocations_rider.size() && requesters.size() == endlocations_rider.size()){
-            if (requesters.size() > 1){
-                Location location_driver = switchDriverLocationToLocation(driverLocation);
-                Location location_rider = switchRiderLocationToLocation(currentlocations_rider.get(0));
-
-                float nearestRequest = location_driver.distanceTo(location_rider);
-                Log.i("Distance: ","Distance between driver and "+requesters.get(0)+" is "+nearestRequest);
-                int counter = 0;
-                int indexOfNearste = 0;
-
-                if (requesters.size() == 2){
-
-                    String address1 = "";
-                    String address2 = "";
-                    float newDistance = location_driver.distanceTo(switchRiderLocationToLocation(currentlocations_rider.get(1)));
-
-                    if (nearestRequest < newDistance){
-                        address1 = getAdressFromLocation(currentlocations_rider.get(0));
-                        address2 = getAdressFromLocation(currentlocations_rider.get(1));
-                        listContent.add(requesters.get(0)+" ["+address1+"]");
-                        listContent.add(requesters.get(1)+" ["+address2+"]");
-                    }
-                    else{
-                        address1 = getAdressFromLocation(currentlocations_rider.get(1));
-                        address2 = getAdressFromLocation(currentlocations_rider.get(0));
-                        listContent.add(requesters.get(1)+" ["+address1+"]");
-                        listContent.add(requesters.get(0)+" ["+address2+"]");
-                }
-                listAdapter.notifyDataSetChanged();
-                }
-
-                else{
-                    while (counter <= requesters.size()-1){
-                        for (int i = 1; i < requesters.size(); i++){
-                            if (indexOfNearste != i){
-                                float newDistance = location_driver.distanceTo(switchRiderLocationToLocation(currentlocations_rider.get(i)));
-                                Log.i("Distance: ","Distance beetween "+nameOfDriver+" and "+requesters.get(indexOfNearste)+" is "+newDistance);
-
-                                if (newDistance < nearestRequest){
-                                    nearestRequest = newDistance;
-                                    indexOfNearste = i;
-                                }
-                            }
-                        }
-
-                        counter++;
-                        String address = getAdressFromLocation(currentlocations_rider.get(indexOfNearste));
-                        listContent.add(requesters.get(indexOfNearste)+" ["+address+"]");
-                    }
-                    listAdapter.notifyDataSetChanged();
-                }
-            }
-            else{
-                String address = getAdressFromLocation(currentlocations_rider.get(0));
-                this.listContent.add(requesters.get(0)+"- ["+address+"]");
-            }
-        }
-        else{
-            Log.w("Problem withs lists","Requests list ("+requesters.size()+"), current locations list ("+currentlocations_rider.size()+"), end locations list ("+endlocations_rider.size()+") not same size");
-        }
+    public void addClickListenerOnList(ListView listOfRequests,String[] users, String[] currentAdresses){
 
     }
 
-    public String getAdressFromLocation(RiderLocation riderLocation){
-        LatLng currentRiderPosition = new LatLng(riderLocation.getRider_latitude(),riderLocation.getRider_longitude());
+    public String[] getRiders(ArrayList<String> requesters){
+        String[] riderArray = new String[requesters.size()];
+        int index = 0;
 
-        String addressInfos = "";
+        for (String requester : requesters){
+            riderArray[index] = requester;
+            index++;
+        }
+
+        Log.i("Riders: ",Arrays.toString(riderArray));
+        return riderArray;
+    }
+
+
+    public String[] getAddressesFromList(ArrayList<RiderLocation> currentRiderLocations){
+        String[] addresses = new String[currentRiderLocations.size()];
+        int index = 0;
+
+        for (RiderLocation riderLocation : currentRiderLocations){
+            addresses[index] = changeCordinationsToAdress(riderLocation);
+            index++;
+        }
+
+        Log.i("Addresses: ",Arrays.toString(addresses));
+        return addresses;
+    }
+
+    public String changeCordinationsToAdress(RiderLocation riderLocation){
+        LatLng currentLocation = new LatLng(riderLocation.getRider_latitude(),riderLocation.getRider_longitude());
 
         Geocoder geocoder = new Geocoder(ShowNearestRequesters.this,Locale.getDefault());
-        List<Address> addresses = new ArrayList<>();
+        List<Address> addresses = null;
+
+        String address = "";
 
         try {
-            addresses = geocoder.getFromLocation(currentRiderPosition.latitude,currentRiderPosition.longitude,1);
+            addresses = geocoder.getFromLocation(currentLocation.latitude,currentLocation.longitude,1);
 
             if (addresses.size() > 0 && addresses != null){
-                addressInfos += addresses.get(0).getAddressLine(0)+", ";
-                addressInfos += addresses.get(0).getLocality()+", ";
-                addressInfos += addresses.get(0).getAdminArea();
-
+                address += addresses.get(0).getAddressLine(0)+", "+addresses.get(0).getLocality()+", "+addresses.get(0).getAdminArea();
             }
             else{
-                Log.w("Geocoder problem","Failed to get address from geocoder- (List empty or null)");
-                addressInfos = "["+currentRiderPosition.latitude+"; "+currentRiderPosition.longitude+"]";
+                Log.e("Geocoder problem","Problem to get addresses from geocoder- List null or empty");
+                address = currentLocation.latitude+";"+currentLocation.longitude;
             }
-
         }
         catch (IOException ioException){
             ioException.printStackTrace();
         }
 
-        if (addressInfos.equals("")){
-            Log.w("Address problem", "Problem to get addreses infos from geocoder");
-        }
-
-        return addressInfos;
+        Log.i("Address of rider: ",address);
+        return address;
     }
+
+    public int[] getImgs(int size){
+        int[] avatars = new int[size];
+
+        for (int i = 0; i < avatars.length; i++){
+            avatars[i] = R.drawable.avatar;
+        }
+        return avatars;
+    }
+
+
 
     public Location switchDriverLocationToLocation(DriverLocation driverLocation){
       Location location = new Location(LocationManager.GPS_PROVIDER);
