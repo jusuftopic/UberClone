@@ -65,6 +65,7 @@ public class ShowNearestRequesters extends AppCompatActivity {
         setContentOfList();
 
 
+
     }
 
     public void setContentOfList() {
@@ -98,27 +99,43 @@ public class ShowNearestRequesters extends AppCompatActivity {
                 Location location_rider = switchRiderLocationToLocation(currentlocations_rider.get(0));
 
                 float nearestRequest = location_driver.distanceTo(location_rider);
-                Log.i("Distance: ","Distance between driver and first "+nearestRequest);
+                Log.i("Distance: ","Distance between driver and "+requesters.get(0)+" is "+nearestRequest);
                 int counter = 0;
                 int indexOfNearste = 0;
 
-                while (counter <= requesters.size()-1){
-                    for (int i = 1; i < requesters.size(); i++){
-                        if (indexOfNearste != i){
-                            float newDistance = location_driver.distanceTo(switchRiderLocationToLocation(currentlocations_rider.get(i)));
-                            Log.i("Distance: ","Distance beetween "+nameOfDriver+" and "+requesters.get(indexOfNearste)+" is "+newDistance);
+                if (requesters.size() == 2){
+                    float newDistance = location_driver.distanceTo(switchRiderLocationToLocation(currentlocations_rider.get(1)));
 
-                            if (newDistance < nearestRequest){
-                                nearestRequest = newDistance;
-                                indexOfNearste = i;
-                            }
-                        }
+                    if (nearestRequest < newDistance){
+                        listContent.add(requesters.get(0)+" ["+currentlocations_rider.get(0).getRider_latitude()+":"+currentlocations_rider.get(0).getRider_longitude()+"]");
+                        listContent.add(requesters.get(1)+" ["+currentlocations_rider.get(1).getRider_latitude()+":"+currentlocations_rider.get(1).getRider_longitude()+"]");
                     }
-
-                    counter++;
-                    listContent.add(requesters.get(indexOfNearste)+" ["+currentlocations_rider.get(indexOfNearste).getRider_latitude()+":"+currentlocations_rider.get(indexOfNearste).getRider_longitude()+"]");
+                    else{
+                        listContent.add(requesters.get(1)+" ["+currentlocations_rider.get(1).getRider_latitude()+":"+currentlocations_rider.get(1).getRider_longitude()+"]");
+                        listContent.add(requesters.get(0)+" ["+currentlocations_rider.get(0).getRider_latitude()+":"+currentlocations_rider.get(0).getRider_longitude()+"]");
                 }
                 listAdapter.notifyDataSetChanged();
+                }
+
+                else{
+                    while (counter <= requesters.size()-1){
+                        for (int i = 1; i < requesters.size(); i++){
+                            if (indexOfNearste != i){
+                                float newDistance = location_driver.distanceTo(switchRiderLocationToLocation(currentlocations_rider.get(i)));
+                                Log.i("Distance: ","Distance beetween "+nameOfDriver+" and "+requesters.get(indexOfNearste)+" is "+newDistance);
+
+                                if (newDistance < nearestRequest){
+                                    nearestRequest = newDistance;
+                                    indexOfNearste = i;
+                                }
+                            }
+                        }
+
+                        counter++;
+                        listContent.add(requesters.get(indexOfNearste)+" ["+currentlocations_rider.get(indexOfNearste).getRider_latitude()+":"+currentlocations_rider.get(indexOfNearste).getRider_longitude()+"]");
+                    }
+                    listAdapter.notifyDataSetChanged();
+                }
             }
             else{
                 this.listContent.add(requesters.get(0)+"- ["+currentlocations_rider.get(0).getRider_latitude()+":"+currentlocations_rider.get(0).getRider_longitude()+"]");
@@ -160,6 +177,7 @@ public class ShowNearestRequesters extends AppCompatActivity {
                         if (!dataSnapshot.getKey().equalsIgnoreCase("test")) {
                             String requester = dataSnapshot.getKey();
 
+                            Log.i("User in list",requester);
                             requesters.add(requester);
                         }
                     }
