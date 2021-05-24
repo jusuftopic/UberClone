@@ -6,7 +6,7 @@
     android:background="#403D3D">
 
    <ImageView
-       android:id="@+id/imageView2"
+       android:id="@+id/avatarImage"
        android:layout_width="78dp"
        android:layout_height="85dp"
        android:layout_marginLeft="30dp"

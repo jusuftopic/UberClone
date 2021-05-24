@@ -103,11 +103,11 @@ public class ShowNearestRequesters extends AppCompatActivity {
                                         if (requestes.size() == currentlocations.size() && requestes.size() == endlocations.size() && requestes.size() > 0) {
                                             riders = getRiders(requestes);
                                             addresses_currentLocation = getAddressesFromList(currentlocations);
-                                            addresses_endLocations = getAddressesFromList(endlocations);
+                                          //  addresses_endLocations = getAddressesFromList(endlocations);
                                             imgs = getImgs(requestes.size());
                                             requestsAdapter = new RequestsAdapter(ShowNearestRequesters.this, riders, addresses_currentLocation, imgs);
                                             nearestListView.setAdapter(requestsAdapter);
-                                            addClickListenerOnList(nearestListView, riders, addresses_currentLocation, addresses_endLocations,driverLocation);
+                                    //        addClickListenerOnList(nearestListView, riders, addresses_currentLocation, addresses_endLocations,driverLocation);
 
                                         } else {
                                             Log.w("Problem withs lists", "Requests list (" + requestes.size() + "), current locations list (" + currentlocations.size() + "), end locations list (" + endlocations.size() + ") not same size");
