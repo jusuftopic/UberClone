@@ -1,10 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#433F3F"
-    >
+    android:background="#403D3D">
 
-   <corners android:radius="10dp"></corners>
+   <ImageView
+       android:id="@+id/imageView2"
+       android:layout_width="78dp"
+       android:layout_height="85dp"
+       android:layout_marginLeft="30dp"
+       android:layout_marginTop="20dp"
+       app:srcCompat="@drawable/avatar" />
 
+   <TextView
+       android:id="@+id/username"
+       android:layout_width="108dp"
+       android:layout_height="wrap_content"
+       android:layout_marginLeft="115dp"
+       android:layout_marginTop="25dp"
+       android:gravity="center"
+       android:text="TextView"
+       android:textColor="#FBFBFB" />
+
+   <TextView
+       android:id="@+id/textView13"
+       android:layout_width="93dp"
+       android:layout_height="wrap_content"
+       android:layout_marginLeft="115dp"
+       android:layout_marginTop="55dp"
+       android:gravity="center"
+       android:text="Current:"
+       android:textColor="#FBFBFB" />
+
+   <TextView
+       android:id="@+id/currentlocation"
+       android:layout_width="110dp"
+       android:layout_height="wrap_content"
+       android:layout_marginLeft="215dp"
+       android:layout_marginTop="55dp"
+       android:gravity="center"
+       android:text="TextView"
+       android:textColor="#FBFBFB" />
+
+   <TextView
+       android:id="@+id/textView14"
+       android:layout_width="93dp"
+       android:layout_height="wrap_content"
+       android:layout_marginLeft="115dp"
+       android:layout_marginTop="85dp"
+       android:gravity="center"
+       android:text="End:"
+       android:textColor="#FBFBFB" />
+
+   <TextView
+       android:id="@+id/endlocation"
+       android:layout_width="110dp"
+       android:layout_height="wrap_content"
+       android:layout_marginLeft="215dp"
+       android:layout_marginTop="85dp"
+       android:gravity="center"
+       android:text="TextView"
+       android:textColor="#FBFBFB" />
+
+   <Button
+       android:id="@+id/accept"
+       android:layout_width="148dp"
+       android:layout_height="37dp"
+       android:layout_marginLeft="115dp"
+       android:layout_marginTop="120dp"
+       android:backgroundTint="#353333"
+       android:text="Accept"
+       android:textColor="#FBFBFB" />
 </RelativeLayout>
