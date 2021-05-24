@@ -48,7 +48,7 @@ public class RequesterPopUp extends AppCompatActivity {
         setAvatarImage();
         setUsernameFromIntent();
         setCurrentLocationFromIntent();
-        setEndLocationFromIntent();
+      //  setEndLocationFromIntent();
 
 
     }
@@ -108,6 +108,7 @@ public class RequesterPopUp extends AppCompatActivity {
         this.currentLocationField.setText(endaddress);
     }
 
+    //TODO get latitude and longitude from intent and make location
     public void setEndLocationFromIntent(){
         if (this.getIntent().getStringExtra("end address") == null){
             Log.e("Endlocation problem","Problem to get End location from intetn-> show on null object");

@@ -55,7 +55,6 @@ public class ShowNearestRequesters extends AppCompatActivity {
 
     private String[] riders;
     private String[] addresses_currentLocation;
-    private String[] addresses_endLocations;
     private int[] imgs;
     private RequestsAdapter requestsAdapter;
 
@@ -103,11 +102,10 @@ public class ShowNearestRequesters extends AppCompatActivity {
                                         if (requestes.size() == currentlocations.size() && requestes.size() == endlocations.size() && requestes.size() > 0) {
                                             riders = getRiders(requestes);
                                             addresses_currentLocation = getAddressesFromList(currentlocations);
-                                          //  addresses_endLocations = getAddressesFromList(endlocations);
                                             imgs = getImgs(requestes.size());
                                             requestsAdapter = new RequestsAdapter(ShowNearestRequesters.this, riders, addresses_currentLocation, imgs);
                                             nearestListView.setAdapter(requestsAdapter);
-                                    //        addClickListenerOnList(nearestListView, riders, addresses_currentLocation, addresses_endLocations,driverLocation);
+                                           addClickListenerOnList(nearestListView, riders, addresses_currentLocation,endlocations,driverLocation);
 
                                         } else {
                                             Log.w("Problem withs lists", "Requests list (" + requestes.size() + "), current locations list (" + currentlocations.size() + "), end locations list (" + endlocations.size() + ") not same size");
@@ -122,14 +120,15 @@ public class ShowNearestRequesters extends AppCompatActivity {
         });
     }
 
-    public void addClickListenerOnList(ListView listOfRequests, String[] users, String[] currentAdresses,String[] endAddresses,DriverLocation driverLocation) {
+    public void addClickListenerOnList(ListView listOfRequests, String[] users, String[] currentAdresses,ArrayList<RiderLocation> endRiderLocs,DriverLocation driverLocation) {
         listOfRequests.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent toPopUp = new Intent(ShowNearestRequesters.this,RequesterPopUp.class);
                 toPopUp.putExtra("username_rider",users[position]);
                 toPopUp.putExtra("current address",currentAdresses[position]);
-                toPopUp.putExtra("end address",endAddresses[position]);
+                toPopUp.putExtra("endlocation_latitude",endRiderLocs.get(position).getRider_latitude());
+                toPopUp.putExtra("endlocation_longitude",endRiderLocs.get(position).getRider_latitude());
                 toPopUp.putExtra("avatar image",imgs[position]);
                 toPopUp.putExtra("diver name",nameOfDriver);
                 toPopUp.putExtra("driver location_latitude",driverLocation.getDriver_latitude());
