@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.uberclone.Modules.Requests.DriverLocation;
+import com.example.uberclone.Modules.Requests.RiderLocation;
 import com.example.uberclone.R;
 
 public class RequesterPopUp extends AppCompatActivity {
@@ -25,6 +26,8 @@ public class RequesterPopUp extends AppCompatActivity {
 
     private String nameOfDriver;
     private DriverLocation driverLocation;
+
+    private RiderLocation rider_endCordinates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,8 @@ public class RequesterPopUp extends AppCompatActivity {
 
         nameOfDriver = getNameOfDriver();
         driverLocation = getDriverLocation();
+
+        rider_endCordinates = getEndCordinates();
 
         setAvatarImage();
         setUsernameFromIntent();
@@ -75,6 +80,23 @@ public class RequesterPopUp extends AppCompatActivity {
             driverLoc.setDriver_longitude(longitude);
         }
         return driverLoc;
+    }
+
+    public RiderLocation getEndCordinates(){
+        RiderLocation location_from_intent = new RiderLocation();
+
+        double latitude = this.getIntent().getDoubleExtra("endlocation_latitude",-1);
+        double longitude = this.getIntent().getDoubleExtra("endlocation_longitude",-1);
+
+        if (latitude == -1 || longitude == -1){
+            Log.e("Rider's endLoc problem","Problem to get latitude and longitude from rider's end locations");
+            return null;
+        }
+
+        location_from_intent.setRider_latitude(latitude);
+        location_from_intent.setRider_longitude(longitude);
+
+        return location_from_intent;
     }
 
     public void setAvatarImage(){
