@@ -3,12 +3,15 @@ package com.example.uberclone.MainApp.Driver;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -97,18 +100,17 @@ public class ShowNearestRequesters extends AppCompatActivity {
                                 getDriverLocation(new FireBaseCallBackDriverLocation() {
                                     @Override
                                     public void onCallBackDriverLocation(DriverLocation driverLocation) {
-                                        if (requestes.size() == currentlocations.size() && requestes.size() == endlocations.size() && requestes.size() > 0){
+                                        if (requestes.size() == currentlocations.size() && requestes.size() == endlocations.size() && requestes.size() > 0) {
                                             riders = getRiders(requestes);
                                             addresses_currentLocation = getAddressesFromList(currentlocations);
-                                          //  addresses_currentLocation = getAddressesForEndLocation(endlocations);
+                                            addresses_endLocations = getAddressesFromList(endlocations);
                                             imgs = getImgs(requestes.size());
-                                            requestsAdapter = new RequestsAdapter(ShowNearestRequesters.this,riders, addresses_currentLocation,imgs);
+                                            requestsAdapter = new RequestsAdapter(ShowNearestRequesters.this, riders, addresses_currentLocation, imgs);
                                             nearestListView.setAdapter(requestsAdapter);
-                                          //  addClickListenerOnList(nearestListView,riders, addresses_currentLocation,);
+                                            addClickListenerOnList(nearestListView, riders, addresses_currentLocation, addresses_endLocations);
 
-                                        }
-                                        else{
-                                            Log.w("Problem withs lists","Requests list ("+requestes.size()+"), current locations list ("+currentlocations.size()+"), end locations list ("+endlocations.size()+") not same size");
+                                        } else {
+                                            Log.w("Problem withs lists", "Requests list (" + requestes.size() + "), current locations list (" + currentlocations.size() + "), end locations list (" + endlocations.size() + ") not same size");
                                         }
                                     }
                                 });
@@ -120,84 +122,92 @@ public class ShowNearestRequesters extends AppCompatActivity {
         });
     }
 
-    public void addClickListenerOnList(ListView listOfRequests,String[] users, String[] currentAdresses){
+    public void addClickListenerOnList(ListView listOfRequests, String[] users, String[] currentAdresses,String[] endAddresses) {
+        listOfRequests.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent toPopUp = new Intent(ShowNearestRequesters.this,RequesterPopUp.class);
+                toPopUp.putExtra("username_rider",users[position]);
+                toPopUp.putExtra("current address",currentAdresses[position]);
+                toPopUp.putExtra("end address",endAddresses[position]);
+                toPopUp.putExtra("avatar image",imgs[position]);
 
+                startActivity(toPopUp);
+            }
+        });
     }
 
-    public String[] getRiders(ArrayList<String> requesters){
+    public String[] getRiders(ArrayList<String> requesters) {
         String[] riderArray = new String[requesters.size()];
         int index = 0;
 
-        for (String requester : requesters){
+        for (String requester : requesters) {
             riderArray[index] = requester;
             index++;
         }
 
-        Log.i("Riders: ",Arrays.toString(riderArray));
+        Log.i("Riders: ", Arrays.toString(riderArray));
         return riderArray;
     }
 
 
-    public String[] getAddressesFromList(ArrayList<RiderLocation> currentRiderLocations){
+    public String[] getAddressesFromList(ArrayList<RiderLocation> currentRiderLocations) {
         String[] addresses = new String[currentRiderLocations.size()];
         int index = 0;
 
-        for (RiderLocation riderLocation : currentRiderLocations){
+        for (RiderLocation riderLocation : currentRiderLocations) {
             addresses[index] = changeCordinationsToAdress(riderLocation);
             index++;
         }
 
-        Log.i("Addresses: ",Arrays.toString(addresses));
+        Log.i("Addresses: ", Arrays.toString(addresses));
         return addresses;
     }
 
-    public String changeCordinationsToAdress(RiderLocation riderLocation){
-        LatLng currentLocation = new LatLng(riderLocation.getRider_latitude(),riderLocation.getRider_longitude());
+    public String changeCordinationsToAdress(RiderLocation riderLocation) {
+        LatLng currentLocation = new LatLng(riderLocation.getRider_latitude(), riderLocation.getRider_longitude());
 
-        Geocoder geocoder = new Geocoder(ShowNearestRequesters.this,Locale.getDefault());
+        Geocoder geocoder = new Geocoder(ShowNearestRequesters.this, Locale.getDefault());
         List<Address> addresses = null;
 
         String address = "";
 
         try {
-            addresses = geocoder.getFromLocation(currentLocation.latitude,currentLocation.longitude,1);
+            addresses = geocoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1);
 
-            if (addresses.size() > 0 && addresses != null){
-                address += addresses.get(0).getAddressLine(0)+", "+addresses.get(0).getLocality()+", "+addresses.get(0).getAdminArea();
+            if (addresses.size() > 0 && addresses != null) {
+                address += addresses.get(0).getAddressLine(0) + ", " + addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea();
+            } else {
+                Log.e("Geocoder problem", "Problem to get addresses from geocoder- List null or empty");
+                address = currentLocation.latitude + ";" + currentLocation.longitude;
             }
-            else{
-                Log.e("Geocoder problem","Problem to get addresses from geocoder- List null or empty");
-                address = currentLocation.latitude+";"+currentLocation.longitude;
-            }
-        }
-        catch (IOException ioException){
+        } catch (IOException ioException) {
             ioException.printStackTrace();
         }
 
-        Log.i("Address of rider: ",address);
+        Log.i("Address of rider: ", address);
         return address;
     }
 
-    public int[] getImgs(int size){
+    public int[] getImgs(int size) {
         int[] avatars = new int[size];
 
-        for (int i = 0; i < avatars.length; i++){
+        for (int i = 0; i < avatars.length; i++) {
             avatars[i] = R.drawable.avatar;
         }
         return avatars;
     }
 
 
+    public Location switchDriverLocationToLocation(DriverLocation driverLocation) {
+        Location location = new Location(LocationManager.GPS_PROVIDER);
+        location.setLatitude(driverLocation.getDriver_latitude());
+        location.setLongitude(driverLocation.getDriver_longitude());
 
-    public Location switchDriverLocationToLocation(DriverLocation driverLocation){
-      Location location = new Location(LocationManager.GPS_PROVIDER);
-      location.setLatitude(driverLocation.getDriver_latitude());
-      location.setLongitude(driverLocation.getDriver_longitude());
-
-      return location;
+        return location;
     }
 
-    public Location switchRiderLocationToLocation(RiderLocation riderLocation){
+    public Location switchRiderLocationToLocation(RiderLocation riderLocation) {
         Location location = new Location(LocationManager.GPS_PROVIDER);
         location.setLatitude(riderLocation.getRider_latitude());
         location.setLongitude(riderLocation.getRider_longitude());
@@ -219,7 +229,7 @@ public class ShowNearestRequesters extends AppCompatActivity {
                         if (!dataSnapshot.getKey().equalsIgnoreCase("test")) {
                             String requester = dataSnapshot.getKey();
 
-                            Log.i("User in list",requester);
+                            Log.i("User in list", requester);
                             requesters.add(requester);
                         }
                     }
