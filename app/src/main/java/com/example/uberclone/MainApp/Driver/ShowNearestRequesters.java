@@ -107,7 +107,7 @@ public class ShowNearestRequesters extends AppCompatActivity {
                                             imgs = getImgs(requestes.size());
                                             requestsAdapter = new RequestsAdapter(ShowNearestRequesters.this, riders, addresses_currentLocation, imgs);
                                             nearestListView.setAdapter(requestsAdapter);
-                                            addClickListenerOnList(nearestListView, riders, addresses_currentLocation, addresses_endLocations);
+                                            addClickListenerOnList(nearestListView, riders, addresses_currentLocation, addresses_endLocations,driverLocation);
 
                                         } else {
                                             Log.w("Problem withs lists", "Requests list (" + requestes.size() + "), current locations list (" + currentlocations.size() + "), end locations list (" + endlocations.size() + ") not same size");
@@ -122,7 +122,7 @@ public class ShowNearestRequesters extends AppCompatActivity {
         });
     }
 
-    public void addClickListenerOnList(ListView listOfRequests, String[] users, String[] currentAdresses,String[] endAddresses) {
+    public void addClickListenerOnList(ListView listOfRequests, String[] users, String[] currentAdresses,String[] endAddresses,DriverLocation driverLocation) {
         listOfRequests.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -131,6 +131,9 @@ public class ShowNearestRequesters extends AppCompatActivity {
                 toPopUp.putExtra("current address",currentAdresses[position]);
                 toPopUp.putExtra("end address",endAddresses[position]);
                 toPopUp.putExtra("avatar image",imgs[position]);
+                toPopUp.putExtra("diver name",nameOfDriver);
+                toPopUp.putExtra("driver location_latitude",driverLocation.getDriver_latitude());
+                toPopUp.putExtra("driver location_longitude",driverLocation.getDriver_longitude());
 
                 startActivity(toPopUp);
             }
@@ -176,7 +179,7 @@ public class ShowNearestRequesters extends AppCompatActivity {
             addresses = geocoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1);
 
             if (addresses.size() > 0 && addresses != null) {
-                address += addresses.get(0).getAddressLine(0) + ", " + addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea();
+                address += addresses.get(0).getAddressLine(0);
             } else {
                 Log.e("Geocoder problem", "Problem to get addresses from geocoder- List null or empty");
                 address = currentLocation.latitude + ";" + currentLocation.longitude;
