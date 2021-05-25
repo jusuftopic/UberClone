@@ -1,5 +1,6 @@
 package com.example.uberclone.MainApp.Driver;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.database.DataSetObserver;
@@ -20,11 +21,18 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.uberclone.Modules.Requests.DriverLocation;
 import com.example.uberclone.Modules.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,6 +57,7 @@ public class RequesterPopUp extends AppCompatActivity {
     private String nameOfDriver;
     private DriverLocation driverLocation;
 
+    private RiderLocation rider_currentCordinates;
     private RiderLocation rider_endCordinates;
 
     @Override
@@ -86,12 +95,58 @@ public class RequesterPopUp extends AppCompatActivity {
         setUsernameFromIntent();
         setCurrentLocationFromIntent();
 
+        rider_currentCordinates = getCurrentLocationCordinates();
         //transform cordinates to real address
         rider_endCordinates= getEndLocationFromIntent();
         transformCorindatesToAddress(rider_endCordinates);
+    }
 
+    public void acceptRidersCall(View view){
+        if (!choosenTime.equals("")){
+            changeDriversAcceptanceStatus(nameOfDriver,rider_currentCordinates,rider_endCordinates);
+        }
 
+    }
 
+    public void changeDriversAcceptanceStatus(String nameOfDriver,RiderLocation rider_currentCordinates,RiderLocation rider_endCordinates){
+        if (rider_currentCordinates != null && rider_endCordinates != null){
+            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+            DatabaseReference root = firebaseDatabase.getReference();
+
+            root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()){
+
+                        double driver_latitude = driverLocation.getDriver_latitude();
+                        double driver_longitude = driverLocation.getDriver_longitude();
+                        boolean acceptedCall = true;
+                        RiderLocation rider_current = rider_currentCordinates;
+                        RiderLocation rider_end = rider_endCordinates;
+
+                        DriverLocation location_accpet = new DriverLocation(driver_latitude,driver_longitude,acceptedCall,rider_current,rider_end);
+
+                        root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).child("Current location").setValue(location_accpet).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Toast.makeText(RequesterPopUp.this,"Request acceped",Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                    else{
+                        Log.e("Driver's path problem",nameOfDriver+" doesn't exists in database");
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull  DatabaseError error) {
+                    Log.e("Database error",error.getMessage());
+                }
+            });
+        }
+        else{
+            Log.e("FAIL from intent","Can not change driver's status because current or end rider's location null");
+        }
     }
 
     public String getNameOfDriver(){
@@ -166,6 +221,19 @@ public class RequesterPopUp extends AppCompatActivity {
         this.currentLocationField.setText(endaddress);
     }
 
+    public RiderLocation getCurrentLocationCordinates(){
+        double latitude = getIntent().getDoubleExtra("currentlocation_latitude",-1);
+        double longitude = getIntent().getDoubleExtra("currentlocation_longitude",-1);
+
+        if (latitude != -1 && longitude != -1){
+            return new RiderLocation(latitude,longitude);
+        }
+        else {
+            Log.e("Current cordinates","Problem to trasport current rider's cordinates from intent");
+            return null;
+        }
+    }
+
 
     public RiderLocation getEndLocationFromIntent(){
         double latitude = this.getIntent().getDoubleExtra("endlocation_latitude",-1);
@@ -176,9 +244,8 @@ public class RequesterPopUp extends AppCompatActivity {
 
         }
         else{
-            rider_endCordinates = null;
             Log.e("Intent problem","Problem to get cordinates of rider's end location");
-            return rider_endCordinates;
+            return null;
         }
     }
 
