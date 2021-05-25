@@ -54,6 +54,8 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
     private RiderLocation currentlocation;
     private RiderLocation endlocation;
 
+    int numberOfMarkers;
+
 
 
     @Override
@@ -86,12 +88,17 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
 
         isCalled = false;
 
+        numberOfMarkers = 1;
+
         callUber = (Button) findViewById(R.id.sendRequest);
+        callUber.setEnabled(false);
 
         currentlocation = new RiderLocation();
         endlocation = new RiderLocation();
 
-        deleteRequestFromDatabase(nameOfRider);
+        if (!this.getIntent().getBooleanExtra("Back from picker",false)){
+            deleteRequestFromDatabase(nameOfRider);
+        }
 
     }
 
@@ -143,12 +150,17 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                mMap.clear();
-                endlocation.setRider_latitude(latLng.latitude);
-                endlocation.setRider_longitude(latLng.longitude);
+                if (numberOfMarkers <= 2){
+                    mMap.clear();
+                    endlocation.setRider_latitude(latLng.latitude);
+                    endlocation.setRider_longitude(latLng.longitude);
 
-           marker_endlocation= mMap.addMarker(new MarkerOptions().title("Location to drive").position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+                    marker_endlocation= mMap.addMarker(new MarkerOptions().title("Location to drive").position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+                    callUber.setEnabled(true);
+                }
             }
         });
     }
@@ -293,7 +305,8 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         if (location != null){
         LatLng currentposition = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.addMarker(new MarkerOptions().title("Your current location").position(currentposition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentposition,30f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentposition));
+
         }
 
     }
