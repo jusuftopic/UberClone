@@ -104,6 +104,7 @@ public class RequesterPopUp extends AppCompatActivity {
     public void acceptRidersCall(View view){
         if (!choosenTime.equals("")){
             changeDriversAcceptanceStatus(nameOfDriver,rider_currentCordinates,rider_endCordinates);
+            deleteRiderFromRequests(String.valueOf(usernameField.getText()));
         }
 
     }
@@ -146,6 +147,34 @@ public class RequesterPopUp extends AppCompatActivity {
         }
         else{
             Log.e("FAIL from intent","Can not change driver's status because current or end rider's location null");
+        }
+    }
+
+    public void deleteRiderFromRequests(String username){
+        if (username != null && !username.equals("")){
+            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+            DatabaseReference root = firebaseDatabase.getReference();
+
+            root.child("Requests").child("Rider Calls").child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()){
+                       // root.child("Requests").child("Rider Calls").child(username).setValue(null);
+                        Log.i("Deleted rider",username+" deleted from requests list");
+                    }
+                    else{
+                        Log.e("Database problem: ","Can't find path to username: "+username);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull  DatabaseError error) {
+
+                }
+            });
+        }
+        else{
+            Log.e("Rider name","Failed to detele rider from requests-> Username didn't recognized");
         }
     }
 
