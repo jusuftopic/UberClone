@@ -2,13 +2,21 @@ package com.example.uberclone.MainApp.Driver;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.example.uberclone.Modules.Requests.DriverLocation;
@@ -21,6 +29,12 @@ public class RequesterPopUp extends AppCompatActivity {
     private TextView usernameField;
     private TextView currentLocationField;
     private TextView endLocationField;
+
+    private Spinner timechooser;
+    ArrayAdapter<Integer> timesAdapter;
+    private Integer[] times;
+
+    private Integer choosenTime;
 
     private Button acceptRequest;
 
@@ -42,6 +56,16 @@ public class RequesterPopUp extends AppCompatActivity {
         usernameField = (TextView) findViewById(R.id.username);
         currentLocationField = (TextView) findViewById(R.id.currentlocation);
         endLocationField = (TextView) findViewById(R.id.endlocation);
+
+
+        setUpTimes();
+        choosenTime = 0;
+
+        timechooser = (Spinner) findViewById(R.id.timechooser);
+        timesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,times);
+        timechooser.setAdapter(timesAdapter);
+        setListenerOnSpinner(timechooser);
+
 
         acceptRequest = (Button) findViewById(R.id.accept);
 
@@ -141,6 +165,47 @@ public class RequesterPopUp extends AppCompatActivity {
         this.endLocationField.setText(endaddress);
     }
 
+    public void setListenerOnSpinner(Spinner timesspinner){
+        timesspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position){
+                    case 0:
+                        choosenTime = times[0];
+                        break;
+                    case 1:
+                        choosenTime = times[1];
+                        break;
+                    case 2:
+                        choosenTime = times[2];
+                        break;
+                    case 3:
+                        choosenTime = times[3];
+                        break;
+                    default:
+                        Log.e("Spinner problem","Can not choose time for picking");
+                        choosenTime = 0;
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    public void setUpTimes(){
+        this.times = new Integer[4];
+
+        times[0] = 15;
+        times[1] = 30;
+        times[2] = 45;
+        times[3] = 60;
+    }
+
 
     public void setMetrics(){
 
@@ -150,7 +215,7 @@ public class RequesterPopUp extends AppCompatActivity {
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
 
-        getWindow().setLayout((int) (width*0.8),(int) (height*0.3));
+        getWindow().setLayout((int) (width*0.9),(int) (height*0.7));
 
         WindowManager.LayoutParams params = getWindow().getAttributes();
         params.gravity = Gravity.CENTER;

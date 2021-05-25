@@ -9,7 +9,7 @@
        android:id="@+id/avatarImage"
        android:layout_width="78dp"
        android:layout_height="85dp"
-       android:layout_marginLeft="30dp"
+       android:layout_marginLeft="25dp"
        android:layout_marginTop="20dp"
        app:srcCompat="@drawable/avatar" />
 
@@ -17,7 +17,7 @@
        android:id="@+id/username"
        android:layout_width="108dp"
        android:layout_height="wrap_content"
-       android:layout_marginLeft="115dp"
+       android:layout_marginLeft="185dp"
        android:layout_marginTop="25dp"
        android:gravity="center"
        android:text="TextView"
@@ -27,7 +27,7 @@
        android:id="@+id/textView13"
        android:layout_width="93dp"
        android:layout_height="wrap_content"
-       android:layout_marginLeft="115dp"
+       android:layout_marginLeft="110dp"
        android:layout_marginTop="55dp"
        android:gravity="center"
        android:text="Current:"
@@ -35,19 +35,20 @@
 
    <TextView
        android:id="@+id/currentlocation"
-       android:layout_width="110dp"
+       android:layout_width="150dp"
        android:layout_height="wrap_content"
-       android:layout_marginLeft="215dp"
+       android:layout_marginLeft="210dp"
        android:layout_marginTop="55dp"
        android:gravity="center"
        android:text="TextView"
-       android:textColor="#FBFBFB" />
+       android:textColor="#FBFBFB"
+       android:textSize="13dp" />
 
    <TextView
        android:id="@+id/textView14"
        android:layout_width="93dp"
        android:layout_height="wrap_content"
-       android:layout_marginLeft="115dp"
+       android:layout_marginLeft="110dp"
        android:layout_marginTop="85dp"
        android:gravity="center"
        android:text="End:"
@@ -55,21 +56,39 @@
 
    <TextView
        android:id="@+id/endlocation"
-       android:layout_width="110dp"
+       android:layout_width="153dp"
        android:layout_height="wrap_content"
-       android:layout_marginLeft="215dp"
+       android:layout_marginLeft="210dp"
        android:layout_marginTop="85dp"
        android:gravity="center"
        android:text="TextView"
-       android:textColor="#FBFBFB" />
+       android:textColor="#FBFBFB"
+       android:textSize="13dp" />
 
    <Button
        android:id="@+id/accept"
        android:layout_width="148dp"
        android:layout_height="37dp"
-       android:layout_marginLeft="115dp"
-       android:layout_marginTop="120dp"
+       android:layout_marginLeft="150dp"
+       android:layout_marginTop="220dp"
        android:backgroundTint="#353333"
        android:text="Accept"
        android:textColor="#FBFBFB" />
+
+   <TextView
+       android:id="@+id/textView12"
+       android:layout_width="109dp"
+       android:layout_height="wrap_content"
+       android:layout_marginLeft="110dp"
+       android:layout_marginTop="114dp"
+       android:gravity="center"
+       android:text="Time/min:"
+       android:textColor="#FBFBFB" />
+
+   <Spinner
+       android:id="@+id/timechooser"
+       android:layout_width="136dp"
+       android:layout_height="wrap_content"
+       android:layout_marginLeft="230dp"
+       android:layout_marginTop="114dp" />
 </RelativeLayout>
