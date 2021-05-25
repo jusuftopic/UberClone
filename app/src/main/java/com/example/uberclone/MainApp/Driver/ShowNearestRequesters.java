@@ -105,7 +105,7 @@ public class ShowNearestRequesters extends AppCompatActivity {
                                             imgs = getImgs(requestes.size());
                                             requestsAdapter = new RequestsAdapter(ShowNearestRequesters.this, riders, addresses_currentLocation, imgs);
                                             nearestListView.setAdapter(requestsAdapter);
-                                           addClickListenerOnList(nearestListView, riders, addresses_currentLocation,endlocations,driverLocation);
+                                           addClickListenerOnList(nearestListView, riders, addresses_currentLocation,currentlocations,endlocations,driverLocation);
 
                                         } else {
                                             Log.w("Problem withs lists", "Requests list (" + requestes.size() + "), current locations list (" + currentlocations.size() + "), end locations list (" + endlocations.size() + ") not same size");
@@ -120,13 +120,15 @@ public class ShowNearestRequesters extends AppCompatActivity {
         });
     }
 
-    public void addClickListenerOnList(ListView listOfRequests, String[] users, String[] currentAdresses,ArrayList<RiderLocation> endRiderLocs,DriverLocation driverLocation) {
+    public void addClickListenerOnList(ListView listOfRequests, String[] users, String[] currentAdresses,ArrayList<RiderLocation> currentRiderLocs,ArrayList<RiderLocation> endRiderLocs,DriverLocation driverLocation) {
         listOfRequests.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent toPopUp = new Intent(ShowNearestRequesters.this,RequesterPopUp.class);
                 toPopUp.putExtra("username_rider",users[position]);
                 toPopUp.putExtra("current address",currentAdresses[position]);
+                toPopUp.putExtra("currentlocation_latitude",currentRiderLocs.get(position).getRider_latitude());
+                toPopUp.putExtra("currentlocation_longitude",currentRiderLocs.get(position).getRider_longitude());
                 toPopUp.putExtra("endlocation_latitude",endRiderLocs.get(position).getRider_latitude());
                 toPopUp.putExtra("endlocation_longitude",endRiderLocs.get(position).getRider_latitude());
                 toPopUp.putExtra("avatar image",imgs[position]);
