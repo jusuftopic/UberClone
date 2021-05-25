@@ -3,6 +3,8 @@ package com.example.uberclone.MainApp.Driver;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.database.DataSetObserver;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -22,6 +24,12 @@ import android.widget.TextView;
 import com.example.uberclone.Modules.Requests.DriverLocation;
 import com.example.uberclone.Modules.Requests.RiderLocation;
 import com.example.uberclone.R;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class RequesterPopUp extends AppCompatActivity {
 
@@ -77,7 +85,11 @@ public class RequesterPopUp extends AppCompatActivity {
         setAvatarImage();
         setUsernameFromIntent();
         setCurrentLocationFromIntent();
-      //  setEndLocationFromIntent();
+
+        //transform cordinates to real address
+        rider_endCordinates= getEndLocationFromIntent();
+        transformCorindatesToAddress(rider_endCordinates);
+
 
 
     }
@@ -154,15 +166,50 @@ public class RequesterPopUp extends AppCompatActivity {
         this.currentLocationField.setText(endaddress);
     }
 
-    //TODO get latitude and longitude from intent and make location
-    public void setEndLocationFromIntent(){
-        if (this.getIntent().getStringExtra("end address") == null){
-            Log.e("Endlocation problem","Problem to get End location from intetn-> show on null object");
-            return;
-        }
-        String endaddress = this.getIntent().getStringExtra("end address");
 
-        this.endLocationField.setText(endaddress);
+    public RiderLocation getEndLocationFromIntent(){
+        double latitude = this.getIntent().getDoubleExtra("endlocation_latitude",-1);
+        double longitude = this.getIntent().getDoubleExtra("endlocation_longitude",-1);
+
+        if (latitude != -1 && longitude != -1){
+            return new RiderLocation(latitude,longitude);
+
+        }
+        else{
+            rider_endCordinates = null;
+            Log.e("Intent problem","Problem to get cordinates of rider's end location");
+            return rider_endCordinates;
+        }
+    }
+
+    public void transformCorindatesToAddress(RiderLocation rider_endlocation){
+        LatLng endposition = new LatLng(rider_endlocation.getRider_latitude(),rider_endlocation.getRider_longitude());
+
+        Geocoder geocoder = new Geocoder(RequesterPopUp.this, Locale.getDefault());
+        List<Address> addresses = null;
+
+        String streetname = "";
+
+        try {
+            addresses = geocoder.getFromLocation(endposition.latitude,endposition.longitude,1);
+
+            if (addresses.size() > 0 && addresses != null){
+                if (addresses.get(0).getThoroughfare() != null){
+                    streetname += addresses.get(0).getThoroughfare();
+                }
+                else{
+                    Log.e("Problem with streetname","Can not get streetname from geocoder-> NullPointerException or empty");
+                }
+            }
+            else{
+                Log.e("List of addresses","Can not get addresses from geocoder");
+            }
+        }
+        catch (IOException ioe){
+            ioe.printStackTrace();
+        }
+
+        endLocationField.setText(streetname);
     }
 
     public void setListenerOnSpinner(Spinner timesspinner){

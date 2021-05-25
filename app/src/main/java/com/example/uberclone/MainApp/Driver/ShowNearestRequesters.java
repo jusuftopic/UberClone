@@ -172,23 +172,28 @@ public class ShowNearestRequesters extends AppCompatActivity {
         Geocoder geocoder = new Geocoder(ShowNearestRequesters.this, Locale.getDefault());
         List<Address> addresses = null;
 
-        String address = "";
+        String streetsname = "";
 
         try {
             addresses = geocoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1);
 
             if (addresses.size() > 0 && addresses != null) {
-                address += addresses.get(0).getAddressLine(0);
+                if (!addresses.get(0).getThoroughfare().equals("") || addresses.get(0).getThoroughfare() != null){
+                    streetsname += addresses.get(0).getThoroughfare();
+                }
+                else{
+                    Log.e("Problem with streetname","Can not get streetname from geocoder-> NullPointerException or empty");
+                }
             } else {
                 Log.e("Geocoder problem", "Problem to get addresses from geocoder- List null or empty");
-                address = currentLocation.latitude + ";" + currentLocation.longitude;
+                streetsname = currentLocation.latitude + ";" + currentLocation.longitude;
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
 
-        Log.i("Address of rider: ", address);
-        return address;
+        Log.i("Address of rider: ", streetsname);
+        return streetsname;
     }
 
     public int[] getImgs(int size) {
