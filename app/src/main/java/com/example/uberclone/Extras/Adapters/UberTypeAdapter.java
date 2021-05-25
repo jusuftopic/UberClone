@@ -16,10 +16,10 @@ public class UberTypeAdapter extends ArrayAdapter<String> {
 
     private Context context;
     private String[] cars;
-    private double[] prices;
+    private String[] prices;
     private int[] maxpassangers;
 
-    public UberTypeAdapter(Context c,String[] cars,double[] prices,int[] maxpassangers){
+    public UberTypeAdapter(Context c, String[] cars, String[] prices, int[] maxpassangers){
         super(c, R.layout.carslist,cars);
         this.context = c;
         this.cars = cars;
