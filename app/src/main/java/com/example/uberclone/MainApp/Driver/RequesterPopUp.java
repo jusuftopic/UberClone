@@ -99,14 +99,19 @@ public class RequesterPopUp extends AppCompatActivity {
         //transform cordinates to real address
         rider_endCordinates= getEndLocationFromIntent();
         transformCorindatesToAddress(rider_endCordinates);
-    }
 
-    public void acceptRidersCall(View view){
-        if (!choosenTime.equals("")){
-            changeDriversAcceptanceStatus(nameOfDriver,rider_currentCordinates,rider_endCordinates);
-            deleteRiderFromRequests(String.valueOf(usernameField.getText()));
-        }
-
+        acceptRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!choosenTime.equals("")){
+                    changeDriversAcceptanceStatus(nameOfDriver,rider_currentCordinates,rider_endCordinates);
+                    deleteRiderFromRequests(String.valueOf(usernameField.getText()));
+                }
+                else{
+                    Toast.makeText(RequesterPopUp.this,"Please choose the time at which you will pick up the passenger",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     public void changeDriversAcceptanceStatus(String nameOfDriver,RiderLocation rider_currentCordinates,RiderLocation rider_endCordinates){
