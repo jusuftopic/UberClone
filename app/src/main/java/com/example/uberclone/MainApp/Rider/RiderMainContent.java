@@ -83,7 +83,9 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
         nameOfRider = getNameOfRider();
+        checkIfTheRequestExists(nameOfRider);
 
         isCalled = false;
 
@@ -203,6 +205,10 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         changeButtonInfos(true, "Cancle Uber");
+                        Location lastKnownLocation = getLastKnownLocation();
+                        if (lastKnownLocation != null){
+                            addCurrentLocationInDatabase(lastKnownLocation);
+                        }
                     }
                 });
 
@@ -296,9 +302,28 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             changeButtonInfos(true, "Cancle call");
             setMarkerOnEndLocation(nameOfRider);
         } else {
-            //TODO first ask rider if he/she wants to cancle request or not
-            deleteRequestFromDatabase(nameOfRider);
+            checkIfTheRequestExists(nameOfRider);
         }
+    }
+
+    public void checkIfTheRequestExists(String username){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference("Rider Calls");
+
+        root.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    setDialog();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Database error",error.getMessage());
+            }
+        });
+
     }
 
     public void setMarkerOnEndLocation(String username) {
