@@ -61,53 +61,8 @@ public class ChooseUberCar extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent toMapAgain = new Intent(ChooseUberCar.this,RiderMainContent.class);
-                switch (position){
-                    case 0:
-                        addCarInfosToRiderRequest(nameOfRider,types[position]);
-                        toMapAgain.putExtra("Back from picker",true);
-                        toMapAgain.putExtra("picked car",true);
-                        break;
-                    case 1:
-                        addCarInfosToRiderRequest(nameOfRider,types[position]);
-                        toMapAgain.putExtra("Back from picker",true);
-                        toMapAgain.putExtra("picked car",true);
-                        break;
-                    case 2:
-                        addCarInfosToRiderRequest(nameOfRider,types[position]);
-                        toMapAgain.putExtra("Back from picker",true);
-                        toMapAgain.putExtra("picked car",true);
-                        break;
-                    case 3:
-                        addCarInfosToRiderRequest(nameOfRider,types[position]);
-                        toMapAgain.putExtra("Back from picker",true);
-                        toMapAgain.putExtra("picked car",true);
-                        break;
-                    case 4:
-                        addCarInfosToRiderRequest(nameOfRider,types[position]);
-                        toMapAgain.putExtra("Back from picker",true);
-                        toMapAgain.putExtra("picked car",true);
-                        break;
-                    case 5:
-                        addCarInfosToRiderRequest(nameOfRider,types[position]);
-                        toMapAgain.putExtra("Back from picker",true);
-                        toMapAgain.putExtra("picked car",true);
-                        break;
-                    case 6:
-                        addCarInfosToRiderRequest(nameOfRider,types[position]);
-                        toMapAgain.putExtra("Back from picker",true);
-                        toMapAgain.putExtra("picked car",true);
-                        break;
-                    case 7:
-                        addCarInfosToRiderRequest(nameOfRider,types[position]);
-                        toMapAgain.putExtra("Back from picker",true);
-                        toMapAgain.putExtra("picked car",true);
-                        break;
-
-                    default:
-                        toMapAgain.putExtra("Back from picker",false);
-                        toMapAgain.putExtra("picked car",false);
-                        break;
-                }
+                addCarInfosToRiderRequest(nameOfRider,types[position]);
+                handleIntent(toMapAgain,"Back from picker",true,"picked car",true);
             }
         });
     }
@@ -139,6 +94,13 @@ public class ChooseUberCar extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    public void handleIntent(Intent intent,String message1,boolean value1,String message2,boolean value2){
+        intent.putExtra(message1,value1);
+        intent.putExtra(message2,value2);
+
+        startActivity(intent);
     }
 
     public String[] getTypes(){
