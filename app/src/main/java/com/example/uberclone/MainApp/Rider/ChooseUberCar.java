@@ -1,9 +1,13 @@
 package com.example.uberclone.MainApp.Rider;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.uberclone.Extras.Adapters.UberTypeAdapter;
@@ -16,6 +20,12 @@ import com.example.uberclone.Modules.Car.UberWAV;
 import com.example.uberclone.Modules.Car.UberX;
 import com.example.uberclone.Modules.Car.UberXL;
 import com.example.uberclone.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class ChooseUberCar extends AppCompatActivity {
 
@@ -38,6 +48,97 @@ public class ChooseUberCar extends AppCompatActivity {
         types = getTypes();
         prices = getPrices();
         numsOfPassengers = getNumsOfPassengers();
+
+        listOfTypes = (ListView) findViewById(R.id.listOfTypes);
+        uberTypeAdapter = new UberTypeAdapter(ChooseUberCar.this,types,prices,numsOfPassengers);
+        listOfTypes.setAdapter(uberTypeAdapter);
+
+        setSelectListenerOnList();
+    }
+
+    public void setSelectListenerOnList(){
+        listOfTypes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent toMapAgain = new Intent(ChooseUberCar.this,RiderMainContent.class);
+                switch (position){
+                    case 0:
+                        addCarInfosToRiderRequest(nameOfRider,types[position]);
+                        toMapAgain.putExtra("Back from picker",true);
+                        toMapAgain.putExtra("picked car",true);
+                        break;
+                    case 1:
+                        addCarInfosToRiderRequest(nameOfRider,types[position]);
+                        toMapAgain.putExtra("Back from picker",true);
+                        toMapAgain.putExtra("picked car",true);
+                        break;
+                    case 2:
+                        addCarInfosToRiderRequest(nameOfRider,types[position]);
+                        toMapAgain.putExtra("Back from picker",true);
+                        toMapAgain.putExtra("picked car",true);
+                        break;
+                    case 3:
+                        addCarInfosToRiderRequest(nameOfRider,types[position]);
+                        toMapAgain.putExtra("Back from picker",true);
+                        toMapAgain.putExtra("picked car",true);
+                        break;
+                    case 4:
+                        addCarInfosToRiderRequest(nameOfRider,types[position]);
+                        toMapAgain.putExtra("Back from picker",true);
+                        toMapAgain.putExtra("picked car",true);
+                        break;
+                    case 5:
+                        addCarInfosToRiderRequest(nameOfRider,types[position]);
+                        toMapAgain.putExtra("Back from picker",true);
+                        toMapAgain.putExtra("picked car",true);
+                        break;
+                    case 6:
+                        addCarInfosToRiderRequest(nameOfRider,types[position]);
+                        toMapAgain.putExtra("Back from picker",true);
+                        toMapAgain.putExtra("picked car",true);
+                        break;
+                    case 7:
+                        addCarInfosToRiderRequest(nameOfRider,types[position]);
+                        toMapAgain.putExtra("Back from picker",true);
+                        toMapAgain.putExtra("picked car",true);
+                        break;
+
+                    default:
+                        toMapAgain.putExtra("Back from picker",false);
+                        toMapAgain.putExtra("picked car",false);
+                        break;
+                }
+            }
+        });
+    }
+
+    public void addCarInfosToRiderRequest(String ridersname, String cartype){
+        if (cartype != null && !cartype.equals("")){
+            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+            DatabaseReference root = firebaseDatabase.getReference();
+
+            root.child("Requests").child("Rider Calls").child(ridersname).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                    if (snapshot.exists()){
+                        root.child("Requests").child("Rider Calls").child(ridersname).child("Picked car").setValue(cartype).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                             Log.i("CAR ADDED","Succesefull added car to rider's request");
+                            }
+                        });
+                    }
+                    else{
+                        Log.e("Rider's name path","Problem to find path to rider's username");
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("Database error",error.getMessage());
+                }
+            });
+        }
     }
 
     public String[] getTypes(){
@@ -45,12 +146,12 @@ public class ChooseUberCar extends AppCompatActivity {
 
         cars[0] = "UberX";
         cars[1] = "UberXL";
-        cars[2] = "Uber Black";
-        cars[3] = "Uber Select";
-        cars[4] = "Uber Lux";
-        cars[5] = "Uber SUV";
-        cars[6] = "Uber WAV";
-        cars[7] = "Uber Express Pool";
+        cars[2] = "UberBlack";
+        cars[3] = "UberSelect";
+        cars[4] = "UberLux";
+        cars[5] = "UberSUV";
+        cars[6] = "UberWAV";
+        cars[7] = "UberExpressPool";
 
         return cars;
     }

@@ -99,6 +99,9 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         if (!this.getIntent().getBooleanExtra("Back from picker",false)){
             deleteRequestFromDatabase(nameOfRider);
         }
+        if(!this.getIntent().getBooleanExtra("picked car",false)){
+            deleteRequestFromDatabase((nameOfRider));
+        }
 
     }
 
