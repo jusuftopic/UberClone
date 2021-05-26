@@ -98,6 +98,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
 
         if (!this.getIntent().getBooleanExtra("Back from picker",false)){
             deleteRequestFromDatabase(nameOfRider);
+            changeButtonInfos(false,"Call Uber");
         }
         if(!this.getIntent().getBooleanExtra("picked car",false)){
             deleteRequestFromDatabase((nameOfRider));
@@ -309,6 +310,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         LatLng currentposition = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.addMarker(new MarkerOptions().title("Your current location").position(currentposition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(currentposition));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentposition,5f));
 
         }
 

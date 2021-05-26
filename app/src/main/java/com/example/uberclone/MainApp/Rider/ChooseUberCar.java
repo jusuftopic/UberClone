@@ -62,7 +62,7 @@ public class ChooseUberCar extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent toMapAgain = new Intent(ChooseUberCar.this,RiderMainContent.class);
                 addCarInfosToRiderRequest(nameOfRider,types[position]);
-                handleIntent(toMapAgain,"Back from picker",true,"picked car",true);
+                handleIntent(nameOfRider,toMapAgain,"Back from picker",true,"picked car",true);
             }
         });
     }
@@ -96,7 +96,8 @@ public class ChooseUberCar extends AppCompatActivity {
         }
     }
 
-    public void handleIntent(Intent intent,String message1,boolean value1,String message2,boolean value2){
+    public void handleIntent(String username,Intent intent,String message1,boolean value1,String message2,boolean value2){
+        intent.putExtra("name of user",username);
         intent.putExtra(message1,value1);
         intent.putExtra(message2,value2);
 
