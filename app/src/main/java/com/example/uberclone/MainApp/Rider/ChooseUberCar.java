@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -44,6 +45,7 @@ public class ChooseUberCar extends AppCompatActivity {
         setContentView(R.layout.activity_choose_uber_car);
 
         nameOfRider = getNameOfDriver();
+        Log.i("Username",nameOfRider);
 
         types = getTypes();
         prices = getPrices();
@@ -60,9 +62,14 @@ public class ChooseUberCar extends AppCompatActivity {
         listOfTypes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent toMapAgain = new Intent(ChooseUberCar.this,RiderMainContent.class);
                 addCarInfosToRiderRequest(nameOfRider,types[position]);
-                handleIntent(nameOfRider,toMapAgain,"Back from picker",true,"picked car",true);
+                Intent toMapAgain = new Intent(ChooseUberCar.this,RiderMainContent.class);
+                toMapAgain.putExtra("fromPicker",true);
+                toMapAgain.putExtra("picked",true);
+                toMapAgain.putExtra("nameOfRider",nameOfRider);
+
+                startActivity(toMapAgain);
+
             }
         });
     }
@@ -96,13 +103,6 @@ public class ChooseUberCar extends AppCompatActivity {
         }
     }
 
-    public void handleIntent(String username,Intent intent,String message1,boolean value1,String message2,boolean value2){
-        intent.putExtra("name of user",username);
-        intent.putExtra(message1,value1);
-        intent.putExtra(message2,value2);
-
-        startActivity(intent);
-    }
 
     public String[] getTypes(){
         String [] cars = new String[8];

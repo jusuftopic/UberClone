@@ -84,20 +84,17 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        nameOfRider = getNameOfRider();
-        checkIfTheRequestExists(nameOfRider);
+        currentlocation = new RiderLocation();
+        endlocation = new RiderLocation();
 
-        isCalled = false;
-
-        numberOfMarkers = 1;
 
         callUber = (Button) findViewById(R.id.sendRequest);
         callUber.setEnabled(false);
 
-        currentlocation = new RiderLocation();
-        endlocation = new RiderLocation();
+        handleActivityUserComeFrom();
 
-        handleInfosAfterCarPick();
+        numberOfMarkers = 1;
+
 
     }
 
@@ -154,9 +151,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
                     endlocation.setRider_latitude(latLng.latitude);
                     endlocation.setRider_longitude(latLng.longitude);
 
-
                     marker_endlocation = mMap.addMarker(new MarkerOptions().title("Location to drive").position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
                     callUber.setEnabled(true);
                 }
@@ -206,7 +201,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
                     public void onClick(DialogInterface dialog, int which) {
                         changeButtonInfos(true, "Cancle Uber");
                         Location lastKnownLocation = getLastKnownLocation();
-                        if (lastKnownLocation != null){
+                        if (lastKnownLocation != null) {
                             addCurrentLocationInDatabase(lastKnownLocation);
                         }
                     }
@@ -292,9 +287,24 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         });
     }
 
-    public void handleInfosAfterCarPick() {
-        boolean pickFinished = this.getIntent().getBooleanExtra("Back from picker", false) && this.getIntent().getBooleanExtra("picked car", false);
-        String username_pick = this.getIntent().getStringExtra("name of user");
+    public void handleActivityUserComeFrom() {
+        if (!isBackFromPicker()){
+            nameOfRider = getNameOfRider();
+            checkIfTheRequestExists(nameOfRider);
+            isCalled = false;
+        }
+        else{
+            nameOfRider = this.getIntent().getStringExtra("nameOfRider");
+            callUber.setEnabled(true);
+            changeButtonInfos(true, "Cancle call");
+            setMarkerOnEndLocation(nameOfRider);
+        }
+
+    }
+
+   /* public void handleInfosAfterCarPick() {
+        boolean pickFinished = this.getIntent().getBooleanExtra("fromPicker", false) && this.getIntent().getBooleanExtra("picked", false);
+        String username_pick = this.getIntent().getStringExtra("nameOfRider");
 
         if (pickFinished && username_pick != null) {
             nameOfRider = username_pick;
@@ -304,23 +314,27 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         } else {
             checkIfTheRequestExists(nameOfRider);
         }
-    }
+    }*/
 
-    public void checkIfTheRequestExists(String username){
+    public void checkIfTheRequestExists(String username) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference("Rider Calls");
+        DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+        Log.i("Users check", username);
+
+        root.child("Requests").child("Rider Calls").child(username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull  DataSnapshot snapshot) {
-                if (snapshot.exists()){
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
                     setDialog();
+                } else {
+                    Log.i("First request", username + " doesn't have requests in database");
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Database error",error.getMessage());
+                Log.e("Database error", error.getMessage());
             }
         });
 
@@ -338,10 +352,9 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
                         double latitude = Double.parseDouble(String.valueOf(snapshot.child("End location").child("rider_latitude").getValue()));
                         double longitude = Double.parseDouble(String.valueOf(snapshot.child("End location").child("rider_longitude").getValue()));
 
-                        createMarker(latitude,longitude);
-                    }
-                    else{
-                        Log.e("Rider's end location","Failed to get latitude and longitude from rider's end location to set marker");
+                        createMarker(latitude, longitude);
+                    } else {
+                        Log.e("Rider's end location", "Failed to get latitude and longitude from rider's end location to set marker");
                     }
 
 
@@ -357,11 +370,11 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         });
     }
 
-    public void createMarker(double latitude, double longitude){
-        LatLng endPosition = new LatLng(latitude,longitude);
+    public void createMarker(double latitude, double longitude) {
+        LatLng endPosition = new LatLng(latitude, longitude);
 
         mMap.addMarker(new MarkerOptions().title("Location to drive").position(endPosition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(endPosition,5f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(endPosition, 5f));
     }
 
 
@@ -386,6 +399,15 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
 
     public String getNameOfRider() {
         return this.getIntent().getStringExtra("ridername from card activity") != null ? this.getIntent().getStringExtra("ridername from card activity") : this.getIntent().getStringExtra("ridername from login");
+    }
+
+    //TODO- delete temporary
+    public boolean isBackFromPicker() {
+        boolean isBacked = this.getIntent().getBooleanExtra("fromPicker", false) && this.getIntent().getBooleanExtra("picked", false);
+        if (isBacked) {
+            return true;
+        }
+        return false;
     }
 
 }
