@@ -12,10 +12,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.uberclone.Extras.Adapters.RequestsAdapter;
+import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver.FireBaseCallBackDriverCar;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver.FireBaseCallBackDriverLocation;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackEndRiderLocation;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
@@ -95,7 +95,7 @@ public class ShowNearestRequesters extends AppCompatActivity {
                     public void onCallbackCurrentRiderLocation(ArrayList<RiderLocation> currentlocations) {
                         getAllEndLocations(new FireBaseCallbackEndRiderLocation() {
                             @Override
-                            public void onCallbackCurrentRiderLocation(ArrayList<RiderLocation> endlocations) {
+                            public void onCallbackEndRiderLocation(ArrayList<RiderLocation> endlocations) {
                                 getDriverLocation(new FireBaseCallBackDriverLocation() {
                                     @Override
                                     public void onCallBackDriverLocation(DriverLocation driverLocation) {
@@ -105,7 +105,7 @@ public class ShowNearestRequesters extends AppCompatActivity {
                                             imgs = getImgs(requestes.size());
                                             requestsAdapter = new RequestsAdapter(ShowNearestRequesters.this, riders, addresses_currentLocation, imgs);
                                             nearestListView.setAdapter(requestsAdapter);
-                                           addClickListenerOnList(nearestListView, riders, addresses_currentLocation,currentlocations,endlocations,driverLocation);
+                                            addClickListenerOnList(nearestListView, riders, addresses_currentLocation, currentlocations, endlocations, driverLocation);
 
                                         } else {
                                             Log.w("Problem withs lists", "Requests list (" + requestes.size() + "), current locations list (" + currentlocations.size() + "), end locations list (" + endlocations.size() + ") not same size");
@@ -120,21 +120,21 @@ public class ShowNearestRequesters extends AppCompatActivity {
         });
     }
 
-    public void addClickListenerOnList(ListView listOfRequests, String[] users, String[] currentAdresses,ArrayList<RiderLocation> currentRiderLocs,ArrayList<RiderLocation> endRiderLocs,DriverLocation driverLocation) {
+    public void addClickListenerOnList(ListView listOfRequests, String[] users, String[] currentAdresses, ArrayList<RiderLocation> currentRiderLocs, ArrayList<RiderLocation> endRiderLocs, DriverLocation driverLocation) {
         listOfRequests.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent toPopUp = new Intent(ShowNearestRequesters.this,RequesterPopUp.class);
-                toPopUp.putExtra("username_rider",users[position]);
-                toPopUp.putExtra("current address",currentAdresses[position]);
-                toPopUp.putExtra("currentlocation_latitude",currentRiderLocs.get(position).getRider_latitude());
-                toPopUp.putExtra("currentlocation_longitude",currentRiderLocs.get(position).getRider_longitude());
-                toPopUp.putExtra("endlocation_latitude",endRiderLocs.get(position).getRider_latitude());
-                toPopUp.putExtra("endlocation_longitude",endRiderLocs.get(position).getRider_latitude());
-                toPopUp.putExtra("avatar image",imgs[position]);
-                toPopUp.putExtra("diver name",nameOfDriver);
-                toPopUp.putExtra("driver location_latitude",driverLocation.getDriver_latitude());
-                toPopUp.putExtra("driver location_longitude",driverLocation.getDriver_longitude());
+                Intent toPopUp = new Intent(ShowNearestRequesters.this, RequesterPopUp.class);
+                toPopUp.putExtra("username_rider", users[position]);
+                toPopUp.putExtra("current address", currentAdresses[position]);
+                toPopUp.putExtra("currentlocation_latitude", currentRiderLocs.get(position).getRider_latitude());
+                toPopUp.putExtra("currentlocation_longitude", currentRiderLocs.get(position).getRider_longitude());
+                toPopUp.putExtra("endlocation_latitude", endRiderLocs.get(position).getRider_latitude());
+                toPopUp.putExtra("endlocation_longitude", endRiderLocs.get(position).getRider_latitude());
+                toPopUp.putExtra("avatar image", imgs[position]);
+                toPopUp.putExtra("diver name", nameOfDriver);
+                toPopUp.putExtra("driver location_latitude", driverLocation.getDriver_latitude());
+                toPopUp.putExtra("driver location_longitude", driverLocation.getDriver_longitude());
 
                 startActivity(toPopUp);
             }
@@ -180,11 +180,10 @@ public class ShowNearestRequesters extends AppCompatActivity {
             addresses = geocoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1);
 
             if (addresses.size() > 0 && addresses != null) {
-                if (!addresses.get(0).getThoroughfare().equals("") || addresses.get(0).getThoroughfare() != null){
+                if (!addresses.get(0).getThoroughfare().equals("") || addresses.get(0).getThoroughfare() != null) {
                     streetsname += addresses.get(0).getThoroughfare();
-                }
-                else{
-                    Log.e("Problem with streetname","Can not get streetname from geocoder-> NullPointerException or empty");
+                } else {
+                    Log.e("Problem with streetname", "Can not get streetname from geocoder-> NullPointerException or empty");
                 }
             } else {
                 Log.e("Geocoder problem", "Problem to get addresses from geocoder- List null or empty");
@@ -225,107 +224,133 @@ public class ShowNearestRequesters extends AppCompatActivity {
     }
 
     public void getAllRequesters(FireBaseCallbackUsername fireBaseCallbackUsername) {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference();
-
-        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+        getDriversCarCategory(new FireBaseCallBackDriverCar() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    Log.i("Number of users", String.valueOf(snapshot.getChildrenCount()));
+            public void onCallBackDriverCarCategory(String driversCarCategory) {
+                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                DatabaseReference root = firebaseDatabase.getReference();
 
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        if (!dataSnapshot.getKey().equalsIgnoreCase("test")) {
-                            String requester = dataSnapshot.getKey();
+                root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            Log.i("Number of users", String.valueOf(snapshot.getChildrenCount()));
 
-                            Log.i("User in list", requester);
-                            requesters.add(requester);
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                if (!dataSnapshot.getKey().equalsIgnoreCase("test")) {
+                                    String requester = dataSnapshot.getKey();
+                                    String pickedCar = String.valueOf(dataSnapshot.child("Picked car").getValue());
+
+                                    if (pickedCar.equalsIgnoreCase(driversCarCategory)) {
+                                        requesters.add(requester);
+                                    }
+                                }
+                            }
+
+                            Log.i("Check drivers", requesters.toString() + " with " + driversCarCategory + " picked category");
+                            fireBaseCallbackUsername.onCallbackUsername(requesters);
+                        } else {
+                            Log.w("Request list", "Check path to find user in database");
                         }
                     }
 
-                    fireBaseCallbackUsername.onCallbackUsername(requesters);
-                } else {
-                    Log.w("Request list", "Check path to find user in database");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Database error", error.getMessage());
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("Database error", error.getMessage());
+                    }
+                });
             }
         });
     }
 
     public void getAllCurrentLocations(FirebaseCallBackCurrentRiderLocation firebaseCallBackCurrentRiderLocation) {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference();
-
-        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+        getDriversCarCategory(new FireBaseCallBackDriverCar() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
+            public void onCallBackDriverCarCategory(String driversCarCategory) {
+                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                DatabaseReference root = firebaseDatabase.getReference();
 
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        if (!dataSnapshot.getKey().equalsIgnoreCase("test")) {
-                            double latitude = java.lang.Double.parseDouble(String.valueOf(dataSnapshot.child("Current location").child("rider_latitude").getValue()));
-                            double longitude = java.lang.Double.parseDouble(String.valueOf(dataSnapshot.child("Current location").child("rider_longitude").getValue()));
+                root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
 
-                            RiderLocation currentRiderLocation = new RiderLocation(latitude, longitude);
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                if (!dataSnapshot.getKey().equalsIgnoreCase("test")) {
 
-                            Log.i("Check current location", dataSnapshot.getKey() + "'s current location [" + currentRiderLocation.getRider_latitude() + ";" + currentRiderLocation.getRider_longitude() + "] added in list");
+                                    String pickedCar = String.valueOf(dataSnapshot.child("Picked car").getValue());
 
-                            currentRiderLocs.add(currentRiderLocation);
+                                    if (pickedCar.equalsIgnoreCase(driversCarCategory)) {
+                                        double latitude = java.lang.Double.parseDouble(String.valueOf(dataSnapshot.child("Current location").child("rider_latitude").getValue()));
+                                        double longitude = java.lang.Double.parseDouble(String.valueOf(dataSnapshot.child("Current location").child("rider_longitude").getValue()));
 
+                                        RiderLocation currentRiderLocation = new RiderLocation(latitude, longitude);
+
+                                        Log.i("Check current location", dataSnapshot.getKey() + "'s current location [" + currentRiderLocation.getRider_latitude() + ";" + currentRiderLocation.getRider_longitude() + "] added in list");
+
+                                        currentRiderLocs.add(currentRiderLocation);
+                                    }
+                                }
+                            }
+                            firebaseCallBackCurrentRiderLocation.onCallbackCurrentRiderLocation(currentRiderLocs);
+                        } else {
+                            Log.w("Request list", "Check path to find user in database");
                         }
                     }
 
-                    firebaseCallBackCurrentRiderLocation.onCallbackCurrentRiderLocation(currentRiderLocs);
-                } else {
-                    Log.w("Request list", "Check path to find user in database");
-                }
-            }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("Database problem", error.getMessage());
+                    }
+                });
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Database problem", error.getMessage());
             }
         });
-
     }
 
     public void getAllEndLocations(FireBaseCallbackEndRiderLocation firebaseCallBackEndRiderLocation) {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference();
+       getDriversCarCategory(new FireBaseCallBackDriverCar() {
+           @Override
+           public void onCallBackDriverCarCategory(String driversCarCategory) {
+               FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+               DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
+               root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+                   @Override
+                   public void onDataChange(@NonNull DataSnapshot snapshot) {
+                       if (snapshot.exists()) {
 
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        if (!dataSnapshot.getKey().equalsIgnoreCase("test")) {
-                            double latitude = java.lang.Double.parseDouble(String.valueOf(dataSnapshot.child("End location").child("rider_latitude").getValue()));
-                            double longitude = java.lang.Double.parseDouble(String.valueOf(dataSnapshot.child("End location").child("rider_longitude").getValue()));
+                           for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                               if (!dataSnapshot.getKey().equalsIgnoreCase("test")) {
 
-                            RiderLocation endRiderLocation = new RiderLocation(latitude, longitude);
+                                   String pickedCar = String.valueOf(dataSnapshot.child("Picked car").getValue());
 
-                            Log.i("Check current location", dataSnapshot.getKey() + "'s current location [" + endRiderLocation.getRider_latitude() + ";" + endRiderLocation.getRider_longitude() + "] added in list");
+                                   if (pickedCar.equalsIgnoreCase(driversCarCategory)){
+                                       double latitude = java.lang.Double.parseDouble(String.valueOf(dataSnapshot.child("End location").child("rider_latitude").getValue()));
+                                       double longitude = java.lang.Double.parseDouble(String.valueOf(dataSnapshot.child("End location").child("rider_longitude").getValue()));
 
-                            endRiderLocs.add(endRiderLocation);
-                        }
-                    }
+                                       RiderLocation endRiderLocation = new RiderLocation(latitude, longitude);
 
-                    firebaseCallBackEndRiderLocation.onCallbackCurrentRiderLocation(endRiderLocs);
-                } else {
-                    Log.w("Request list", "Check path to find user in database");
-                }
-            }
+                                       Log.i("Check current location", dataSnapshot.getKey() + "'s current location [" + endRiderLocation.getRider_latitude() + ";" + endRiderLocation.getRider_longitude() + "] added in list");
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Database problem", error.getMessage());
-            }
-        });
+                                       endRiderLocs.add(endRiderLocation);
+                                   }
+                               }
+                           }
+
+                           firebaseCallBackEndRiderLocation.onCallbackEndRiderLocation(endRiderLocs);
+                       } else {
+                           Log.w("Request list", "Check path to find user in database");
+                       }
+                   }
+
+                   @Override
+                   public void onCancelled(@NonNull DatabaseError error) {
+                       Log.e("Database problem", error.getMessage());
+                   }
+               });
+           }
+       });
 
     }
 
@@ -366,5 +391,34 @@ public class ShowNearestRequesters extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void getDriversCarCategory(FireBaseCallBackDriverCar fireBaseCallBackDriverCar) {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("User").child("Driver").child(nameOfDriver).child("Car").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    if (snapshot.hasChildren()) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            String carcategory = dataSnapshot.getKey();
+                            fireBaseCallBackDriverCar.onCallBackDriverCarCategory(carcategory);
+                        }
+                    } else {
+                        Log.e("Driver's car", "Failed to get car's category from driver in database");
+                    }
+
+                } else {
+                    Log.e("Car's category", "Problem to find driver's path in database");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Database problem", error.getMessage());
+            }
+        });
     }
 }

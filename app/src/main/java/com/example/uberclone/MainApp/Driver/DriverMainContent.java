@@ -310,7 +310,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     public void getRiderRequesters(FireBaseCallbackUsername fireBaseCallback) {
        getDriverCategory(new FireBaseCallBackDriverCar() {
            @Override
-           public void onCallBackDriverCarCategory(String carcategory) {
+           public void onCallBackDriverCarCategory(String driversCarCategory) {
                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                DatabaseReference root = firebaseDatabase.getReference();
 
@@ -322,7 +322,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
 
                                String pickedCar = String.valueOf(dataSnapshot.child("Picked car").getValue());
 
-                               if (!dataSnapshot.getKey().equals("test") && pickedCar.equalsIgnoreCase(carcategory)){
+                               if (!dataSnapshot.getKey().equals("test") && pickedCar.equalsIgnoreCase(driversCarCategory)){
                                    riders_requesters.add(String.valueOf(dataSnapshot.getKey()));}
                            }
 
@@ -347,7 +347,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     public void getRiderLatitudes(FireBaseCallbackLatitude fireBaseCallbackLatitude) {
        getDriverCategory(new FireBaseCallBackDriverCar() {
            @Override
-           public void onCallBackDriverCarCategory(String carcategory) {
+           public void onCallBackDriverCarCategory(String driversCarCategory) {
                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                DatabaseReference root = firebaseDatabase.getReference();
 
@@ -361,7 +361,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
 
                                String pickedCar = String.valueOf(dataSnapshot.child("Picked car").getValue());
 
-                               if (!dataSnapshot.getKey().equals("test") && pickedCar.equalsIgnoreCase(carcategory)) {
+                               if (!dataSnapshot.getKey().equals("test") && pickedCar.equalsIgnoreCase(driversCarCategory)) {
                                    java.lang.Double latitude = java.lang.Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_latitude").getValue()));
                                    latitudes.add(latitude);
                                }
@@ -387,7 +387,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     public void getRiderLongitude(FireBaseCallbackLongitude fireBaseCallbackLongitude) {
         getDriverCategory(new FireBaseCallBackDriverCar() {
             @Override
-            public void onCallBackDriverCarCategory(String carcategory) {
+            public void onCallBackDriverCarCategory(String driversCarCategory) {
                 FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                 DatabaseReference root = firebaseDatabase.getReference();
 
@@ -399,7 +399,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
                                 String pickedCar = String.valueOf(dataSnapshot.child("Picked car").getValue());
-                                if (!dataSnapshot.getKey().equals("test") && pickedCar.equalsIgnoreCase(carcategory)){
+                                if (!dataSnapshot.getKey().equals("test") && pickedCar.equalsIgnoreCase(driversCarCategory)){
                                     java.lang.Double longitude = java.lang.Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_longitude").getValue()));
                                     longitudes.add(longitude);
                                 }
@@ -437,7 +437,9 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                            String carcategory = dataSnapshot.getKey();
                            fireBaseCallBackDriverCar.onCallBackDriverCarCategory(carcategory);
                        }
-
+                    }
+                    else{
+                        Log.e("Driver's car","Failed to get car's category from driver in database");
                     }
                 }
                 else{
