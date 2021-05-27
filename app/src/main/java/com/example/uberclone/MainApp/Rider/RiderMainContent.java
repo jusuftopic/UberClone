@@ -287,6 +287,14 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         });
     }
 
+    public boolean isBackFromPicker() {
+        boolean isBacked = this.getIntent().getBooleanExtra("fromPicker", false) && this.getIntent().getBooleanExtra("picked", false);
+        if (isBacked) {
+            return true;
+        }
+        return false;
+    }
+
     public void handleActivityUserComeFrom() {
         if (!isBackFromPicker()){
             nameOfRider = getNameOfRider();
@@ -301,20 +309,6 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         }
 
     }
-
-   /* public void handleInfosAfterCarPick() {
-        boolean pickFinished = this.getIntent().getBooleanExtra("fromPicker", false) && this.getIntent().getBooleanExtra("picked", false);
-        String username_pick = this.getIntent().getStringExtra("nameOfRider");
-
-        if (pickFinished && username_pick != null) {
-            nameOfRider = username_pick;
-            callUber.setEnabled(true);
-            changeButtonInfos(true, "Cancle call");
-            setMarkerOnEndLocation(nameOfRider);
-        } else {
-            checkIfTheRequestExists(nameOfRider);
-        }
-    }*/
 
     public void checkIfTheRequestExists(String username) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -401,13 +395,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         return this.getIntent().getStringExtra("ridername from card activity") != null ? this.getIntent().getStringExtra("ridername from card activity") : this.getIntent().getStringExtra("ridername from login");
     }
 
-    //TODO- delete temporary
-    public boolean isBackFromPicker() {
-        boolean isBacked = this.getIntent().getBooleanExtra("fromPicker", false) && this.getIntent().getBooleanExtra("picked", false);
-        if (isBacked) {
-            return true;
-        }
-        return false;
-    }
+
+
 
 }
