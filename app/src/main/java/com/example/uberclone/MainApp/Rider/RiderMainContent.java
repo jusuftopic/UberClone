@@ -203,11 +203,48 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
                         Location lastKnownLocation = getLastKnownLocation();
                         if (lastKnownLocation != null) {
                             addCurrentLocationInDatabase(lastKnownLocation);
+                           // addMarkerOfUsersEndLocation(nameOfRider);
                         }
                     }
                 });
 
         dialogBuilder.create().show();
+    }
+
+
+    //TODO add in dialog
+    public void addMarkerOfUsersEndLocation(String ridersUsername){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child(ridersUsername).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if (snapshot.exists()){
+
+                    double endLatitude = Double.parseDouble(String.valueOf(snapshot.child("End location").child("rider_latitude").getValue()));
+                    double endLongitude = Double.parseDouble(String.valueOf(snapshot.child("End location").child("rider_longitude").getValue()));
+
+                    setMarkerOnAlreadyRequestedRiders(nameOfRider,endLatitude,endLongitude);
+
+                }
+                else{
+                    Log.e("Rider's username","Failed to find "+ridersUsername+" in database");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull  DatabaseError error) {
+                Log.e("Database error",error.getMessage());
+            }
+        });
+    }
+
+    public void setMarkerOnAlreadyRequestedRiders(String username,double latitude, double longitude){
+        LatLng endPosition = new LatLng(latitude,longitude);
+
+        mMap.addMarker(new MarkerOptions().position(endPosition).title(username).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(endPosition));
     }
 
     public void addEndLocationToDatabase(RiderLocation location) {
