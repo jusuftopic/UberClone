@@ -426,17 +426,18 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("User").child("Driver").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child("User").child("Driver").child(nameOfDriver).child("Car").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull  DataSnapshot snapshot) {
                 if (snapshot.exists()){
-                    String carcategory = snapshot.child("Car").getKey();
 
-                    if (carcategory != null && !carcategory.equals("")){
-                        fireBaseCallBackDriverCar.onCallBackDriverCarCategory(carcategory);
-                    }
-                    else{
-                        Log.e("Car category: ","Problem to get category of user's car");
+                    if (snapshot.hasChildren()){
+                       for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                           //TODO I know, it is only one car category, but refactor if it is something wrong and driver has more then one added category
+                           String carcategory = dataSnapshot.getKey();
+                           fireBaseCallBackDriverCar.onCallBackDriverCarCategory(carcategory);
+                       }
+
                     }
                 }
                 else{
