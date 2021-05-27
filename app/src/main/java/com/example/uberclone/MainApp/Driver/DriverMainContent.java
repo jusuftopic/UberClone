@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver.FireBaseCallBackDriverCar;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLatitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLongitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
@@ -71,7 +72,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                     lastKnownLocation = getLastKnownLocation();
                     updateLocation(lastKnownLocation);
                     addDriverInDatabaseNoAccepted(lastKnownLocation);
-                    setMarkersOnMap();
+                  //  setMarkersOnMap();
                     //setClickListenerOnMarker();
                 }
             }
@@ -259,21 +260,6 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         });
     }
 
-  /*  public void setClickListenerOnMarker() {
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                acceptRequestButton.setEnabled(true);
-                if (marker.getTitle() != null && !marker.getTitle().equals("")) {
-                    acceptedRider = marker.getTitle();
-                    acceptedLocation = marker.getPosition();
-                } else {
-                    Log.e("Marker title", "Problem to find marker title for accept\nMarker title: " + marker.getTitle());
-                }
-                return true;
-            }
-        });
-    }*/
 
     public void addDriverInDatabaseNoAccepted(Location location) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -322,97 +308,145 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     }
 
     public void getRiderRequesters(FireBaseCallbackUsername fireBaseCallback) {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference();
+       getDriverCategory(new FireBaseCallBackDriverCar() {
+           @Override
+           public void onCallBackDriverCarCategory(String carcategory) {
+               FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+               DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
+               root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+                   @Override
+                   public void onDataChange(@NonNull DataSnapshot snapshot) {
+                       if (snapshot.exists()) {
+                           for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        if (!dataSnapshot.getKey().equals("test")){
-                        riders_requesters.add(String.valueOf(dataSnapshot.getKey()));}
-                    }
+                               String pickedCar = String.valueOf(dataSnapshot.child("Picked car").getValue());
 
-                    fireBaseCallback.onCallbackUsername(riders_requesters);
-                } else {
-                    Log.e("Database problem", "Can not find Rider Calls path");
-                }
-            }
+                               if (!dataSnapshot.getKey().equals("test") && pickedCar.equalsIgnoreCase(carcategory)){
+                                   riders_requesters.add(String.valueOf(dataSnapshot.getKey()));}
+                           }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Database problem", error.getMessage());
-            }
-        });
+                           fireBaseCallback.onCallbackUsername(riders_requesters);
 
+                           Log.i("Added drivers",riders_requesters.toString());
+                       } else {
+                           Log.e("Database problem", "Can not find Rider Calls path");
+                       }
+                   }
+
+                   @Override
+                   public void onCancelled(@NonNull DatabaseError error) {
+                       Log.e("Database problem", error.getMessage());
+                   }
+               });
+
+           }
+       });
     }
 
     public void getRiderLatitudes(FireBaseCallbackLatitude fireBaseCallbackLatitude) {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference();
+       getDriverCategory(new FireBaseCallBackDriverCar() {
+           @Override
+           public void onCallBackDriverCarCategory(String carcategory) {
+               FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+               DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    Log.i("Number of users", String.valueOf(snapshot.getChildrenCount()));
+               root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+                   @Override
+                   public void onDataChange(@NonNull DataSnapshot snapshot) {
+                       if (snapshot.exists()) {
+                           Log.i("Number of users", String.valueOf(snapshot.getChildrenCount()));
 
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        if (!dataSnapshot.getKey().equals("test")){
-                        Log.i("Requester", dataSnapshot.getKey());
-                        java.lang.Double latitude = java.lang.Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_latitude").getValue()));
-                        Log.i("Latitude added", latitude + " added in database");
-                        latitudes.add(latitude);
-                        Log.i("Check", latitudes.get(0).toString());}
-                    }
+                           for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
-                    Log.i("Check2", latitudes.toString());
-                    fireBaseCallbackLatitude.onCallbackLatitude(latitudes);
-                } else {
-                    Log.e("Database problem", "Path Rider Calls not recognized");
-                }
-            }
+                               String pickedCar = String.valueOf(dataSnapshot.child("Picked car").getValue());
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                               if (!dataSnapshot.getKey().equals("test") && pickedCar.equalsIgnoreCase(carcategory)) {
+                                   java.lang.Double latitude = java.lang.Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_latitude").getValue()));
+                                   latitudes.add(latitude);
+                               }
+                           }
 
-            }
-        });
+                           Log.i("Latitude list: ", latitudes.toString());
+                           fireBaseCallbackLatitude.onCallbackLatitude(latitudes);
+                       } else {
+                           Log.e("Database problem", "Path Rider Calls not recognized");
+                       }
+                   }
+                   @Override
+                   public void onCancelled(@NonNull DatabaseError error) {
+                       Log.e("Database error",error.getMessage());
+                   }
+               });
 
+           }
+       });
 
     }
 
     public void getRiderLongitude(FireBaseCallbackLongitude fireBaseCallbackLongitude) {
+        getDriverCategory(new FireBaseCallBackDriverCar() {
+            @Override
+            public void onCallBackDriverCarCategory(String carcategory) {
+                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                DatabaseReference root = firebaseDatabase.getReference();
+
+                root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            Log.i("Number of users", String.valueOf(snapshot.getChildrenCount()));
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+
+                                String pickedCar = String.valueOf(dataSnapshot.child("Picked car").getValue());
+                                if (!dataSnapshot.getKey().equals("test") && pickedCar.equalsIgnoreCase(carcategory)){
+                                    java.lang.Double longitude = java.lang.Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_longitude").getValue()));
+                                    longitudes.add(longitude);
+                                }
+                            }
+
+                            fireBaseCallbackLongitude.onCallBackLongitude(longitudes);
+                            Log.i("Longitude list: ",longitudes.toString());
+                        } else {
+                            Log.e("Database problem", "Path Rider Calls not recognized");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("Database error", error.getMessage());
+                    }
+                });
+            }
+        });
+
+    }
+
+    public void getDriverCategory(FireBaseCallBackDriverCar fireBaseCallBackDriverCar){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child("User").child("Driver").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    Log.i("Number of users", String.valueOf(snapshot.getChildrenCount()));
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    String carcategory = snapshot.child("Car").getKey();
 
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        if (!dataSnapshot.getKey().equals("test")){
-                        Log.i("Requester", dataSnapshot.getKey());
-                        java.lang.Double longitude = java.lang.Double.parseDouble(String.valueOf(snapshot.child(dataSnapshot.getKey()).child("Current location").child("rider_longitude").getValue()));
-                        Log.i("Longitude added", longitude + " added in database");
-                        longitudes.add(longitude);
-                        Log.i("Check", longitudes.get(0).toString());}
+                    if (carcategory != null && !carcategory.equals("")){
+                        fireBaseCallBackDriverCar.onCallBackDriverCarCategory(carcategory);
                     }
-
-                    Log.i("Check2", longitudes.toString());
-                    fireBaseCallbackLongitude.onCallBackLongitude(longitudes);
-                } else {
-                    Log.e("Database problem", "Path Rider Calls not recognized");
+                    else{
+                        Log.e("Car category: ","Problem to get category of user's car");
+                    }
+                }
+                else{
+                    Log.e("Driver's name","Problem to get driver's name for car category");
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Database error", error.getMessage());
+            public void onCancelled(@NonNull  DatabaseError error) {
+                Log.e("Database problems",error.getMessage());
             }
         });
     }
