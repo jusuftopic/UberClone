@@ -3,6 +3,8 @@ package com.example.uberclone.Modules.Car;
 import android.graphics.Color;
 import android.location.Location;
 
+import java.util.ArrayList;
+
 public class UberExpressPool extends Car {
 
     public static final int MAX_NUMBER_OF_PASSENGERS = 4;
@@ -12,17 +14,18 @@ public class UberExpressPool extends Car {
     public static final double MIN_PRICE_RANGE = 1.1;
     public static final double MAX_PRICE_RANGE = 2.6;
 
-    private Location locationToWait;
+    private ArrayList<Location> spots;
 
-    public UberExpressPool(String autoname, int numberOfDoors, int maxPassengers, Location locationToWait,double price_per_km){
+    public UberExpressPool(String autoname, int numberOfDoors, int maxPassengers, ArrayList<Location> spots,double price_per_km){
         super(autoname,numberOfDoors,maxPassengers, price_per_km);
-        this.locationToWait = locationToWait;
+        this.spots = spots;
     }
 
-    public void setLocationToWait(Location locationToWait){
-        this.locationToWait = locationToWait;
+    public ArrayList<Location> getSpots() {
+        return spots;
     }
-    public Location getLocationToWait(){
-        return this.locationToWait;
+
+    public void setSpots(ArrayList<Location> spots) {
+        this.spots = spots;
     }
 }
