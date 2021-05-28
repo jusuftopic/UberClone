@@ -85,7 +85,7 @@ public class UberWAVDetails extends AppCompatActivity {
                             }
                         }
                         else {
-                            setWarning("UberLux need to pass certification");
+                            setWarning("UberWAV need to pass certification");
                         }
                     }
                     else{
@@ -108,26 +108,26 @@ public class UberWAVDetails extends AppCompatActivity {
     }
 
     public boolean isValidUberLux(UberWAV uberWAV){
-        if (uberWAV.isValidNumberOfPassangers(UberLux.MAX_NUMBER_OF_PASSENGERS)){
-            if (uberWAV.isValidNumberOfDoors(UberLux.MAX_NUMBER_OF_DOORS)){
-                if (uberWAV.isValidPrice(UberLux.MIN_PRICE_RANGE,UberLux.MAX_PRICE_RANGE)){
+        if (uberWAV.isValidNumberOfPassangers(UberWAV.MAX_NUMBER_OF_PASSENGERS)){
+            if (uberWAV.isValidNumberOfDoors(UberWAV.MAX_NUMBER_OF_DOORS)){
+                if (uberWAV.isValidPrice(UberWAV.MIN_PRICE_RANGE,UberWAV.MAX_PRICE_RANGE)){
                     if (uberWAV.isValideUberWAV()){
                         return true;
                     }
                     else{
-                        setWarning("UberLux need to have commercial registration and insurance");
+                        setWarning("UberWAV need to have commercial registration and insurance");
                     }
                 }
                 else{
-                    setWarning("Price musst be between " + UberLux.MIN_PRICE_RANGE + " and " + UberLux.MAX_PRICE_RANGE);
+                    setWarning("Price musst be between " + UberWAV.MIN_PRICE_RANGE + " and " + UberWAV.MAX_PRICE_RANGE);
                 }
             }
             else{
-                setWarning("UberLux need to have minumum 1 and maximum "+ UberLux.MAX_NUMBER_OF_DOORS+ " doors");
+                setWarning("UberWAV need to have minumum 1 and maximum "+ UberWAV.MAX_NUMBER_OF_DOORS+ " doors");
             }
         }
         else{
-            setWarning("UberLux need to have maximum "+ UberLux.MAX_NUMBER_OF_PASSENGERS +" passangers");
+            setWarning("UberWAV need to have maximum "+ UberWAV.MAX_NUMBER_OF_PASSENGERS +" passangers");
         }
         return false;
     }
