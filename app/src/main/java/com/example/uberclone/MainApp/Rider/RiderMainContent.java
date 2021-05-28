@@ -203,8 +203,9 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
                         Location lastKnownLocation = getLastKnownLocation();
                         if (lastKnownLocation != null) {
                             addCurrentLocationInDatabase(lastKnownLocation);
-                           // addMarkerOfUsersEndLocation(nameOfRider);
                         }
+                        addMarkerOfUsersEndLocation(nameOfRider);
+                        callUber.setEnabled(true);
                     }
                 });
 
@@ -212,12 +213,12 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
     }
 
 
-    //TODO add in dialog
+
     public void addMarkerOfUsersEndLocation(String ridersUsername){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requests").child(ridersUsername).addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child("Requests").child("Rider Calls").child(ridersUsername).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull  DataSnapshot snapshot) {
                 if (snapshot.exists()){
