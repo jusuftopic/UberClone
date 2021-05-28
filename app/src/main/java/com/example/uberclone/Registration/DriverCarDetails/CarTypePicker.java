@@ -21,7 +21,7 @@ import com.example.uberclone.Modules.Car.UberX;
 import com.example.uberclone.Modules.Car.UberXL;
 import com.example.uberclone.R;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberBlackDetails;
-import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberExpressPoolDetails;
+import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberExpressPoolDetails.UberExpressPoolDetails;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberLuxDetails;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberSUVDetails;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberSelectDetails;

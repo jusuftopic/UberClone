@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.example.uberclone.MainApp.Driver.DriverMainContent;
 import com.example.uberclone.Modules.Car.CarMarks.CarMarks;
-import com.example.uberclone.Modules.Car.UberLux;
 import com.example.uberclone.Modules.Car.UberWAV;
 import com.example.uberclone.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -77,7 +76,7 @@ public class UberWAVDetails extends AppCompatActivity {
 
                             UberWAV uberWAV = new UberWAV(uberWAV_makname,Integer.parseInt(uberWAV_maxDoors),Integer.parseInt(uberWAV_maxPassangers),uberWAV_wheelchairEqipment,uberWAV_passcertification,Double.parseDouble(uberWAV_price));
 
-                            if (isValidUberLux(uberWAV)){
+                            if (isValidUberWAV(uberWAV)){
                                 addUberLuxInDatabase(uberWAV);
                                 Intent toMain = new Intent(UberWAVDetails.this, DriverMainContent.class);
                                 toMain.putExtra("drivername from cardetails",nameOfDriver);
@@ -107,7 +106,7 @@ public class UberWAVDetails extends AppCompatActivity {
 
     }
 
-    public boolean isValidUberLux(UberWAV uberWAV){
+    public boolean isValidUberWAV(UberWAV uberWAV){
         if (uberWAV.isValidNumberOfPassangers(UberWAV.MAX_NUMBER_OF_PASSENGERS)){
             if (uberWAV.isValidNumberOfDoors(UberWAV.MAX_NUMBER_OF_DOORS)){
                 if (uberWAV.isValidPrice(UberWAV.MIN_PRICE_RANGE,UberWAV.MAX_PRICE_RANGE)){

@@ -28,6 +28,8 @@ public class SpotPicker extends FragmentActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private ActivityMainBinding binding;
 
+    private String nameOfDriver;
+
     private LocationManager locationManager;
     private LocationListener locationListener;
 
@@ -52,6 +54,8 @@ public class SpotPicker extends FragmentActivity implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        nameOfDriver = getNameOfDriver();
     }
 
     /**
@@ -119,5 +123,13 @@ public class SpotPicker extends FragmentActivity implements OnMapReadyCallback {
         }
     }
 
+    public String getNameOfDriver(){
+        if (this.getIntent().getStringExtra("driver name for spots") != null && !this.getIntent().getStringExtra("driver name for spots").equalsIgnoreCase("")){
+            return this.getIntent().getStringExtra("driver name for spots");
+        }
+
+        Log.e("Name of rider","Problem to get name of rider from intetn");
+        return null;
+    }
 
 }
