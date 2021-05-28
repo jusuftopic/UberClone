@@ -21,6 +21,7 @@ import com.example.uberclone.Modules.Car.UberX;
 import com.example.uberclone.Modules.Car.UberXL;
 import com.example.uberclone.R;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberBlackDetails;
+import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberLuxDetails;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberSUVDetails;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberSelectDetails;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberXDetails;
@@ -136,6 +137,11 @@ public class CarTypePicker extends AppCompatActivity {
                   Intent toUberSelect = new Intent(CarTypePicker.this, UberSelectDetails.class);
                   toUberSelect.putExtra("driver from picker",nameOfDriver);
                   startActivity(toUberSelect);
+
+              case "UberLux":
+                  Intent toUberLux = new Intent(CarTypePicker.this, UberLuxDetails.class);
+                  toUberLux.putExtra("driver from picker",nameOfDriver);
+                  startActivity(toUberLux);
           }
         }
         else{
