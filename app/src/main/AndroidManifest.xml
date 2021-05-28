@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.uberclone">
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -16,10 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UberClone">
-        <activity android:name=".MainApp.Driver.ShowNearestRequesters"></activity>
-        <activity android:name=".Registration.DriverCarDetails.CarInformations.UberBlackDetails" />
-        <activity android:name=".MainApp.Rider.ChooseUberCar" />
-        <activity android:name=".Registration.DriverCarDetails.CarInformations.UberSelectDetails" />
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -31,6 +29,22 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".Registration.DriverCarDetails.CarInformations.UberExpressPoolDetails.SpotPicker"
+            android:label="@string/title_activity_maps"></activity>
+        <activity android:name=".Registration.DriverCarDetails.CarInformations.UberExpressPoolDetails.UberExpressPoolDetails" />
+        <activity android:name=".Registration.DriverCarDetails.CarInformations.UberWAVDetails" />
+        <activity android:name=".Registration.DriverCarDetails.CarInformations.UberLuxDetails" />
+        <activity android:name=".MainApp.Driver.RequesterPopUp" />
+        <activity android:name=".MainApp.Driver.ShowNearestRequesters" />
+        <activity android:name=".Registration.DriverCarDetails.CarInformations.UberBlackDetails" />
+        <activity android:name=".MainApp.Rider.ChooseUberCar" />
+        <activity android:name=".Registration.DriverCarDetails.CarInformations.UberSelectDetails" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <activity
             android:name=".MainApp.Driver.DriverMainContent"
