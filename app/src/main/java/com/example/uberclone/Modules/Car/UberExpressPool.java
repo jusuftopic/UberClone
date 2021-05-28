@@ -9,8 +9,6 @@ public class UberExpressPool extends Car {
 
     public static final int MAX_NUMBER_OF_DOORS = 4;
 
-
-
     public static final double MIN_PRICE_RANGE = 1.1;
     public static final double MAX_PRICE_RANGE = 2.6;
 

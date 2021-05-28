@@ -21,6 +21,7 @@ import com.example.uberclone.Modules.Car.UberX;
 import com.example.uberclone.Modules.Car.UberXL;
 import com.example.uberclone.R;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberBlackDetails;
+import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberExpressPoolDetails;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberLuxDetails;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberSUVDetails;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberSelectDetails;
@@ -87,10 +88,14 @@ public class CarTypePicker extends AppCompatActivity {
                         break;
 
                     case 5:
-                        category = "UberLux";
+                        category = "UberExpressPool";
                         break;
 
                     case 6:
+                        category = "UberLux";
+                        break;
+
+                    case 7:
                         category = "UberWAV";
                         break;
 
@@ -148,6 +153,11 @@ public class CarTypePicker extends AppCompatActivity {
                   Intent toUberWAV = new Intent(CarTypePicker.this, UberWAVDetails.class);
                   toUberWAV.putExtra("driver from picker",nameOfDriver);
                   startActivity(toUberWAV);
+
+              case "UberExpressPool":
+                  Intent toUberExpressPool = new Intent(CarTypePicker.this, UberExpressPoolDetails.class);
+                  toUberExpressPool.putExtra("driver from picker",nameOfDriver);
+                  startActivity(toUberExpressPool);
           }
         }
         else{
