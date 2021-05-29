@@ -5,6 +5,8 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -14,6 +16,7 @@ import android.util.Log;
 
 import com.example.uberclone.R;
 import com.example.uberclone.databinding.ActivityMainBinding;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -21,6 +24,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 
 public class SpotPicker extends FragmentActivity implements OnMapReadyCallback {
@@ -32,6 +40,11 @@ public class SpotPicker extends FragmentActivity implements OnMapReadyCallback {
 
     private LocationManager locationManager;
     private LocationListener locationListener;
+
+    private ArrayList<Location> spots;
+    private int markerCounter;
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, @NonNull  int[] grantResults) {
@@ -56,6 +69,9 @@ public class SpotPicker extends FragmentActivity implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
 
         nameOfDriver = getNameOfDriver();
+
+        spots = new ArrayList<>();
+        markerCounter = 0;
     }
 
     /**
@@ -89,6 +105,8 @@ public class SpotPicker extends FragmentActivity implements OnMapReadyCallback {
         };
 
         checkLocationPerission();
+
+        addSpotPoints();
     }
 
     public void checkLocationPerission(){
@@ -100,12 +118,43 @@ public class SpotPicker extends FragmentActivity implements OnMapReadyCallback {
         }
     }
 
+    public void addSpotPoints(){
+        if (markerCounter <= 5){
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    String address = getAddressFromLatLang(latLng);
+                    mMap.addMarker(new MarkerOptions().position(latLng).title(address).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                }
+            });
+        }
+    }
 
+    public String getAddressFromLatLang(LatLng latLng){
+        String address = "";
+        Geocoder geocoder = new Geocoder(SpotPicker.this, Locale.getDefault());
+        List<Address> addresses = new ArrayList<>();
+
+        try {
+            addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+
+            if (addresses.size() > 0 && addresses != null){
+                if (addresses.get(0).getThoroughfare() != null){
+                    address += addresses.get(0).getThoroughfare();
+                }
+            }
+        }
+        catch (IOException ioException){
+            ioException.printStackTrace();
+        }
+        return address;
+    }
 
     public void updateLocation(Location location){
         LatLng position = new LatLng(location.getLatitude(),location.getLongitude());
 
-        mMap.addMarker(new MarkerOptions().position(position).title("My position").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+        mMap.addMarker(new MarkerOptions().position(position).title("My position").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position,5f));
     }
 
