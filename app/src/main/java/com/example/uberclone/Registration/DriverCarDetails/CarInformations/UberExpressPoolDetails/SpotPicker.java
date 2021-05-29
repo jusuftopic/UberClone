@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -11,12 +12,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.example.uberclone.R;
 import com.example.uberclone.databinding.ActivityMainBinding;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -26,12 +27,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 
-public class SpotPicker extends FragmentActivity implements OnMapReadyCallback {
+public class SpotPicker extends FragmentActivity implements OnMapReadyCallback, Serializable {
 
     private GoogleMap mMap;
     private ActivityMainBinding binding;
@@ -59,13 +61,14 @@ public class SpotPicker extends FragmentActivity implements OnMapReadyCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.spotmap);
         mapFragment.getMapAsync(this);
 
         nameOfDriver = getNameOfDriver();
@@ -126,8 +129,29 @@ public class SpotPicker extends FragmentActivity implements OnMapReadyCallback {
                     String address = getAddressFromLatLang(latLng);
                     mMap.addMarker(new MarkerOptions().position(latLng).title(address).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    markerCounter = markerCounter + 1;
+                    addLatLangToList(latLng);
                 }
             });
+        }
+    }
+
+    public void sendAddresses(View view){
+        if (this.spots.size() == 5){
+            Intent toCarInfosActivity = new Intent(SpotPicker.this,UberExpressPoolDetails.class);
+            toCarInfosActivity.putExtra("spot picked",true);
+            toCarInfosActivity.putExtra("DRIVER'S NAME PICKER",nameOfDriver);
+
+            Bundle args = new Bundle();
+            args.putSerializable("SPOTLIST",(Serializable) spots);
+            toCarInfosActivity.putExtra("BUNDLE",args);
+
+            startActivity(toCarInfosActivity);
+
+
+        }
+        else{
+            Toast.makeText(SpotPicker.this,"Please choose 5 spots, where you want to pick passengers",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -148,7 +172,19 @@ public class SpotPicker extends FragmentActivity implements OnMapReadyCallback {
         catch (IOException ioException){
             ioException.printStackTrace();
         }
+
+        if (address.equalsIgnoreCase("")){
+            Log.e("Address failed","Failed to get address from geocoder");
+        }
         return address;
+    }
+
+    public void addLatLangToList(LatLng latLng){
+        Location newSpotPointLocation = new Location(LocationManager.GPS_PROVIDER);
+        newSpotPointLocation.setLatitude(latLng.latitude);
+        newSpotPointLocation.setLongitude(latLng.longitude);
+
+        this.spots.add(newSpotPointLocation);
     }
 
     public void updateLocation(Location location){
