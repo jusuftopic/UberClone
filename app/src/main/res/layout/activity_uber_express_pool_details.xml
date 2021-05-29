@@ -18,6 +18,7 @@
         android:ems="10"
         android:gravity="center"
         android:hint="Mark of car"
+        android:onClick="goAndSetLocations"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -119,6 +120,7 @@
         android:layout_marginStart="64dp"
         android:layout_marginTop="32dp"
         android:backgroundTint="#000000"
+        android:onClick="addCarInDatabasePool"
         android:text="Set Locations"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView9" />
