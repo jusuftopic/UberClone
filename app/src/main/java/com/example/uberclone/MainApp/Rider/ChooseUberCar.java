@@ -63,7 +63,7 @@ public class ChooseUberCar extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 addCarInfosToRiderRequest(nameOfRider,types[position]);
-                Intent toMapAgain = new Intent(ChooseUberCar.this,RiderMainContent.class);
+                Intent toMapAgain = new Intent(ChooseUberCar.this,RidePayment.class);
                 toMapAgain.putExtra("fromPicker",true);
                 toMapAgain.putExtra("picked",true);
                 toMapAgain.putExtra("nameOfRider",nameOfRider);
