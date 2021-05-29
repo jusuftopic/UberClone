@@ -69,7 +69,7 @@ public class UberExpressPoolDetails extends AppCompatActivity {
         startActivity(toSpots);
     }
 
-    public void addCarInDatabase(View view) {
+    public void addCarInDatabasePool(View view) {
         if (addCar.isEnabled()) {
             if (fieldsEmpty()) {
                 if (isValidCarLength()) {
