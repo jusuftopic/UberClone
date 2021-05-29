@@ -85,7 +85,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         setContentView(R.layout.activity_driver_main_content);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.spotmap);
         mapFragment.getMapAsync(this);
 
         nameOfDriver = getNameOfDriver();

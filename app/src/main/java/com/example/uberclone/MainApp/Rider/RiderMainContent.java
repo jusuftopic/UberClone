@@ -81,7 +81,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         setContentView(R.layout.activity_rider_main_content);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.spotmap);
         mapFragment.getMapAsync(this);
 
         currentlocation = new RiderLocation();

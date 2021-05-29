@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -25,9 +26,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class UberExpressPoolDetails extends AppCompatActivity {
 
     private String nameOfDriver;
+
+    private ArrayList<Location> spots;
 
     private EditText carnameField;
     private EditText maxDoorsField;
@@ -46,7 +51,6 @@ public class UberExpressPoolDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uber_express_pool_details);
 
-        nameOfDriver = getNameOfDriver();
 
         carnameField = (EditText) findViewById(R.id.carname_uberExpressPool);
         maxDoorsField = (EditText) findViewById(R.id.numberofdoors_uberExpressPool);
@@ -59,14 +63,40 @@ public class UberExpressPoolDetails extends AppCompatActivity {
 
         addCar = (Button) findViewById(R.id.submitCarDetails_uberExpressPool);
 
-        addCar.setEnabled(false);
+        handleIntents();
 
+
+    }
+
+    public void handleIntents(){
+        if (pickedFiveLocations()){
+            nameOfDriver = this.getIntent().getStringExtra("DRIVER'S NAME PICKER");
+            addCar.setEnabled(true);
+            spots = getSpotsFromSerializable();
+        }
+        else{
+            nameOfDriver = getNameOfDriver();
+            addCar.setEnabled(false);
+        }
     }
 
     public void goAndSetLocations(View view) {
         Intent toSpots = new Intent(UberExpressPoolDetails.this, SpotPicker.class);
         toSpots.putExtra("driver name for spots", nameOfDriver);
         startActivity(toSpots);
+    }
+
+    public boolean pickedFiveLocations(){
+        if (this.getIntent().getStringExtra("DRIVER'S NAME PICKER") != null && this.getIntent().getBooleanExtra("spot picked",false)){
+            return true;
+        }
+        return false;
+    }
+
+    public ArrayList<Location> getSpotsFromSerializable(){
+        Bundle args = this.getIntent().getBundleExtra("BUNDLE");
+
+        return (ArrayList<Location>) args.getSerializable("SPOTLIST");
     }
 
     public void addCarInDatabasePool(View view) {
@@ -77,15 +107,14 @@ public class UberExpressPoolDetails extends AppCompatActivity {
                         String uberExpressPool_makname = String.valueOf(carnameField.getText());
                         String uberExpressPool_maxDoors = String.valueOf(maxDoorsField.getText());
                         String uberExpressPool_maxPassangers = String.valueOf(maxPassangersField.getText());
-                        //TODO check if driver picked spots
-                        //      boolean pickedLocs = pickedLocations();
+                        boolean pickedLocs = pickedFiveLocations();
                         String uberExpressPool_price = String.valueOf(priceField.getText());
 
                         //TODO add arraylist of spots
-                        UberExpressPool uberExpressPool = new UberExpressPool(uberExpressPool_makname, Integer.parseInt(uberExpressPool_maxDoors), Integer.parseInt(uberExpressPool_maxPassangers), null, Double.parseDouble(uberExpressPool_price));
+                        UberExpressPool uberExpressPool = new UberExpressPool(uberExpressPool_makname, Integer.parseInt(uberExpressPool_maxDoors), Integer.parseInt(uberExpressPool_maxPassangers), spots, Double.parseDouble(uberExpressPool_price));
 
                         if (isValidUberExpressPool(uberExpressPool)) {
-                            addUberLuxInDatabase(uberExpressPool);
+                            addUberExpressPoolInDatabase(uberExpressPool);
                             Intent toMain = new Intent(UberExpressPoolDetails.this, DriverMainContent.class);
                             toMain.putExtra("drivername from cardetails", nameOfDriver);
                             startActivity(toMain);
@@ -108,12 +137,12 @@ public class UberExpressPoolDetails extends AppCompatActivity {
         if (uberExpressPool.isValidNumberOfPassangers(UberExpressPool.MAX_NUMBER_OF_PASSENGERS)) {
             if (uberExpressPool.isValidNumberOfDoors(UberExpressPool.MAX_NUMBER_OF_DOORS)) {
                 if (uberExpressPool.isValidPrice(UberExpressPool.MIN_PRICE_RANGE, UberExpressPool.MAX_PRICE_RANGE)) {
-                   /* if (pickedFiveLocations()) {
+                    if (pickedFiveLocations()) {
                         return true;
                     }
                     else {
-
-                    }*/
+                        setWarning("Go and pick your five spots for picking");
+                    }
                 } else {
                     setWarning("Price musst be between " + UberLux.MIN_PRICE_RANGE + " and " + UberLux.MAX_PRICE_RANGE);
                 }
@@ -128,9 +157,7 @@ public class UberExpressPoolDetails extends AppCompatActivity {
     }
 
 
-
-
-    public void addUberLuxInDatabase(UberExpressPool uberExpressPool) {
+    public void addUberExpressPoolInDatabase(UberExpressPool uberExpressPool) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
