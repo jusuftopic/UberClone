@@ -24,7 +24,9 @@ public class CardEntery extends AppCompatActivity {
     private String ridername;
 
     private CardForm ridercardform;
+
     private Button addCard;
+    private Button addCardLater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,9 @@ public class CardEntery extends AppCompatActivity {
         ridername = getRiderName();
 
         ridercardform = findViewById(R.id.ridercardform);
+
         addCard = (Button) findViewById(R.id.addCard);
+        addCardLater = (Button) findViewById(R.id.addCardLater);
 
 
         ridercardform.cardRequired(true)
@@ -79,11 +83,12 @@ public class CardEntery extends AppCompatActivity {
                 }
             }
         });
+    }
 
-
-
-
-
+    public void addCardLaterInDatabase(View view){
+        Intent toMainContent = new Intent(CardEntery.this,RiderMainContent.class);
+        toMainContent.putExtra("ridername from card activity",ridername);
+        startActivity(toMainContent);
     }
 
 
