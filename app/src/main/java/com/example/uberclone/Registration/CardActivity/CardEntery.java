@@ -69,7 +69,7 @@ public class CardEntery extends AppCompatActivity {
                     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                     DatabaseReference root = firebaseDatabase.getReference();
 
-                    root.child("User").child("Rider").child(ridername).child("Card").setValue(card).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    root.child("User").child("Rider").child(ridername).child("Cards").child("Card").setValue(card).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Intent toMainContent = new Intent(CardEntery.this, RiderMainContent.class);
