@@ -3,8 +3,11 @@ package com.example.uberclone.MainApp.Rider.RiderPayment;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -86,6 +89,17 @@ public class RidePayment extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull  DatabaseError error) {
                 Log.e("Database errror",error.getMessage());
+            }
+        });
+    }
+
+    public void setClickListenerOnList(){
+        this.listOfCards.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent toMeetingWithDriver = new Intent(RidePayment.this,RiderDriverMeeting.class);
+                toMeetingWithDriver.putExtra("name of rider from payment",nameOfRider);
+                startActivity(toMeetingWithDriver);
             }
         });
     }
