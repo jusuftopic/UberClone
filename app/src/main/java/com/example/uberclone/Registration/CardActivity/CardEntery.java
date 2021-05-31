@@ -56,7 +56,7 @@ public class CardEntery extends AppCompatActivity {
                     String expYear = ridercardform.getExpirationYear();
                     String cvc = ridercardform.getCvv();
                     CardEditText cardEditText = new CardEditText(CardEntery.this);
-                   CardType cardType=  cardEditText.getCardType();
+                   CardType cardType=  CardType.forCardNumber(cardnumber);
 
                     Toast.makeText(CardEntery.this,String.valueOf(cardType),Toast.LENGTH_LONG).show();
 
