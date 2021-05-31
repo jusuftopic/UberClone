@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.uberclone.Extras.Adapters.UberTypeAdapter;
+import com.example.uberclone.MainApp.Rider.RiderPayment.RidePayment;
 import com.example.uberclone.Modules.Car.UberBlack;
 import com.example.uberclone.Modules.Car.UberExpressPool;
 import com.example.uberclone.Modules.Car.UberLux;
@@ -63,12 +63,10 @@ public class ChooseUberCar extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 addCarInfosToRiderRequest(nameOfRider,types[position]);
-                Intent toMapAgain = new Intent(ChooseUberCar.this,RidePayment.class);
-                toMapAgain.putExtra("fromPicker",true);
-                toMapAgain.putExtra("picked",true);
-                toMapAgain.putExtra("nameOfRider",nameOfRider);
 
-                startActivity(toMapAgain);
+                Intent toPayment = new Intent(ChooseUberCar.this,RidePayment.class);
+                toPayment.putExtra("name of rider- from car picker",nameOfRider);
+                startActivity(toPayment);
 
             }
         });
