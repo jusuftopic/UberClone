@@ -36,6 +36,8 @@ public class AddNewCard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_card);
 
+        this.getSupportActionBar().hide();
+
         nameOfRider = getNameOfRider();
 
         ridercardform =  findViewById(R.id.ridernewcardform);
@@ -74,7 +76,7 @@ public class AddNewCard extends AppCompatActivity {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Intent toMainContent = new Intent(AddNewCard.this, RiderDriverMeeting.class);
-                            toMainContent.putExtra("ridername from card activity",nameOfRider);
+                            toMainContent.putExtra("name of rider from payment",nameOfRider);
                             startActivity(toMainContent);
                         }
                     });

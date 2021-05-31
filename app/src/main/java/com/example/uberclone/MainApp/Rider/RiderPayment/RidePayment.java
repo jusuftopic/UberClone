@@ -8,11 +8,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.braintreepayments.cardform.utils.CardType;
 import com.example.uberclone.Extras.Adapters.CardsAdapter;
+import com.example.uberclone.MainApp.RiderDriverMeeting;
 import com.example.uberclone.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,7 +35,7 @@ public class RidePayment extends AppCompatActivity {
     private ListView listOfCards;
     private CardsAdapter cardsAdapter;
 
-    private CardType cardType;
+    private Button addNewCardButton;
 
 
     @Override
@@ -41,7 +43,11 @@ public class RidePayment extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ride_payment);
 
+        this.getSupportActionBar().hide();
+
         nameOfRider = getNameOfRider();
+
+        addNewCardButton = (Button) findViewById(R.id.addNewCardButton);
 
         listOfCards = (ListView) findViewById(R.id.listOfAddedCards);
 
@@ -97,7 +103,7 @@ public class RidePayment extends AppCompatActivity {
         this.listOfCards.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent toMeetingWithDriver = new Intent(RidePayment.this,RiderDriverMeeting.class);
+                Intent toMeetingWithDriver = new Intent(RidePayment.this, RiderDriverMeeting.class);
                 toMeetingWithDriver.putExtra("name of rider from payment",nameOfRider);
                 startActivity(toMeetingWithDriver);
             }
@@ -129,11 +135,17 @@ public class RidePayment extends AppCompatActivity {
         }
     }
 
+    public void addNewCard(View view){
+        Intent toAddNewCardActivity = new Intent(RidePayment.this,AddNewCard.class);
+        toAddNewCardActivity.putExtra("name of rider from payment",nameOfRider);
+        startActivity(toAddNewCardActivity);
+    }
+
 
     public String getNameOfRider() {
-        if (this.getIntent().getStringExtra("nameOfRider") != null && this.getIntent().getStringExtra("nameOfRider").equalsIgnoreCase("")) {
+        if (this.getIntent().getStringExtra("name of rider- from car picker") != null && this.getIntent().getStringExtra("nameOfRider").equalsIgnoreCase("")) {
 
-            return this.getIntent().getStringExtra("nameOfRider");
+            return this.getIntent().getStringExtra("name of rider- from car picker");
         }
         Log.e("Intent failed","Failed to get name of rider");
         return null;
