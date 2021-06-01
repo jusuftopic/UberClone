@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.braintreepayments.cardform.utils.CardType;
 import com.example.uberclone.Extras.Adapters.CardsAdapter;
 import com.example.uberclone.MainApp.RiderDriverMeeting;
 import com.example.uberclone.R;
@@ -30,7 +29,7 @@ public class RidePayment extends AppCompatActivity {
     private int[] logos;
     private String[] cardnames;
     private String[] cardHolders;
-    private int[] cardNumbers;
+    private String[] cardNumbers;
 
     private ListView listOfCards;
     private CardsAdapter cardsAdapter;
@@ -67,7 +66,7 @@ public class RidePayment extends AppCompatActivity {
                     int length =(int) snapshot.getChildrenCount();
                     cardnames = new String[length];
                     cardHolders = new String[length];
-                    cardNumbers = new int[length];
+                    cardNumbers = new String[length];
                     logos = new int[length];
 
                     int counter = 0;
@@ -75,7 +74,7 @@ public class RidePayment extends AppCompatActivity {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()){
                         cardnames[counter] = String.valueOf(dataSnapshot.child("CardType").getValue());
                         cardHolders[counter] = String.valueOf(dataSnapshot.child("cardholder").getValue());
-                        cardNumbers[counter] = Integer.parseInt(String.valueOf(dataSnapshot.child("cardnumber").getValue()));
+                        cardNumbers[counter] =  String.valueOf(dataSnapshot.child("cardnumber").getValue());
                         logos[counter] = getLogoFromCardBank(cardnames[counter]);
 
                         counter++;
@@ -143,7 +142,7 @@ public class RidePayment extends AppCompatActivity {
 
 
     public String getNameOfRider() {
-        if (this.getIntent().getStringExtra("name of rider- from car picker") != null && this.getIntent().getStringExtra("name of rider- from car picker").equalsIgnoreCase("")) {
+        if (this.getIntent().getStringExtra("name of rider- from car picker") != null && !this.getIntent().getStringExtra("name of rider- from car picker").equalsIgnoreCase("")) {
 
             return this.getIntent().getStringExtra("name of rider- from car picker");
         }

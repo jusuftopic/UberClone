@@ -58,8 +58,7 @@ public class RiderDriverMeeting extends FragmentActivity implements OnMapReadyCa
                     getCurrentRiderLocation(new CurrentLocationCallBack() {
                         @Override
                         public void onCurrentLocationCallBack(RiderLocation riderLocation) {
-
-                            updateLocation(riderLocation,nameOfRider);
+                            updateLocation(changeRiderLocationToLocation(riderLocation),nameOfRider,"START");
                         }
                     });
 
@@ -103,7 +102,7 @@ public class RiderDriverMeeting extends FragmentActivity implements OnMapReadyCa
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                updateLocation(location,nameOfRider);
+                updateLocation(location,nameOfRider,"START");
 
             }
             @Override
@@ -121,15 +120,26 @@ public class RiderDriverMeeting extends FragmentActivity implements OnMapReadyCa
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
         }
         else{
-            updateLocation(currentLocation,nameOfRider);
+            getCurrentRiderLocation(new CurrentLocationCallBack() {
+                @Override
+                public void onCurrentLocationCallBack(RiderLocation currentRiderLocation) {
+                    updateLocation(changeRiderLocationToLocation(currentRiderLocation),nameOfRider,"START");
+                }
+            });
         }
 
+       getEndRiderLocation(new EndLocationCallBack() {
+            @Override
+            public void onEndLocationCallBack(RiderLocation endRiderLocation) {
+                updateLocation(changeRiderLocationToLocation(endRiderLocation),nameOfRider,"END");
+            }
+        });
 
     }
 
-    public void updateLocation(Location location,String username){
+    public void updateLocation(Location location,String username,String message){
         LatLng currentPosition = new LatLng(location.getLatitude(),location.getLongitude());
-        mMap.addMarker(new MarkerOptions().title(username+"\n"+getAddressOfLocation(location)).position(currentPosition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+        mMap.addMarker(new MarkerOptions().title(message+"\n"+username+"\n"+getAddressOfLocation(location)).position(currentPosition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition,20f));
     }
 
@@ -185,7 +195,7 @@ public class RiderDriverMeeting extends FragmentActivity implements OnMapReadyCa
         });
     }
 
-    public void geEndRiderLocation(EndLocationCallBack endLocationCallBack){
+    public void getEndRiderLocation(EndLocationCallBack endLocationCallBack){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
@@ -210,6 +220,14 @@ public class RiderDriverMeeting extends FragmentActivity implements OnMapReadyCa
                 Log.e("Database error",error.getMessage());
             }
         });
+    }
+
+    public Location changeRiderLocationToLocation(RiderLocation riderLocation){
+        Location transformedLocation = new Location(LocationManager.GPS_PROVIDER);
+        transformedLocation.setLatitude(riderLocation.getRider_latitude());
+        transformedLocation.setLongitude(riderLocation.getRider_longitude());
+
+        return transformedLocation;
     }
     public String getNameOfRider(){
         if (this.getIntent().getStringExtra("name of rider from payment") != null && !this.getIntent().getStringExtra("name of rider from payment").equalsIgnoreCase("")){

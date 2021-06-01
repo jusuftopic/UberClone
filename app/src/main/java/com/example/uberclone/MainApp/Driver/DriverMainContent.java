@@ -172,6 +172,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     public void onAcceptRequest(View view){
         if (acceptRequestButton.isEnabled()){
             if (acceptedLocation.latitude != -1 && acceptedLocation.longitude != -1){
+                addDriverToRider(nameOfDriver);
                 acceptRequest(acceptedLocation);
                 deleteRiderFromRequests(acceptedRider);
 
@@ -185,6 +186,27 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         }
         else{
             Toast.makeText(DriverMainContent.this,"First select drive, you want to accept",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void addDriverToRider(String nameOfDriver){
+        if (!acceptedRider.equalsIgnoreCase("") && acceptedRider != null){
+            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+            DatabaseReference root = firebaseDatabase.getReference();
+
+            root.child("Requests").child("Rider Calls").child(acceptedRider).child("Driver").setValue(nameOfDriver).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Log.i("ADDED","Added name of driver to rider's request");
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull  Exception e) {
+                    Log.e("FAILED","Failed to add driver to rider's request");
+                    e.printStackTrace();
+                }
+            });
         }
     }
 
