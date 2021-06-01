@@ -13,6 +13,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.uberclone.MainApp.CallBacks.Rider.CurrentLocationCallBack;
+import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.example.uberclone.databinding.ActivityRiderDriverMeetingBinding;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,6 +25,11 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,12 +46,15 @@ public class RiderDriverMeeting extends FragmentActivity implements OnMapReadyCa
     private LocationManager locationManager;
     private LocationListener locationListener;
 
+    private RiderLocation currentLocation;
+    private RiderLocation endLocation;
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull  String[] permissions, @NonNull  int[] grantResults) {
         if (requestCode == 1){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                    //getLocationFromDatabase(nameOfRider);
+                    updateLocation(currentLocation,nameOfRider);
                 }
             }
         }
@@ -65,6 +75,9 @@ public class RiderDriverMeeting extends FragmentActivity implements OnMapReadyCa
         mapFragment.getMapAsync(this);
 
         nameOfRider = getNameOfRider();
+
+        currentLocation = getCurrentLocation(nameOfRider);
+        endLocation = getEndLocation(nameOfRider);
     }
 
     /**
@@ -102,7 +115,7 @@ public class RiderDriverMeeting extends FragmentActivity implements OnMapReadyCa
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
         }
         else{
-           // getLocationFromDatabase(nameOfRider);
+            updateLocation(currentLocation,nameOfRider);
         }
 
 
@@ -137,6 +150,33 @@ public class RiderDriverMeeting extends FragmentActivity implements OnMapReadyCa
         }
 
         return address;
+    }
+
+    public void getCurrentRiderLocation(CurrentLocationCallBack currentLocationCallBack){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").child(nameOfRider).child("Current location").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    double latitude = (double) snapshot.child("rider_latitude").getValue();
+                    double longitude = (double) snapshot.child("rider_longitude").getValue();
+
+                    currentLocation = new RiderLocation(latitude,longitude);
+
+                    currentLocationCallBack.onCurrentLocationCallBack(currentLocation);
+                }
+                else{
+                    Log.e("Current loc error","Can not find path to user's currentlocation");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull  DatabaseError error) {
+                Log.e("Database error",error.getMessage());
+            }
+        });
     }
     public String getNameOfRider(){
         if (this.getIntent().getStringExtra("name of rider from payment") != null && !this.getIntent().getStringExtra("name of rider from payment").equalsIgnoreCase("")){
