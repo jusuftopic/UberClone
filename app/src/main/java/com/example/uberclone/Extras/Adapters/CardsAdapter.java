@@ -19,11 +19,12 @@ public class CardsAdapter extends ArrayAdapter<String> {
     private int[] logos;
     private String[] cardnames;
     private String[] cardholders;
-    private int[] cardNumbers;
+    private String[] cardNumbers;
 
-    public CardsAdapter(Context context, int[] logos,String[] cardnames,String[] cardholders,int[] cardNumbers){
+    public CardsAdapter(Context context, int[] logos, String[] cardnames, String[] cardholders, String[] cardNumbers){
         super(context, R.layout.cardsfromrider,cardnames);
         this.context = context;
+        this.logos = logos;
         this.cardnames = cardnames;
         this.cardholders = cardholders;
         this.cardNumbers = cardNumbers;
