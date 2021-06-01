@@ -21,6 +21,8 @@ public class RiderDriverMeeting extends FragmentActivity implements OnMapReadyCa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_rider_driver_meeting);
+
 
         binding = ActivityRiderDriverMeetingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

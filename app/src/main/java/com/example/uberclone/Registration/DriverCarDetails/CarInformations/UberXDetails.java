@@ -1,10 +1,8 @@
 package com.example.uberclone.Registration.DriverCarDetails.CarInformations;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,11 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.uberclone.MainApp.Driver.DriverMainContent;
-import com.example.uberclone.Modules.Car.CarMarks.CarMarks;
-import com.example.uberclone.Modules.Car.UberX;
+import com.example.uberclone.Models.Car.CarMarks.CarMarks;
+import com.example.uberclone.Models.Car.UberX;
 import com.example.uberclone.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;

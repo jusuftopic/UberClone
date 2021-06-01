@@ -1,4 +1,4 @@
-package com.example.uberclone.Modules.Card;
+package com.example.uberclone.Models.Card;
 
 public enum CardType {
 

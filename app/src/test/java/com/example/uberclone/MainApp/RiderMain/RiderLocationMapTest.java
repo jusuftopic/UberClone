@@ -1,7 +1,7 @@
 package com.example.uberclone.MainApp.RiderMain;
 
 import com.example.uberclone.MainApp.Rider.RiderMainContent;
-import com.example.uberclone.Modules.Requests.RiderLocation;
+import com.example.uberclone.Models.Requests.RiderLocation;
 
 import org.junit.After;
 import org.junit.Before;

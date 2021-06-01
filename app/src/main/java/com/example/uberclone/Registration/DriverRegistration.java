@@ -15,8 +15,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.uberclone.Login.DriverLogin;
-import com.example.uberclone.Modules.Participants.Driver;
-import com.example.uberclone.Modules.Phonenumber;
+import com.example.uberclone.Models.Participants.Driver;
+import com.example.uberclone.Models.Phonenumber;
 import com.example.uberclone.R;
 import com.example.uberclone.Registration.Phonenumber.DriverPhonenumber;
 import com.google.android.gms.tasks.OnSuccessListener;

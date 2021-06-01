@@ -16,10 +16,9 @@ import android.widget.TextView;
 
 import com.example.uberclone.Extras.Adapters.InteriorAdapter;
 import com.example.uberclone.MainApp.Driver.DriverMainContent;
-import com.example.uberclone.Modules.Car.CarMarks.CarMarks;
-import com.example.uberclone.Modules.Car.InteriorType.InteriorType;
-import com.example.uberclone.Modules.Car.UberSelect;
-import com.example.uberclone.Modules.Color.Colors;
+import com.example.uberclone.Models.Car.CarMarks.CarMarks;
+import com.example.uberclone.Models.Car.InteriorType.InteriorType;
+import com.example.uberclone.Models.Car.UberSelect;
 import com.example.uberclone.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;

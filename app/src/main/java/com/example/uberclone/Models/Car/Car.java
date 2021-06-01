@@ -1,4 +1,4 @@
-package com.example.uberclone.Modules.Car;
+package com.example.uberclone.Models.Car;
 
 public abstract class Car {
 

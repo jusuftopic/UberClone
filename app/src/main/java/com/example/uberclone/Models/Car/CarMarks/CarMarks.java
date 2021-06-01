@@ -1,4 +1,4 @@
-package com.example.uberclone.Modules.Car.CarMarks;
+package com.example.uberclone.Models.Car.CarMarks;
 
 public enum CarMarks {
     MERCEDES("Mercedes"),

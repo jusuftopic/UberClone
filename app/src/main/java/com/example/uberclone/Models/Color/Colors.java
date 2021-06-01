@@ -1,4 +1,4 @@
-package com.example.uberclone.Modules.Color;
+package com.example.uberclone.Models.Color;
 
 public enum Colors {
 

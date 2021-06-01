@@ -17,7 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.uberclone.Modules.Requests.RiderLocation;
+import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -91,7 +91,12 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         callUber = (Button) findViewById(R.id.sendRequest);
         callUber.setEnabled(false);
 
-        handleActivityUserComeFrom();
+
+        nameOfRider = getNameOfRider();
+        checkIfTheRequestExists(nameOfRider);
+        isCalled = false;
+
+
 
         numberOfMarkers = 1;
 
@@ -325,28 +330,8 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
         });
     }
 
-    public boolean isBackFromPicker() {
-        boolean isBacked = this.getIntent().getBooleanExtra("fromPicker", false) && this.getIntent().getBooleanExtra("picked", false);
-        if (isBacked) {
-            return true;
-        }
-        return false;
-    }
 
-    public void handleActivityUserComeFrom() {
-        if (!isBackFromPicker()){
-            nameOfRider = getNameOfRider();
-            checkIfTheRequestExists(nameOfRider);
-            isCalled = false;
-        }
-        else{
-            nameOfRider = this.getIntent().getStringExtra("nameOfRider");
-            callUber.setEnabled(true);
-            changeButtonInfos(true, "Cancle call");
-            setMarkerOnEndLocation(nameOfRider);
-        }
 
-    }
 
     public void checkIfTheRequestExists(String username) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();

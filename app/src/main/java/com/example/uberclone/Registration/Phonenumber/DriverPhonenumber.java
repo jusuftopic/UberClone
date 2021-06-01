@@ -15,7 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.uberclone.Extras.Adapters.CoutryAdapters.CounrtiesAdapterDriver;
-import com.example.uberclone.Modules.Country;
+import com.example.uberclone.Models.Country;
 import com.example.uberclone.R;
 import com.example.uberclone.Registration.DriverCarDetails.CarTypePicker;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -141,7 +141,7 @@ public class DriverPhonenumber extends AppCompatActivity implements Phonenumber{
 
                                 String driverphonenumber = mergePhonenumber(prefixToDatabase,phonenumberToDatabase);
 
-                                com.example.uberclone.Modules.Phonenumber driverphonenumberForDatabase = new com.example.uberclone.Modules.Phonenumber(driverphonenumber,country);
+                                com.example.uberclone.Models.Phonenumber driverphonenumberForDatabase = new com.example.uberclone.Models.Phonenumber(driverphonenumber,country);
 
                                 root.child("User").child("Driver").child(nameOfDriver).child("Phonenumber").setValue(driverphonenumberForDatabase).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override

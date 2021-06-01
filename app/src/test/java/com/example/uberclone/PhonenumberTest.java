@@ -1,6 +1,6 @@
 package com.example.uberclone;
 
-import com.example.uberclone.Modules.Country;
+import com.example.uberclone.Models.Country;
 import com.example.uberclone.Registration.Phonenumber.DriverPhonenumber;
 
 import org.junit.After;

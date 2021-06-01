@@ -1,4 +1,4 @@
-package com.example.uberclone.Modules.Requests;
+package com.example.uberclone.Models.Requests;
 
 public class DriverLocation {
 

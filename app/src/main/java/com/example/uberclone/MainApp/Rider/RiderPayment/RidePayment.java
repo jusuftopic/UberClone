@@ -143,7 +143,7 @@ public class RidePayment extends AppCompatActivity {
 
 
     public String getNameOfRider() {
-        if (this.getIntent().getStringExtra("name of rider- from car picker") != null && this.getIntent().getStringExtra("nameOfRider").equalsIgnoreCase("")) {
+        if (this.getIntent().getStringExtra("name of rider- from car picker") != null && this.getIntent().getStringExtra("name of rider- from car picker").equalsIgnoreCase("")) {
 
             return this.getIntent().getStringExtra("name of rider- from car picker");
         }

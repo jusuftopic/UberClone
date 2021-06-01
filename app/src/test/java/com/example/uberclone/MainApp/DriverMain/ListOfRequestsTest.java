@@ -1,7 +1,7 @@
 package com.example.uberclone.MainApp.DriverMain;
 
 import com.example.uberclone.MainApp.Driver.ShowNearestRequesters;
-import com.example.uberclone.Modules.Requests.RiderLocation;
+import com.example.uberclone.Models.Requests.RiderLocation;
 
 import org.junit.After;
 import org.junit.Assert;

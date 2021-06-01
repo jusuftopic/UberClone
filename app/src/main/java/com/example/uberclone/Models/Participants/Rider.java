@@ -1,8 +1,7 @@
-package com.example.uberclone.Modules.Participants;
+package com.example.uberclone.Models.Participants;
 
-import com.example.uberclone.Modules.Participants.User;
-import com.example.uberclone.Modules.PaymentMethode;
-import com.example.uberclone.Modules.Phonenumber;
+import com.example.uberclone.Models.PaymentMethode;
+import com.example.uberclone.Models.Phonenumber;
 
 public class Rider extends User {
 

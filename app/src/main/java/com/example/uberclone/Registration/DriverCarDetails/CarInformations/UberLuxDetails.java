@@ -16,9 +16,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.uberclone.MainApp.Driver.DriverMainContent;
-import com.example.uberclone.Modules.Car.CarMarks.CarMarks;
-import com.example.uberclone.Modules.Car.UberBlack;
-import com.example.uberclone.Modules.Car.UberLux;
+import com.example.uberclone.Models.Car.CarMarks.CarMarks;
+import com.example.uberclone.Models.Car.UberLux;
 import com.example.uberclone.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;

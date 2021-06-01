@@ -1,4 +1,4 @@
-package com.example.uberclone.Modules.Car.InteriorType;
+package com.example.uberclone.Models.Car.InteriorType;
 
 public enum InteriorType {
 

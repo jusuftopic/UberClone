@@ -1,13 +1,9 @@
 package com.example.uberclone.Car;
 
-import com.example.uberclone.Modules.Car.UberBlack;
-import com.example.uberclone.Modules.Car.UberExpressPool;
-import com.example.uberclone.Modules.Car.UberLux;
-import com.example.uberclone.Modules.Car.UberSUV;
-import com.example.uberclone.Modules.Car.UberSelect;
-import com.example.uberclone.Modules.Car.UberWAV;
-import com.example.uberclone.Modules.Car.UberX;
-import com.example.uberclone.Modules.Car.UberXL;
+import com.example.uberclone.Models.Car.UberExpressPool;
+import com.example.uberclone.Models.Car.UberSUV;
+import com.example.uberclone.Models.Car.UberWAV;
+import com.example.uberclone.Models.Car.UberX;
 import com.example.uberclone.Registration.DriverCarDetails.CarTypePicker;
 
 import org.junit.After;

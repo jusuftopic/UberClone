@@ -16,8 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.uberclone.Extras.Adapters.CoutryAdapters.CountriesAdapterRider;
-import com.example.uberclone.Modules.Country;
-import com.example.uberclone.Modules.Phonenumber;
+import com.example.uberclone.Models.Country;
+import com.example.uberclone.Models.Phonenumber;
 import com.example.uberclone.R;
 import com.example.uberclone.Registration.CardActivity.CardEntery;
 import com.google.android.gms.tasks.OnSuccessListener;

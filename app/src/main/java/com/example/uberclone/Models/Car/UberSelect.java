@@ -1,10 +1,6 @@
-package com.example.uberclone.Modules.Car;
+package com.example.uberclone.Models.Car;
 
-import android.graphics.Color;
-import android.text.InputType;
-
-import com.example.uberclone.Modules.Car.Car;
-import com.example.uberclone.Modules.Car.InteriorType.InteriorType;
+import com.example.uberclone.Models.Car.InteriorType.InteriorType;
 
 public class UberSelect extends Car {
 

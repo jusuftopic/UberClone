@@ -1,7 +1,7 @@
 package com.example.uberclone.Car;
 
-import com.example.uberclone.Modules.Car.CarMarks.CarMarks;
-import com.example.uberclone.Modules.Car.CarMarks.SUVMarks;
+import com.example.uberclone.Models.Car.CarMarks.CarMarks;
+import com.example.uberclone.Models.Car.CarMarks.SUVMarks;
 
 import org.junit.After;
 import org.junit.Assert;

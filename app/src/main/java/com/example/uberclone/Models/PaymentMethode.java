@@ -1,4 +1,4 @@
-package com.example.uberclone.Modules;
+package com.example.uberclone.Models;
 
 public enum PaymentMethode {
 

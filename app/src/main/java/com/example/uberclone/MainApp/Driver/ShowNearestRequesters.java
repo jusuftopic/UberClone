@@ -20,8 +20,8 @@ import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver.FireBaseCal
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackEndRiderLocation;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FirebaseCallBackCurrentRiderLocation;
-import com.example.uberclone.Modules.Requests.DriverLocation;
-import com.example.uberclone.Modules.Requests.RiderLocation;
+import com.example.uberclone.Models.Requests.DriverLocation;
+import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;

@@ -1,6 +1,6 @@
 package com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver;
 
-import com.example.uberclone.Modules.Requests.DriverLocation;
+import com.example.uberclone.Models.Requests.DriverLocation;
 
 public interface FireBaseCallBackDriverLocation {
 

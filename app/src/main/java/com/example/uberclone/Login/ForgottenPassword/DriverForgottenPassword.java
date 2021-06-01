@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.uberclone.Login.DriverLogin;
-import com.example.uberclone.Modules.Participants.Driver;
+import com.example.uberclone.Models.Participants.Driver;
 import com.example.uberclone.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;

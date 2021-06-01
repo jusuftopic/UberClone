@@ -13,7 +13,7 @@ import com.braintreepayments.cardform.utils.CardType;
 import com.braintreepayments.cardform.view.CardEditText;
 import com.braintreepayments.cardform.view.CardForm;
 import com.example.uberclone.MainApp.Rider.RiderMainContent;
-import com.example.uberclone.Modules.Card.Card;
+import com.example.uberclone.Models.Card.Card;
 import com.example.uberclone.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;

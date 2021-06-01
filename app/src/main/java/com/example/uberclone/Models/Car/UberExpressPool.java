@@ -1,6 +1,5 @@
-package com.example.uberclone.Modules.Car;
+package com.example.uberclone.Models.Car;
 
-import android.graphics.Color;
 import android.location.Location;
 
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package com.example.uberclone.Car;
 
-import com.example.uberclone.Modules.Car.UberSUV;
+import com.example.uberclone.Models.Car.UberSUV;
 import com.example.uberclone.Registration.DriverCarDetails.CarInformations.UberSUVDetails;
 
 import org.junit.After;

@@ -1,12 +1,12 @@
 package com.example.uberclone.Car;
 
-import com.example.uberclone.Modules.Car.Car;
-import com.example.uberclone.Modules.Car.InteriorType.InteriorType;
-import com.example.uberclone.Modules.Car.UberLux;
-import com.example.uberclone.Modules.Car.UberSUV;
-import com.example.uberclone.Modules.Car.UberSelect;
-import com.example.uberclone.Modules.Car.UberWAV;
-import com.example.uberclone.Modules.Car.UberX;
+import com.example.uberclone.Models.Car.Car;
+import com.example.uberclone.Models.Car.InteriorType.InteriorType;
+import com.example.uberclone.Models.Car.UberLux;
+import com.example.uberclone.Models.Car.UberSUV;
+import com.example.uberclone.Models.Car.UberSelect;
+import com.example.uberclone.Models.Car.UberWAV;
+import com.example.uberclone.Models.Car.UberX;
 
 import org.junit.After;
 import org.junit.Assert;
