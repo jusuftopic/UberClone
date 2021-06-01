@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.uberclone.MainApp.CallBacks.Rider.CurrentLocationCallBack;
+import com.example.uberclone.MainApp.CallBacks.Rider.EndLocationCallBack;
 import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.example.uberclone.databinding.ActivityRiderDriverMeetingBinding;
@@ -54,7 +55,14 @@ public class RiderDriverMeeting extends FragmentActivity implements OnMapReadyCa
         if (requestCode == 1){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                    updateLocation(currentLocation,nameOfRider);
+                    getCurrentRiderLocation(new CurrentLocationCallBack() {
+                        @Override
+                        public void onCurrentLocationCallBack(RiderLocation riderLocation) {
+
+                            updateLocation(riderLocation,nameOfRider);
+                        }
+                    });
+
                 }
             }
         }
@@ -76,8 +84,6 @@ public class RiderDriverMeeting extends FragmentActivity implements OnMapReadyCa
 
         nameOfRider = getNameOfRider();
 
-        currentLocation = getCurrentLocation(nameOfRider);
-        endLocation = getEndLocation(nameOfRider);
     }
 
     /**
@@ -169,6 +175,33 @@ public class RiderDriverMeeting extends FragmentActivity implements OnMapReadyCa
                 }
                 else{
                     Log.e("Current loc error","Can not find path to user's currentlocation");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull  DatabaseError error) {
+                Log.e("Database error",error.getMessage());
+            }
+        });
+    }
+
+    public void geEndRiderLocation(EndLocationCallBack endLocationCallBack){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").child(nameOfRider).child("End location").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    double latitude = (double) snapshot.child("rider_latitude").getValue();
+                    double longitude = (double) snapshot.child("rider_longitude").getValue();
+
+                    endLocation = new RiderLocation(latitude,longitude);
+
+                   endLocationCallBack.onEndLocationCallBack(endLocation);
+                }
+                else{
+                    Log.e("End loc error","Can not find path to user's end location");
                 }
             }
 
