@@ -19,6 +19,7 @@ import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver.FireBaseCal
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLatitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLongitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
+import com.example.uberclone.MainApp.RiderDriverMeeting;
 import com.example.uberclone.Models.Requests.DriverLocation;
 import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
@@ -30,6 +31,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -172,6 +174,10 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             if (acceptedLocation.latitude != -1 && acceptedLocation.longitude != -1){
                 acceptRequest(acceptedLocation);
                 deleteRiderFromRequests(acceptedRider);
+
+                Intent toMeeting = new Intent(DriverMainContent.this, RiderDriverMeeting.class);
+                toMeeting.putExtra("driver name for meeting",nameOfDriver);
+                startActivity(toMeeting);
             }
             else{
                 Log.e("LatLng problem: ",acceptedLocation.toString() + " didn't recognized in on marker click");
@@ -219,7 +225,18 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requests").child("Rider Calls").child(username).setValue(null);
+        root.child("Requests").child("Rider Calls").child(username).setValue(null).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Log.i("User deleted",username+" deletef from requests in database");
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull  Exception e) {
+                Log.e("Delete failed",username+" could not be deleted from database");
+            }
+        });
 
     }
 

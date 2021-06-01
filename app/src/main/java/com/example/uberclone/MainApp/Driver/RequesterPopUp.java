@@ -3,6 +3,7 @@ package com.example.uberclone.MainApp.Driver;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.uberclone.MainApp.RiderDriverMeeting;
 import com.example.uberclone.Models.Requests.DriverLocation;
 import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
@@ -101,6 +103,10 @@ public class RequesterPopUp extends AppCompatActivity {
                 if (!choosenTime.equals("")){
                     changeDriversAcceptanceStatus(nameOfDriver,rider_currentCordinates,rider_endCordinates);
                     deleteRiderFromRequests(String.valueOf(usernameField.getText()));
+
+                    Intent toMeeting = new Intent(RequesterPopUp.this, RiderDriverMeeting.class);
+                    toMeeting.putExtra("driver name for meeting",nameOfDriver);
+                    startActivity(toMeeting);
                 }
                 else{
                     Toast.makeText(RequesterPopUp.this,"Please choose the time at which you will pick up the passenger",Toast.LENGTH_LONG).show();
