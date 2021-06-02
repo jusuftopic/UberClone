@@ -220,7 +220,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
 
                                         }
                                     });
-                                    root.child("Requests").child(driverName).child(riderName).child("End location").setValue(endRiderLocation).addOnFailureListener(new OnFailureListener() {
+                                    root.child("Requests").child("Accepted requests").child(driverName).child(riderName).child("End location").setValue(endRiderLocation).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull  Exception e) {
                                             Log.e("Failed","Failed to add rider "+riderName+" to accepted requests- current location"+endRiderLocation.toString());
