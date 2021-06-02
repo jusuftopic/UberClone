@@ -195,24 +195,36 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     }
 
     public void mergeDriverAndRider(String driverName, DriverLocation driverLocation,String riderName){
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference();
-
-        root.child("Requests").addListenerForSingleValueEvent(new ValueEventListener() {
+        getAcceptedRiderCurrentLocation(new CurrentLocationCallBack() {
             @Override
-            public void onDataChange(@NonNull  DataSnapshot snapshot) {
-                if (snapshot.exists()){
+            public void onCurrentLocationCallBack(RiderLocation currentRiderLocation) {
+                getAcceptedRiderEndLocation(new EndLocationCallBack() {
+                    @Override
+                    public void onEndLocationCallBack(RiderLocation endRiderLocation) {
+                        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                        DatabaseReference root = firebaseDatabase.getReference();
 
-                }
-                else{
+                        root.child("Requests").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                                if (snapshot.exists()){
+                                    root.child("Requests").child(driverName).child("Driver's location").setValue(driverLocation);
+                                    root.child("Requests").child(driverName).child(riderName).child("Current location").setValue(currentRiderLocation);
+                                    root.child("Requests").child(driverName).child(riderName).child("End location").setValue(endRiderLocation);
+                                }
+                                else{
+                                    Log.e("Failed","Failed to find requsts path");
+                                }
 
-                }
+                            }
 
-            }
-
-            @Override
-            public void onCancelled(@NonNull  DatabaseError error) {
-                Log.e("Database error",error.getMessage());
+                            @Override
+                            public void onCancelled(@NonNull  DatabaseError error) {
+                                Log.e("Database error",error.getMessage());
+                            }
+                        });
+                    }
+                });
             }
         });
     }
