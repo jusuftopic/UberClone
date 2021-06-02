@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.uberclone.MainApp.CallBacks.Rider.CurrentLocationCallBack;
+import com.example.uberclone.MainApp.CallBacks.Rider.EndLocationCallBack;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver.FireBaseCallBackDriverCar;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLatitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLongitude;
@@ -56,6 +58,9 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     private ArrayList<java.lang.Double> longitudes;
 
     private ArrayList<RiderLocation> ridersCurrentLocations;
+
+    private RiderLocation acceptedRiderCurrentLocation;
+    private RiderLocation acceptedRiderEndLocation;
 
     private Location lastKnownLocation;
 
@@ -172,7 +177,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     public void onAcceptRequest(View view){
         if (acceptRequestButton.isEnabled()){
             if (acceptedLocation.latitude != -1 && acceptedLocation.longitude != -1){
-                addDriverToRider(nameOfDriver);
+                mergeDriverAndRider(nameOfDriver,getDriverLocation(getLastKnownLocation()),acceptedRider);
                 acceptRequest(acceptedLocation);
                 deleteRiderFromRequests(acceptedRider);
 
@@ -189,26 +194,29 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         }
     }
 
-    public void addDriverToRider(String nameOfDriver){
-        if (!acceptedRider.equalsIgnoreCase("") && acceptedRider != null){
-            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-            DatabaseReference root = firebaseDatabase.getReference();
+    public void mergeDriverAndRider(String driverName, DriverLocation driverLocation,String riderName){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
 
-            root.child("Requests").child("Rider Calls").child(acceptedRider).child("Driver").setValue(nameOfDriver).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void unused) {
-                    Log.i("ADDED","Added name of driver to rider's request");
+        root.child("Requests").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if (snapshot.exists()){
+
                 }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull  Exception e) {
-                    Log.e("FAILED","Failed to add driver to rider's request");
-                    e.printStackTrace();
+                else{
+
                 }
-            });
-        }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull  DatabaseError error) {
+                Log.e("Database error",error.getMessage());
+            }
+        });
     }
+
 
     public void acceptRequest(LatLng acceptedLoc){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -329,6 +337,9 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         });
     }
 
+    public DriverLocation getDriverLocation(Location location){
+        return new DriverLocation(true,location.getLongitude(),location.getLongitude());
+    }
 
     public void updateLocation(Location location) {
         if (location != null) {
@@ -344,6 +355,62 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
         return null;
+    }
+
+    public void getAcceptedRiderCurrentLocation(CurrentLocationCallBack currentLocationCallBack){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").child(acceptedRider).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    double latitude = (double) snapshot.child("Current location").child("rider_latitude").getValue();
+                    double longitude = (double) snapshot.child("Current location").child("rider_latitude").getValue();
+
+                    acceptedRiderCurrentLocation = new RiderLocation(latitude,longitude);
+
+                    currentLocationCallBack.onCurrentLocationCallBack(acceptedRiderCurrentLocation);
+
+                }
+                else{
+                    Log.e("Accepted rider","Failed to find accepted rider on marker click");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Database error",error.getMessage());
+            }
+        });
+    }
+
+    public void getAcceptedRiderEndLocation(EndLocationCallBack endLocationCallBack){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").child(acceptedRider).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    double latitude = (double) snapshot.child("End location").child("rider_latitude").getValue();
+                    double longitude = (double) snapshot.child("End location").child("rider_latitude").getValue();
+
+                    acceptedRiderEndLocation = new RiderLocation(latitude,longitude);
+
+                    endLocationCallBack.onEndLocationCallBack(acceptedRiderEndLocation);
+
+                }
+                else{
+                    Log.e("Accepted rider","Failed to find accepted rider on marker click");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Database error",error.getMessage());
+            }
+        });
     }
 
     public void getRiderRequesters(FireBaseCallbackUsername fireBaseCallback) {
