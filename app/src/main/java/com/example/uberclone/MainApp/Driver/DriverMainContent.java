@@ -96,7 +96,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
         mapFragment.getMapAsync(this);
 
         nameOfDriver = getNameOfDriver();
-        Log.i("Name of driver ",nameOfDriver);
+        Log.i("Name of driver",nameOfDriver);
 
         riders_requesters = new ArrayList<>();
         latitudes = new ArrayList<java.lang.Double>();
@@ -179,7 +179,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             if (acceptedLocation.latitude != -1 && acceptedLocation.longitude != -1){
                 mergeDriverAndRider(nameOfDriver,getDriverLocation(getLastKnownLocation()),acceptedRider);
                 acceptRequest(acceptedLocation);
-                deleteRiderFromRequests(acceptedRider);
+               // deleteRiderFromRequests(acceptedRider);
 
                 Intent toMeeting = new Intent(DriverMainContent.this, RiderDriverMeeting.class);
                 toMeeting.putExtra("driver name for meeting",nameOfDriver);
@@ -577,6 +577,9 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             if (this.getIntent().getStringExtra("drivername from login") != null) {
                 return this.getIntent().getStringExtra("drivername from login");
             }
+        }
+        else{
+            return this.getIntent().getStringExtra("drivername from cardetails");
         }
         return null;
     }
