@@ -177,13 +177,9 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     public void onAcceptRequest(View view){
         if (acceptRequestButton.isEnabled()){
             if (acceptedLocation.latitude != -1 && acceptedLocation.longitude != -1){
-                mergeDriverAndRider(nameOfDriver,getDriverLocation(getLastKnownLocation()),acceptedRider);
                 acceptRequest(acceptedLocation);
-               // deleteRiderFromRequests(acceptedRider);
+                mergeDriverAndRider(nameOfDriver,getDriverLocation(getLastKnownLocation()),acceptedRider);
 
-                Intent toMeeting = new Intent(DriverMainContent.this, RiderDriverMeeting.class);
-                toMeeting.putExtra("driver name for meeting",nameOfDriver);
-                startActivity(toMeeting);
             }
             else{
                 Log.e("LatLng problem: ",acceptedLocation.toString() + " didn't recognized in on marker click");
@@ -229,6 +225,12 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
                                         public void onFailure(@NonNull  Exception e) {
                                             Log.e("Failed","Failed to add rider "+riderName+" to accepted requests- current location"+endRiderLocation.toString());
                                             e.printStackTrace();
+                                        }
+                                    })
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            Log.i("Succesefull","Created new path to accepted requests");
                                         }
                                     });
                                 }
