@@ -73,8 +73,8 @@ public class RiderDriverMeeting extends FragmentActivity implements OnMapReadyCa
         setContentView(R.layout.activity_rider_driver_meeting);
 
 
-        binding = ActivityRiderDriverMeetingBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+      //  binding = ActivityRiderDriverMeetingBinding.inflate(getLayoutInflater());
+        //setContentView(binding.getRoot());
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
