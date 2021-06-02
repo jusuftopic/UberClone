@@ -86,7 +86,7 @@ public class RequesterPopUp extends AppCompatActivity {
         nameOfDriver = getNameOfDriver();
         driverLocation = getDriverLocation();
 
-        rider_endCordinates = getEndCordinates();
+       // rider_endCordinates = getEndCordinates();
 
         setAvatarImage();
         setUsernameFromIntent();
@@ -102,15 +102,42 @@ public class RequesterPopUp extends AppCompatActivity {
             public void onClick(View v) {
                 if (!choosenTime.equals("")){
                     changeDriversAcceptanceStatus(nameOfDriver,rider_currentCordinates,rider_endCordinates);
-                    deleteRiderFromRequests(String.valueOf(usernameField.getText()));
+                   // deleteRiderFromRequests(String.valueOf(usernameField.getText()));
+                    mergeDriverAndRider(nameOfDriver,driverLocation,String.valueOf(usernameField.getText()),rider_currentCordinates,rider_endCordinates);
 
-                    Intent toMeeting = new Intent(RequesterPopUp.this, RiderDriverMeeting.class);
-                    toMeeting.putExtra("driver name for meeting",nameOfDriver);
-                    startActivity(toMeeting);
                 }
                 else{
                     Toast.makeText(RequesterPopUp.this,"Please choose the time at which you will pick up the passenger",Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+    }
+
+    public void mergeDriverAndRider(String driverName,DriverLocation driverLocation,String riderName,RiderLocation currentLocation,RiderLocation endLocation){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    root.child("Requests").child("Accepted requests").child(driverName).child("Driver's location").setValue(driverLocation);
+                    root.child("Requests").child("Accepted requests").child(driverName).child(riderName).child("Current location").setValue(currentLocation);
+                    root.child("Requests").child("Accepted requests").child(driverName).child(riderName).child("End location").setValue(endLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Log.i("SUCCESEFULL","ADDED ACCEPTED PATH IN POP UP");
+                        }
+                    });
+                }
+                else{
+                    Log.e("Path problem","Failed to find request path");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull  DatabaseError error) {
+                Log.e("Database error",error.getMessage());
             }
         });
     }
