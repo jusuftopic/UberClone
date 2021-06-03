@@ -11,6 +11,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.uberclone.MainApp.CallBacks.Rider.EndLocationCallBack;
+import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,6 +21,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
@@ -28,6 +35,9 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
     private LocationManager locationManager;
     private LocationListener locationListener;
+
+    private RiderLocation currentRiderLocation;
+    private RiderLocation endRiderLocation;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull  int[] grantResults) {
@@ -127,6 +137,34 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
         LatLng position = new LatLng(location.getLatitude(),location.getLongitude());
         mMap.addMarker(new MarkerOptions().position(position).title(username).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position,15f));
+    }
+
+    public void getEndRiderLocation(EndLocationCallBack endLocationCallBack){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").child(nameOfRider).child("End location").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    double latitude = (double) snapshot.child("rider_latitude").getValue();
+                    double longitude = (double) snapshot.child("rider_latitude").getValue();
+
+                    endRiderLocation = new RiderLocation(latitude,longitude);
+
+                    endLocationCallBack.onEndLocationCallBack(endRiderLocation);
+                }
+                else{
+                    Log.e("Path problem", "Can not find path to user end location");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull  DatabaseError error) {
+                Log.e("Database error",error.getMessage());
+            }
+        });
+
     }
 
     public String getNameOfRider(){
