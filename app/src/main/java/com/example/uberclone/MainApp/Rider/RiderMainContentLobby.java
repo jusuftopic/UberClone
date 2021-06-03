@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.uberclone.MainApp.MainRider;
+import com.example.uberclone.MainApp.Rider.RiderPayment.RidePayment;
 import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -210,7 +212,11 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
                             addCurrentLocationInDatabase(lastKnownLocation);
                         }
                         addMarkerOfUsersEndLocation(nameOfRider);
-                        callUber.setEnabled(true);
+                        callUber.setEnabled(false);
+
+                        Intent toMainRider = new Intent(RiderMainContentLobby.this, MainRider.class);
+                        toMainRider.putExtra("existed requester",nameOfRider);
+                        startActivity(toMainRider);
                     }
                 });
 
