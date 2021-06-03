@@ -72,7 +72,7 @@ public class RidePayment extends AppCompatActivity {
                     int counter = 0;
 
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                        cardnames[counter] = String.valueOf(dataSnapshot.child("CardType").getValue());
+                        cardnames[counter] = String.valueOf(dataSnapshot.child("cardType").getValue());
                         cardHolders[counter] = String.valueOf(dataSnapshot.child("cardholder").getValue());
                         cardNumbers[counter] =  String.valueOf(dataSnapshot.child("cardnumber").getValue());
                         logos[counter] = getLogoFromCardBank(cardnames[counter]);
