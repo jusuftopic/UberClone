@@ -25,6 +25,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainRider extends FragmentActivity implements OnMapReadyCallback {
@@ -110,6 +111,8 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
         setMarkerOnRiderEndLocation();
 
+        checkIfRequestAccepted();
+
     }
 
     public void handlePermission() {
@@ -138,10 +141,77 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
         return lastKnwnLoc;
     }
 
+    public void checkIfRequestAccepted(){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Accepted requests").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    Log.i("Accpted requests",String.valueOf(snapshot.getChildrenCount()));
+
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        if (dataSnapshot.child(nameOfRider) != null){
+                            isRequestAccepted = true;
+                            setMarkerOfDriversLocation(String.valueOf(dataSnapshot.getValue()));
+                        }
+                    }
+                }
+                else{
+                    Log.e("Path failed","Can not find path to Accpted requesters");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull  DatabaseError error) {
+                Log.e("Database problem",error.getMessage());
+            }
+        });
+    }
+
+    public void setMarkerOfDriversLocation(String driversName){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference("Accepted requests");
+
+        root.child(driversName).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    double latitude = (double) snapshot.child("Driver's location").child("driver_latitude").getValue();
+                    double longitude = (double) snapshot.child("Driver's location").child("driver_longitude").getValue();
+
+                    putCordinatesInMap(driversName,latitude, longitude);
+                }
+                else{
+                    Log.e("Path failed","Failed to get driver from database in accepted requests");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull  DatabaseError error) {
+                Log.e("Database error",error.getMessage());
+            }
+        });
+    }
+
+    public void putCordinatesInMap(String driversName, double latitude, double longitude){
+        if ((Double)latitude == null || (Double)longitude == null){
+            Log.e("Cordinates failed","Failed to ger driver's location from database");
+            return;
+        }
+
+        LatLng driversposition = new LatLng(latitude,longitude);
+
+        mMap.addMarker(new MarkerOptions().position(driversposition).title(driversName).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+        Log.i("Marker added","Accepted call from "+driversName+" and marker added on map");
+    }
+
     public void updateLocation(Location location, String username, String message) {
         LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.addMarker(new MarkerOptions().position(position).title(username + "\n" + message).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
     }
 
     public void setMarkerOnRiderEndLocation() {
@@ -150,6 +220,8 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
             public void onEndLocationCallBack(RiderLocation endRiderLocation) {
                 LatLng endPosition = new LatLng(endRiderLocation.getRider_latitude(), endRiderLocation.getRider_longitude());
                 mMap.addMarker(new MarkerOptions().position(endPosition).title(nameOfRider + "\n" + "END").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+                Log.i("Marker added","Marked added on locations "+endPosition.toString());
 
             }
         });
