@@ -39,13 +39,15 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
     private RiderLocation currentRiderLocation;
     private RiderLocation endRiderLocation;
 
+    private boolean isRequestAccepted;
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull  int[] grantResults) {
-        if (requestCode == 1){
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     Location lastKnownLocation = getLastKnownLocation();
-                    updateLocation(lastKnownLocation,nameOfRider,"START");
+                    updateLocation(lastKnownLocation, nameOfRider, "START");
                 }
             }
         }
@@ -64,6 +66,8 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
 
         nameOfRider = getNameOfRider();
+
+        isRequestAccepted = false;
     }
 
     /**
@@ -83,7 +87,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                updateLocation(location,nameOfRider,"START");
+                updateLocation(location, nameOfRider, "START");
             }
 
             @Override
@@ -108,84 +112,86 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
     }
 
-    public void handlePermission(){
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-        }
-        else{
+    public void handlePermission() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        } else {
             Location lastKnownLocation = getLastKnownLocation();
-            updateLocation(lastKnownLocation,nameOfRider,"START");
+            updateLocation(lastKnownLocation, nameOfRider, "START");
         }
     }
 
-    public Location getLastKnownLocation(){
+    public Location getLastKnownLocation() {
 
         Location lastKnwnLoc = null;
 
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
             lastKnwnLoc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
 
-        if (lastKnwnLoc == null){
-            Log.e("Last known loc","PROBLEM TO GET LAST KNOWN LOCATION VIA GPS");
+        if (lastKnwnLoc == null) {
+            Log.e("Last known loc", "PROBLEM TO GET LAST KNOWN LOCATION VIA GPS");
             return null;
         }
 
         return lastKnwnLoc;
     }
 
-    public void updateLocation(Location location,String username,String message){
-        LatLng position = new LatLng(location.getLatitude(),location.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(position).title(username+"\n"+message).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position,15f));
+    public void updateLocation(Location location, String username, String message) {
+        LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
+        mMap.addMarker(new MarkerOptions().position(position).title(username + "\n" + message).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15f));
     }
 
-    public void setMarkerOnRiderEndLocation(){
+    public void setMarkerOnRiderEndLocation() {
         getEndRiderLocation(new EndLocationCallBack() {
             @Override
             public void onEndLocationCallBack(RiderLocation endRiderLocation) {
-                LatLng endPosition = new LatLng(endRiderLocation.getRider_latitude(),endRiderLocation.getRider_longitude());
-                mMap.addMarker(new MarkerOptions().position(endPosition).title(nameOfRider+"\n"+"END").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                LatLng endPosition = new LatLng(endRiderLocation.getRider_latitude(), endRiderLocation.getRider_longitude());
+                mMap.addMarker(new MarkerOptions().position(endPosition).title(nameOfRider + "\n" + "END").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
             }
         });
     }
 
-    public void getEndRiderLocation(EndLocationCallBack endLocationCallBack){
+    public void getEndRiderLocation(EndLocationCallBack endLocationCallBack) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
         root.child("Requests").child("Rider Calls").child(nameOfRider).child("End location").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull  DataSnapshot snapshot) {
-                if (snapshot.exists()){
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
                     double latitude = (double) snapshot.child("rider_latitude").getValue();
-                    double longitude = (double) snapshot.child("rider_latitude").getValue();
+                    double longitude = (double) snapshot.child("rider_longitude").getValue();
 
-                    endRiderLocation = new RiderLocation(latitude,longitude);
+                    endRiderLocation = new RiderLocation(latitude, longitude);
 
                     endLocationCallBack.onEndLocationCallBack(endRiderLocation);
-                }
-                else{
+                } else {
                     Log.e("Path problem", "Can not find path to user end location");
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull  DatabaseError error) {
-                Log.e("Database error",error.getMessage());
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Database error", error.getMessage());
             }
         });
 
     }
 
-    public String getNameOfRider(){
-        if (this.getIntent().getStringExtra("name of rider from payment") != null && !this.getIntent().getStringExtra("name of rider from payment").equalsIgnoreCase("")){
-            return this.getIntent().getStringExtra("");
-        }
+    public String getNameOfRider() {
+        if (this.getIntent().getStringExtra("existed requester") != null && !this.getIntent().getStringExtra("existed requester").equalsIgnoreCase("")) {
+            return this.getIntent().getStringExtra("existed requester");
+        } else {
+            if (this.getIntent().getStringExtra("name of rider from payment") != null && !this.getIntent().getStringExtra("name of rider from payment").equalsIgnoreCase("")) {
+                return this.getIntent().getStringExtra("name of rider from payment");
+            }
 
-        Log.e("Intent problem","Problem to get name of rider from intent");
-        return null;
+            Log.e("Intent problem", "Problem to get name of rider from intent");
+            return null;
+        }
     }
 }
