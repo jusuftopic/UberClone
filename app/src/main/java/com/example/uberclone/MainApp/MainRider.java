@@ -45,7 +45,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                     Location lastKnownLocation = getLastKnownLocation();
-                    updateLocation(lastKnownLocation,nameOfRider);
+                    updateLocation(lastKnownLocation,nameOfRider,"START");
                 }
             }
         }
@@ -83,7 +83,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                updateLocation(location,nameOfRider);
+                updateLocation(location,nameOfRider,"START");
             }
 
             @Override
@@ -104,6 +104,8 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
         handlePermission();
 
+        setMarkerOnRiderEndLocation();
+
     }
 
     public void handlePermission(){
@@ -112,7 +114,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
         }
         else{
             Location lastKnownLocation = getLastKnownLocation();
-            updateLocation(lastKnownLocation,nameOfRider);
+            updateLocation(lastKnownLocation,nameOfRider,"START");
         }
     }
 
@@ -133,10 +135,21 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
         return lastKnwnLoc;
     }
 
-    public void updateLocation(Location location,String username){
+    public void updateLocation(Location location,String username,String message){
         LatLng position = new LatLng(location.getLatitude(),location.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(position).title(username).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+        mMap.addMarker(new MarkerOptions().position(position).title(username+"\n"+message).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position,15f));
+    }
+
+    public void setMarkerOnRiderEndLocation(){
+        getEndRiderLocation(new EndLocationCallBack() {
+            @Override
+            public void onEndLocationCallBack(RiderLocation endRiderLocation) {
+                LatLng endPosition = new LatLng(endRiderLocation.getRider_latitude(),endRiderLocation.getRider_longitude());
+                mMap.addMarker(new MarkerOptions().position(endPosition).title(nameOfRider+"\n"+"END").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+            }
+        });
     }
 
     public void getEndRiderLocation(EndLocationCallBack endLocationCallBack){
