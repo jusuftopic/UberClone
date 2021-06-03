@@ -173,9 +173,9 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
     public void setMarkerOfDriversLocation(String driversName){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference("Accepted requests");
+        DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child(driversName).addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child("Requests").child("Accepted requests").child(driversName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull  DataSnapshot snapshot) {
                 if (snapshot.exists()){
