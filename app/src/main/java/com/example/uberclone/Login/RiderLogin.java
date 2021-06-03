@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.uberclone.Login.ForgottenPassword.RiderForgottenPassword;
-import com.example.uberclone.MainApp.Rider.RiderMainContent;
+import com.example.uberclone.MainApp.Rider.RiderMainContentLobby;
 import com.example.uberclone.R;
 import com.example.uberclone.Registration.RiderRegistration;
 import com.google.firebase.database.DataSnapshot;
@@ -70,7 +70,7 @@ public class RiderLogin extends AppCompatActivity {
                         String passwordInDatabase = String.valueOf(snapshot.child("password").getValue());
 
                         if (passwordOfUser.equals(passwordInDatabase)){
-                            Intent toMainContent = new Intent(RiderLogin.this, RiderMainContent.class);
+                            Intent toMainContent = new Intent(RiderLogin.this, RiderMainContentLobby.class);
                             toMainContent.putExtra("ridername from login",nameOfUser);
                             startActivity(toMainContent);
                         }

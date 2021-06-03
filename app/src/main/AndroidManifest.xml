@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.uberclone">
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -16,7 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UberClone">
-        <activity android:name=".MainApp.Rider.RiderPayment.AddNewCard"></activity>
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -30,8 +31,9 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MainApp.RiderDriverMeeting"
-            android:label="@string/title_activity_rider_driver_meeting" />
+            android:name=".MainApp.MainRider"
+            android:label="@string/title_activity_main_rider"></activity>
+        <activity android:name=".MainApp.Rider.RiderPayment.AddNewCard" />
         <activity android:name=".MainApp.Rider.RiderPayment.RidePayment" />
         <activity
             android:name=".Registration.DriverCarDetails.CarInformations.UberExpressPoolDetails.SpotPicker"
@@ -50,10 +52,10 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".MainApp.Driver.DriverMainContent"
+            android:name=".MainApp.Driver.DriverMainContentLobby"
             android:label="@string/title_activity_driver_main_content" />
         <activity
-            android:name=".MainApp.Rider.RiderMainContent"
+            android:name=".MainApp.Rider.RiderMainContentLobby"
             android:label="@string/title_activity_rider_main_content" />
         <activity android:name=".Registration.DriverCarDetails.CarInformations.UberSUVDetails" />
         <activity android:name=".Registration.DriverCarDetails.CarInformations.UberXLDetails" />

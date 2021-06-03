@@ -6,7 +6,7 @@ tools:layout_editor_absoluteX="138dp"
 tools:layout_editor_absoluteY="636dp"
 xmlns:tools="http://schemas.android.com/tools"
 xmlns:android="http://schemas.android.com/apk/res/android"
-tools:context=".MainApp.Driver.DriverMainContent">
+tools:context=".MainApp.Driver.DriverMainContentLobby">
 
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -15,7 +15,7 @@ tools:context=".MainApp.Driver.DriverMainContent">
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainApp.Driver.DriverMainContent" >
+    tools:context=".MainApp.Driver.DriverMainContentLobby" >
 </fragment>
 
     <Button

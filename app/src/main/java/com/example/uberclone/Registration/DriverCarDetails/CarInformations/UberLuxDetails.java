@@ -15,7 +15,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.uberclone.MainApp.Driver.DriverMainContent;
+import com.example.uberclone.MainApp.Driver.DriverMainContentLobby;
 import com.example.uberclone.Models.Car.CarMarks.CarMarks;
 import com.example.uberclone.Models.Car.UberLux;
 import com.example.uberclone.R;
@@ -81,7 +81,7 @@ public class UberLuxDetails extends AppCompatActivity {
 
                             if (isValidUberLux(uberLux)){
                                 addUberLuxInDatabase(uberLux);
-                                Intent toMain = new Intent(UberLuxDetails.this, DriverMainContent.class);
+                                Intent toMain = new Intent(UberLuxDetails.this, DriverMainContentLobby.class);
                                 toMain.putExtra("drivername from cardetails",nameOfDriver);
                                 startActivity(toMain);
                             }

@@ -34,7 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class RiderMainContent extends FragmentActivity implements OnMapReadyCallback {
+public class RiderMainContentLobby extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
@@ -176,7 +176,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
             }
             changeButtonInfos(true, "Cancle call");
 
-            Intent toPickCar = new Intent(RiderMainContent.this, ChooseUberCar.class);
+            Intent toPickCar = new Intent(RiderMainContentLobby.this, ChooseUberCar.class);
             toPickCar.putExtra("username from ridermain", nameOfRider);
             startActivity(toPickCar);
 
@@ -191,7 +191,7 @@ public class RiderMainContent extends FragmentActivity implements OnMapReadyCall
     }
 
     public void setDialog() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(RiderMainContent.this)
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(RiderMainContentLobby.this)
                 .setTitle("Cancle Uber?")
                 .setMessage("You already requested Uber.\nDo yo want to cancle and call again?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {

@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.uberclone.MainApp.Driver.DriverMainContent;
+import com.example.uberclone.MainApp.Driver.DriverMainContentLobby;
 import com.example.uberclone.Models.Car.CarMarks.CarMarks;
 import com.example.uberclone.Models.Car.UberX;
 import com.example.uberclone.R;
@@ -86,7 +86,7 @@ public class UberXDetails extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                          Log.i("UberXDetails car: ","ADDED");
-                                            Intent toMainContent = new Intent(UberXDetails.this, DriverMainContent.class);
+                                            Intent toMainContent = new Intent(UberXDetails.this, DriverMainContentLobby.class);
                                             toMainContent.putExtra("drivername from cardetails",drivername);
                                             startActivity(toMainContent);
                                         }

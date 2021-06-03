@@ -1,6 +1,6 @@
 package com.example.uberclone.MainApp.RiderMain;
 
-import com.example.uberclone.MainApp.Rider.RiderMainContent;
+import com.example.uberclone.MainApp.Rider.RiderMainContentLobby;
 import com.example.uberclone.Models.Requests.RiderLocation;
 
 import org.junit.After;
@@ -9,18 +9,18 @@ import org.junit.Test;
 
 public class RiderLocationMapTest {
 
-    private RiderMainContent riderMainContent;
+    private RiderMainContentLobby riderMainContentLobby;
     private RiderLocation aRiderLocation;
 
     @Before
     public void setUp(){
-        riderMainContent = new RiderMainContent();
+        riderMainContentLobby = new RiderMainContentLobby();
         aRiderLocation = new RiderLocation(30,30);
     }
 
     @After
     public void tearDown(){
-        riderMainContent = null;
+        riderMainContentLobby = null;
         aRiderLocation = null;
     }
 

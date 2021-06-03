@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.uberclone.MainApp.Driver.DriverMainContent;
+import com.example.uberclone.MainApp.Driver.DriverMainContentLobby;
 import com.example.uberclone.Models.Car.CarMarks.CarMarks;
 import com.example.uberclone.Models.Car.UberExpressPool;
 import com.example.uberclone.Models.Car.UberLux;
@@ -115,7 +115,7 @@ public class UberExpressPoolDetails extends AppCompatActivity {
 
                         if (isValidUberExpressPool(uberExpressPool)) {
                             addUberExpressPoolInDatabase(uberExpressPool);
-                            Intent toMain = new Intent(UberExpressPoolDetails.this, DriverMainContent.class);
+                            Intent toMain = new Intent(UberExpressPoolDetails.this, DriverMainContentLobby.class);
                             toMain.putExtra("drivername from cardetails", nameOfDriver);
                             startActivity(toMain);
                         }

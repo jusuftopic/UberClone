@@ -13,7 +13,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.uberclone.MainApp.Driver.DriverMainContent;
+import com.example.uberclone.MainApp.Driver.DriverMainContentLobby;
 import com.example.uberclone.Models.Car.CarMarks.CarMarks;
 import com.example.uberclone.Models.Car.UberWAV;
 import com.example.uberclone.R;
@@ -78,7 +78,7 @@ public class UberWAVDetails extends AppCompatActivity {
 
                             if (isValidUberWAV(uberWAV)){
                                 addUberLuxInDatabase(uberWAV);
-                                Intent toMain = new Intent(UberWAVDetails.this, DriverMainContent.class);
+                                Intent toMain = new Intent(UberWAVDetails.this, DriverMainContentLobby.class);
                                 toMain.putExtra("drivername from cardetails",nameOfDriver);
                                 startActivity(toMain);
                             }

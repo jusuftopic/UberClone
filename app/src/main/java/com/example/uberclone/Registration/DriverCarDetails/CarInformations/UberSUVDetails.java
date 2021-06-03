@@ -15,7 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.uberclone.Extras.Adapters.ColorAdapter;
-import com.example.uberclone.MainApp.Driver.DriverMainContent;
+import com.example.uberclone.MainApp.Driver.DriverMainContentLobby;
 import com.example.uberclone.Models.Car.CarMarks.SUVMarks;
 import com.example.uberclone.Models.Car.UberSUV;
 import com.example.uberclone.Models.Color.Colors;
@@ -216,7 +216,7 @@ public class UberSUVDetails extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             Log.i("UberSUV registration ", "SUCCESEFULL");
-                                            Intent toMainContent = new Intent(UberSUVDetails.this, DriverMainContent.class);
+                                            Intent toMainContent = new Intent(UberSUVDetails.this, DriverMainContentLobby.class);
                                             toMainContent.putExtra("drivername from cardetails", nameOfDriver);
                                             startActivity(toMainContent);
                                         }

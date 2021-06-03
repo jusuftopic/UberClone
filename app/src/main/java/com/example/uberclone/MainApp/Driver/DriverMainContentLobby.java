@@ -21,7 +21,6 @@ import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver.FireBaseCal
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLatitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLongitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
-import com.example.uberclone.MainApp.RiderDriverMeeting;
 import com.example.uberclone.Models.Requests.DriverLocation;
 import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
@@ -43,7 +42,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class DriverMainContent extends FragmentActivity implements OnMapReadyCallback {
+public class DriverMainContentLobby extends FragmentActivity implements OnMapReadyCallback {
 
     private String nameOfDriver;
 
@@ -186,7 +185,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
             }
         }
         else{
-            Toast.makeText(DriverMainContent.this,"First select drive, you want to accept",Toast.LENGTH_LONG).show();
+            Toast.makeText(DriverMainContentLobby.this,"First select drive, you want to accept",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -311,7 +310,7 @@ public class DriverMainContent extends FragmentActivity implements OnMapReadyCal
     }
 
     public void showListOfNearestLocations(View view){
-        Intent toListOfRequests = new Intent(DriverMainContent.this,ShowNearestRequesters.class);
+        Intent toListOfRequests = new Intent(DriverMainContentLobby.this,ShowNearestRequesters.class);
         toListOfRequests.putExtra("driver name from main",nameOfDriver);
         startActivity(toListOfRequests);
     }

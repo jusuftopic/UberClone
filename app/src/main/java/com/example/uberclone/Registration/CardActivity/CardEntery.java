@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.braintreepayments.cardform.utils.CardType;
 import com.braintreepayments.cardform.view.CardEditText;
 import com.braintreepayments.cardform.view.CardForm;
-import com.example.uberclone.MainApp.Rider.RiderMainContent;
+import com.example.uberclone.MainApp.Rider.RiderMainContentLobby;
 import com.example.uberclone.Models.Card.Card;
 import com.example.uberclone.R;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -72,7 +72,7 @@ public class CardEntery extends AppCompatActivity {
                     root.child("User").child("Rider").child(ridername).child("Cards").child("Card").setValue(card).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Intent toMainContent = new Intent(CardEntery.this, RiderMainContent.class);
+                            Intent toMainContent = new Intent(CardEntery.this, RiderMainContentLobby.class);
                             toMainContent.putExtra("ridername from card activity",ridername);
                             startActivity(toMainContent);
                         }
@@ -86,7 +86,7 @@ public class CardEntery extends AppCompatActivity {
     }
 
     public void addCardLaterInDatabase(View view){
-        Intent toMainContent = new Intent(CardEntery.this,RiderMainContent.class);
+        Intent toMainContent = new Intent(CardEntery.this, RiderMainContentLobby.class);
         toMainContent.putExtra("ridername from card activity",ridername);
         startActivity(toMainContent);
     }

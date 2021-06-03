@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.braintreepayments.cardform.utils.CardType;
 import com.braintreepayments.cardform.view.CardEditText;
 import com.braintreepayments.cardform.view.CardForm;
-import com.example.uberclone.MainApp.RiderDriverMeeting;
+import com.example.uberclone.MainApp.MainRider;
 import com.example.uberclone.Models.Card.Card;
 import com.example.uberclone.R;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -73,7 +73,7 @@ public class AddNewCard extends AppCompatActivity {
                     root.child("User").child("Rider").child(nameOfRider).child("Cards").child("Card").setValue(card).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Intent toMainContent = new Intent(AddNewCard.this, RiderDriverMeeting.class);
+                            Intent toMainContent = new Intent(AddNewCard.this, MainRider.class);
                             toMainContent.putExtra("name of rider from payment",nameOfRider);
                             startActivity(toMainContent);
                         }

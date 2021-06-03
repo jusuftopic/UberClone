@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.uberclone.Extras.Adapters.CardsAdapter;
-import com.example.uberclone.MainApp.RiderDriverMeeting;
+import com.example.uberclone.MainApp.MainRider;
 import com.example.uberclone.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -102,7 +102,7 @@ public class RidePayment extends AppCompatActivity {
         this.listOfCards.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent toMeetingWithDriver = new Intent(RidePayment.this, RiderDriverMeeting.class);
+                Intent toMeetingWithDriver = new Intent(RidePayment.this, MainRider.class);
                 toMeetingWithDriver.putExtra("name of rider from payment",nameOfRider);
                 startActivity(toMeetingWithDriver);
             }

@@ -16,7 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.uberclone.Extras.Adapters.ColorAdapter;
-import com.example.uberclone.MainApp.Driver.DriverMainContent;
+import com.example.uberclone.MainApp.Driver.DriverMainContentLobby;
 import com.example.uberclone.Models.Car.CarMarks.CarMarks;
 import com.example.uberclone.Models.Car.UberBlack;
 import com.example.uberclone.Models.Color.Colors;
@@ -212,7 +212,7 @@ public class UberBlackDetails extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                          Log.i("UberBlackDetails: ","SUCCESEFULL IN DATABASE");
-                                            Intent toMainApp = new Intent(UberBlackDetails.this, DriverMainContent.class);
+                                            Intent toMainApp = new Intent(UberBlackDetails.this, DriverMainContentLobby.class);
                                             toMainApp.putExtra("drivername from cardetails",nameOfDriver);
                                             startActivity(toMainApp);
                                         }

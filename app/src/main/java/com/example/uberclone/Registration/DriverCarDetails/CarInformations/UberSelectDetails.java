@@ -15,7 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.uberclone.Extras.Adapters.InteriorAdapter;
-import com.example.uberclone.MainApp.Driver.DriverMainContent;
+import com.example.uberclone.MainApp.Driver.DriverMainContentLobby;
 import com.example.uberclone.Models.Car.CarMarks.CarMarks;
 import com.example.uberclone.Models.Car.InteriorType.InteriorType;
 import com.example.uberclone.Models.Car.UberSelect;
@@ -124,7 +124,7 @@ public class UberSelectDetails extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             Log.i("UberSelect reg ", "SUCCESEFULL");
-                                            Intent toMainContent = new Intent(UberSelectDetails.this, DriverMainContent.class);
+                                            Intent toMainContent = new Intent(UberSelectDetails.this, DriverMainContentLobby.class);
                                             toMainContent.putExtra("drivername from cardetails", nameOfDriver);
                                             startActivity(toMainContent);
                                         }
