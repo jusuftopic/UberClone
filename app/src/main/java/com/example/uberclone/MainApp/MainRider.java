@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.uberclone.MainApp.CallBacks.Rider.EndLocationCallBack;
+import com.example.uberclone.MainApp.DirectionHelper.FetchURL;
+import com.example.uberclone.MainApp.DirectionHelper.TaskLoadedCallBack;
 import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,6 +24,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,7 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-public class MainRider extends FragmentActivity implements OnMapReadyCallback {
+public class MainRider extends FragmentActivity implements OnMapReadyCallback, TaskLoadedCallBack {
 
     private GoogleMap mMap;
 
@@ -45,6 +49,10 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
     private Marker currentRiderMarker;
     private Marker driverMarker;
+
+    private Polyline polyline;
+
+
 
 
     @Override
@@ -117,6 +125,8 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
         setMarkerOnRiderEndLocation();
 
         checkIfRequestAccepted();
+
+        drawRoute();
 
     }
 
@@ -209,7 +219,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
         LatLng driversposition = new LatLng(latitude,longitude);
 
-        mMap.addMarker(new MarkerOptions().position(driversposition).title("Driver").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+        driverMarker= mMap.addMarker(new MarkerOptions().position(driversposition).title("Driver").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
         Log.i("Marker added","Accepted call from "+driversName+" and marker added on map");
     }
 
@@ -273,6 +283,32 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
     }
 
     public void drawRoute(){
+        String url = getUrl(currentRiderMarker.getPosition(),driverMarker.getPosition(),"driving");
+        new FetchURL(MainRider.this).execute(url,"driving");
 
+    }
+
+    private String getUrl(LatLng origin,LatLng dest,String directionMode){
+        String str_origin = "origin="+origin.latitude+","+origin.longitude;
+
+        String str_destination = "destionation="+dest.latitude+","+dest.longitude;
+
+        String direct_mode = "mode= "+directionMode;
+
+        String parameters = str_origin+"&"+str_destination+"&"+direct_mode;
+
+        String output = "json";
+
+        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters+"&key="+getString(R.string.google_maps_key);
+
+        return url;
+    }
+
+    @Override
+    public void onTaskDone(Object... values) {
+        if (polyline != null){
+            polyline.remove();
+        }
+        mMap.addPolyline((PolylineOptions) values[0]);
     }
 }
