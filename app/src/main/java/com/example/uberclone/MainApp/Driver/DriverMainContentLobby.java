@@ -21,6 +21,7 @@ import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver.FireBaseCal
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLatitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLongitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
+import com.example.uberclone.MainApp.MainDriver;
 import com.example.uberclone.Models.Requests.DriverLocation;
 import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
@@ -230,6 +231,10 @@ public class DriverMainContentLobby extends FragmentActivity implements OnMapRea
                                         @Override
                                         public void onSuccess(Void unused) {
                                             Log.i("Succesefull","Created new path to accepted requests");
+
+                                            Intent toMainDriver = new Intent(DriverMainContentLobby.this, MainDriver.class);
+                                            toMainDriver.putExtra("driver name from accept",nameOfDriver);
+                                            startActivity(toMainDriver);
                                         }
                                     });
                                 }
