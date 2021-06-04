@@ -20,6 +20,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,6 +42,10 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
     private RiderLocation endRiderLocation;
 
     private boolean isRequestAccepted;
+
+    private Marker currentRiderMarker;
+    private Marker driverMarker;
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -204,13 +209,13 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
         LatLng driversposition = new LatLng(latitude,longitude);
 
-        mMap.addMarker(new MarkerOptions().position(driversposition).title(driversName).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+        mMap.addMarker(new MarkerOptions().position(driversposition).title("Driver").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
         Log.i("Marker added","Accepted call from "+driversName+" and marker added on map");
     }
 
     public void updateLocation(Location location, String username, String message) {
         LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(position).title(username + "\n" + message).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+        currentRiderMarker =  mMap.addMarker(new MarkerOptions().position(position).title(username + "\n" + message).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
     }
 
@@ -219,7 +224,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onEndLocationCallBack(RiderLocation endRiderLocation) {
                 LatLng endPosition = new LatLng(endRiderLocation.getRider_latitude(), endRiderLocation.getRider_longitude());
-                mMap.addMarker(new MarkerOptions().position(endPosition).title(nameOfRider + "\n" + "END").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                driverMarker = mMap.addMarker(new MarkerOptions().position(endPosition).title(nameOfRider + "\n" + "END").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
                 Log.i("Marker added","Marked added on locations "+endPosition.toString());
 
@@ -265,5 +270,9 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
             Log.e("Intent problem", "Problem to get name of rider from intent");
             return null;
         }
+    }
+
+    public void drawRoute(){
+
     }
 }
