@@ -154,7 +154,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()){
                         if (dataSnapshot.child(nameOfRider) != null){
                             isRequestAccepted = true;
-                            setMarkerOfDriversLocation(String.valueOf(dataSnapshot.getValue()));
+                            setMarkerOfDriversLocation(String.valueOf(dataSnapshot.getKey()));
                         }
                     }
                 }
