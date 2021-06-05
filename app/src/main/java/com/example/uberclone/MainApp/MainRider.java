@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.uberclone.MainApp.CallBacks.Rider.EndLocationCallBack;
+import com.example.uberclone.MainApp.CallBacks.Rider.MarkerCallBack;
 import com.example.uberclone.MainApp.DirectionHelper.FetchURL;
 import com.example.uberclone.MainApp.DirectionHelper.TaskLoadedCallBack;
 import com.example.uberclone.Models.Requests.RiderLocation;
@@ -170,6 +171,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback, T
                         if (dataSnapshot.child(nameOfRider) != null){
                             isRequestAccepted = true;
                             setMarkerOfDriversLocation(String.valueOf(dataSnapshot.getKey()));
+
                         }
                     }
                 }
@@ -220,6 +222,13 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback, T
         LatLng driversposition = new LatLng(latitude,longitude);
 
         driverMarker= mMap.addMarker(new MarkerOptions().position(driversposition).title("Driver").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+
+        MarkerCallBack markerCallBack = new MarkerCallBack() {
+            @Override
+            public void onAddedMarker(Marker marker) {
+                marker = driverMarker;
+            }
+        };
         Log.i("Marker added","Accepted call from "+driversName+" and marker added on map");
     }
 
