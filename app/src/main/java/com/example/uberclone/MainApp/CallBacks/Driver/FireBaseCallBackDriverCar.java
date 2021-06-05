@@ -1,4 +1,4 @@
-package com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver;
+package com.example.uberclone.MainApp.CallBacks.Driver;
 
 public interface FireBaseCallBackDriverCar {
 

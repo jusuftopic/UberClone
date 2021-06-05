@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.example.uberclone.MainApp.CallBacks.Rider.CurrentLocationCallBack;
 import com.example.uberclone.MainApp.CallBacks.Rider.EndLocationCallBack;
-import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver.FireBaseCallBackDriverCar;
+import com.example.uberclone.MainApp.CallBacks.Driver.FireBaseCallBackDriverCar;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLatitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackLongitude;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
