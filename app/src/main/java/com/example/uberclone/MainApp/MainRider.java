@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.uberclone.MainApp.CallBacks.Rider.EndLocationCallBack;
-import com.example.uberclone.MainApp.CallBacks.Rider.MarkerCallBack;
 import com.example.uberclone.MainApp.DirectionHelper.FetchURL;
 import com.example.uberclone.MainApp.DirectionHelper.TaskLoadedCallBack;
 import com.example.uberclone.Models.Requests.RiderLocation;
@@ -31,7 +30,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainRider extends FragmentActivity implements OnMapReadyCallback, TaskLoadedCallBack {
@@ -127,7 +125,6 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback, T
 
         checkIfRequestAccepted();
 
-        drawRoute();
 
     }
 
@@ -223,12 +220,8 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback, T
 
         driverMarker= mMap.addMarker(new MarkerOptions().position(driversposition).title("Driver").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
 
-        MarkerCallBack markerCallBack = new MarkerCallBack() {
-            @Override
-            public void onAddedMarker(Marker marker) {
-                marker = driverMarker;
-            }
-        };
+        drawRoute(driverMarker);
+
         Log.i("Marker added","Accepted call from "+driversName+" and marker added on map");
     }
 
@@ -291,7 +284,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback, T
         }
     }
 
-    public void drawRoute(){
+    public void drawRoute(Marker driverMarker){
         String url = getUrl(currentRiderMarker.getPosition(),driverMarker.getPosition(),"driving");
         new FetchURL(MainRider.this).execute(url,"driving");
 
