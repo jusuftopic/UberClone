@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.uberclone.MainApp.CallBacks.Rider.CurrentLocationCallBack;
+import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,6 +23,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
 
@@ -32,6 +39,8 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
     private LocationListener locationListener;
 
     private Marker driverMarker;
+
+    private RiderLocation currentRiderLocation;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull  String[] permissions, @NonNull  int[] grantResults) {
@@ -101,6 +110,45 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
             Location lastKnownLocation = getLastKnownLocation();
             updateLocation(lastKnownLocation);
         }
+    }
+
+    public void getRiderCurrentLocation(CurrentLocationCallBack currentLocationCallBack){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Accpeted requests").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    Log.i("Number of children",String.valueOf(snapshot.getChildrenCount()));
+
+                    if (snapshot.getChildrenCount() == 2){
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                            if (!dataSnapshot.getKey().equalsIgnoreCase("Driver's location")){
+                                double rider_latitude = (double) dataSnapshot.child("Current location").child("rider_latitude").getValue();
+                                double rider_longitude = (double) dataSnapshot.child("Current location").child("rider_latitude").getValue();
+
+                                currentRiderLocation = new RiderLocation(rider_latitude,rider_longitude);
+
+                                currentLocationCallBack.onCurrentLocationCallBack(currentRiderLocation);
+
+                            }
+                        }
+                    }
+                    else{
+                        Log.e("Accept failed","Failed to accept user on right way");
+                    }
+                }
+                else{
+                    Log.e("FAILED","Failed to find path to driver in accepted requests");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Database error",error.getMessage());
+            }
+        });
     }
 
     public void updateLocation(Location location){
