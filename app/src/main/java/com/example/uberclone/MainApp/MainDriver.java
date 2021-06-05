@@ -39,6 +39,7 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
     private LocationListener locationListener;
 
     private Marker driverMarker;
+    private Marker riderMarker;
 
     private RiderLocation currentRiderLocation;
 
@@ -109,6 +110,19 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
         else{
             Location lastKnownLocation = getLastKnownLocation();
             updateLocation(lastKnownLocation);
+            getRiderCurrentLocation(new CurrentLocationCallBack() {
+                @Override
+                public void onCurrentLocationCallBack(RiderLocation currentRiderLocation) {
+
+                }
+
+                @Override
+                public void onCurrentLocationCallBackWihtUsername(String username, RiderLocation riderLocation) {
+                    setUpMarker(username,riderLocation);
+                }
+            });
+
+
         }
     }
 
@@ -130,7 +144,7 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
 
                                 currentRiderLocation = new RiderLocation(rider_latitude,rider_longitude);
 
-                                currentLocationCallBack.onCurrentLocationCallBack(currentRiderLocation);
+                                currentLocationCallBack.onCurrentLocationCallBackWihtUsername(dataSnapshot.getKey(),currentRiderLocation);
 
                             }
                         }
@@ -142,6 +156,8 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
                 else{
                     Log.e("FAILED","Failed to find path to driver in accepted requests");
                 }
+
+
             }
 
             @Override
@@ -149,6 +165,13 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
                 Log.e("Database error",error.getMessage());
             }
         });
+    }
+
+    public void setUpMarker(String username, RiderLocation currentRiderLocation){
+        LatLng currentRiderPosition = new LatLng(currentRiderLocation.getRider_latitude(),currentRiderLocation.getRider_longitude());
+        riderMarker = mMap.addMarker(new MarkerOptions().position(currentRiderPosition).title(username).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+
+
     }
 
     public void updateLocation(Location location){
