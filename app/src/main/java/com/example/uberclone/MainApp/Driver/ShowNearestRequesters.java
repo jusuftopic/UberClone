@@ -15,8 +15,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.uberclone.Extras.Adapters.RequestsAdapter;
-import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver.FireBaseCallBackDriverCar;
-import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.Driver.FireBaseCallBackDriverLocation;
+import com.example.uberclone.MainApp.CallBacks.Driver.FireBaseCallBackDriverCar;
+import com.example.uberclone.MainApp.CallBacks.Driver.FireBaseCallBackDriverLocation;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackEndRiderLocation;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FireBaseCallbackUsername;
 import com.example.uberclone.MainApp.Driver.FirebaseCallbacks.FirebaseCallBackCurrentRiderLocation;
