@@ -252,6 +252,11 @@ public class DriverMainContentLobby extends FragmentActivity implements OnMapRea
                     }
                 });
             }
+
+            @Override
+            public void onCurrentLocationCallBackWihtUsername(String username, RiderLocation riderLocation) {
+
+            }
         });
     }
 
