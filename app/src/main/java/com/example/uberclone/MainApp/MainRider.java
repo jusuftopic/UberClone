@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.example.uberclone.MainApp.CallBacks.AcceptedRequests.DriverLatLngCallBack;
 import com.example.uberclone.MainApp.CallBacks.Rider.EndLocationCallBack;
 import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
@@ -128,8 +129,12 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
         setMarkerOnRiderEndLocation();
 
+        checkIfRequestAccepted(new DriverLatLngCallBack() {
+            @Override
+            public void onDriverLatLng(LatLng driverLatLng) {
 
-
+            }
+        });
     }
 
     public void handlePermission() {
@@ -158,7 +163,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
         return lastKnwnLoc;
     }
 
-    public void checkIfRequestAccepted(){
+    public void checkIfRequestAccepted(DriverLatLngCallBack driverLatLngCallBack){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
@@ -172,7 +177,17 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
                         if (dataSnapshot.child(nameOfRider) != null){
                             isRequestAccepted = true;
 
-                            setMarkerOfDriversLocation(String.valueOf(dataSnapshot.getKey()));
+                            String username = dataSnapshot.getKey();
+                            double latitude = (double) dataSnapshot.child("Driver's location").child("driver_latitude").getValue();
+                            double longitude = (double) dataSnapshot.child("Driver's location").child("driver_longitude").getValue();
+
+                            currentDriverLatLng = new LatLng(latitude,longitude);
+
+                            driverMarker = mMap.addMarker(new MarkerOptions().position(currentDriverLatLng).title(username).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+
+                            driverLatLngCallBack.onDriverLatLng(currentDriverLatLng);
+
+                            setTextDistance(currentRiderLatLng,currentDriverLatLng);
 
                         }
                     }
@@ -190,44 +205,6 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
         });
     }
 
-    public void setMarkerOfDriversLocation(String driversName){
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference();
-
-        root.child("Requests").child("Accepted requests").child(driversName).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull  DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    double latitude = (double) snapshot.child("Driver's location").child("driver_latitude").getValue();
-                    double longitude = (double) snapshot.child("Driver's location").child("driver_longitude").getValue();
-
-                    putCordinatesInMap(driversName,latitude, longitude);
-                }
-                else{
-                    Log.e("Path failed","Failed to get driver from database in accepted requests");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull  DatabaseError error) {
-                Log.e("Database error",error.getMessage());
-            }
-        });
-    }
-
-    public void putCordinatesInMap(String driversName, double latitude, double longitude){
-        if ((Double)latitude == null || (Double)longitude == null){
-            Log.e("Cordinates failed","Failed to ger driver's location from database");
-            return;
-        }
-
-        currentDriverLatLng = new LatLng(latitude,longitude);
-
-        driverMarker= mMap.addMarker(new MarkerOptions().position(currentDriverLatLng).title("Driver").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-
-
-        Log.i("Marker added","Accepted call from "+driversName+" and marker added on map");
-    }
 
 
     public void updateLocation(Location location, String username, String message) {
