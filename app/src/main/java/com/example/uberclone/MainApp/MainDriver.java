@@ -23,6 +23,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -87,6 +89,7 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 updateLocation(location);
+                setDriverLocationUpdateInDatabase(location);
             }
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -124,6 +127,45 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
 
 
         }
+    }
+
+    public void setDriverLocationUpdateInDatabase(Location location){
+        double currentDriverLatitude = location.getLatitude();
+        double currentDriverLongitude = location.getLongitude();
+
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Accepted requests").child(nameOfDriver).child("Driver's location").child("driver_latitude").setValue(currentDriverLatitude)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.i("SUCCESEFULL","Driver's latitude succesefull changed on update");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("FAILED","Failed to update driver's latitude on change");
+                        e.printStackTrace();
+                    }
+                });
+
+        root.child("Requests").child("Accepted requests").child(nameOfDriver).child("Driver's location").child("driver_longitude").setValue(currentDriverLongitude)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.i("SUCCESEFULL","Driver's longitude succesefull changed on update");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("FAILED","Failed to update driver's longitude on change");
+                        e.printStackTrace();
+                    }
+                });
+
     }
 
     public void getRiderCurrentLocation(CurrentLocationCallBack currentLocationCallBack){
