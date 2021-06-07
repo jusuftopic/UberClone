@@ -54,6 +54,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
     private LatLng currentDriverLatLng;
 
 
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 1) {
@@ -107,6 +108,16 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 updateLocation(location, nameOfRider, "START");
+
+                checkIfRequestAccepted(new DriverLatLngCallBack() {
+                    @Override
+                    public void onDriverLatLng(LatLng driverLatLng) {
+                        driverLatLng = new LatLng(location.getLatitude(),location.getLongitude());
+                        driverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("Driver").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+
+                        Log.i("Location updated","Driver and Rider LatLng updated");
+                    }
+                });
             }
 
             @Override
@@ -135,6 +146,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
             }
         });
+
     }
 
     public void handlePermission() {
@@ -204,8 +216,6 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
             }
         });
     }
-
-
 
     public void updateLocation(Location location, String username, String message) {
         currentRiderLatLng = new LatLng(location.getLatitude(), location.getLongitude());
