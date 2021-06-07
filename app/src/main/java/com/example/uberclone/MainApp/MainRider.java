@@ -291,6 +291,17 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
     public void setTextDistance(LatLng currentRiderLatLng,LatLng currentDriverLatLng){
 
+        Location currentRidLoc = new Location(LocationManager.GPS_PROVIDER);
+        currentRidLoc.setLatitude(currentRiderLatLng.latitude);
+        currentRidLoc.setLatitude(currentRiderLatLng.longitude);
+
+        Location currentDriverLoc = new Location(LocationManager.GPS_PROVIDER);
+        currentDriverLoc.setLatitude(currentDriverLatLng.latitude);
+        currentDriverLoc.setLongitude(currentDriverLatLng.longitude);
+
+        float distanceBetween = currentRidLoc.distanceTo(currentDriverLoc);
+
+        distanceView.setText(distanceBetween+" KM");
     }
 
 
