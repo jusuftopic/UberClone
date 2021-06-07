@@ -10,23 +10,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.directions.route.AbstractRouting;
-import com.directions.route.Route;
-import com.directions.route.RouteException;
-import com.directions.route.Routing;
-import com.directions.route.RoutingListener;
 import com.example.uberclone.MainApp.CallBacks.Rider.EndLocationCallBack;
-import com.example.uberclone.MainApp.CallBacks.Rider.OnRequestExistsCallBack;
-import com.example.uberclone.MainApp.CallBacks.Rider.OnRequestLatLang;
-import com.example.uberclone.Models.Requests.DriverLocation;
 import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,20 +23,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class MainRider extends FragmentActivity implements OnMapReadyCallback,
-        GoogleApiClient.OnConnectionFailedListener, RoutingListener {
+public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
@@ -65,13 +47,10 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback,
     private Marker currentRiderMarker;
     private Marker driverMarker;
 
-    private DriverLocation driverLocation;
-    private LatLng driverLatLang;
+    private TextView distanceView;
 
-    private List<Polyline> polylines = null;
-
-    private LatLng currentRiderLatLang;
-
+    private LatLng currentRiderLatLng;
+    private LatLng currentDriverLatLng;
 
 
     @Override
@@ -101,6 +80,12 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback,
         nameOfRider = getNameOfRider();
 
         isRequestAccepted = false;
+
+        distanceView = (TextView) findViewById(R.id.distanceText);
+
+        currentRiderLatLng = new LatLng(-1,-1);
+        currentDriverLatLng = new LatLng(-1,-1);
+
     }
 
     /**
@@ -143,12 +128,6 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback,
 
         setMarkerOnRiderEndLocation();
 
-        checkIfRequestAccepted(new OnRequestExistsCallBack() {
-            @Override
-            public void onRequestExistsCallback(boolean exists) {
-
-            }
-        });
 
 
     }
@@ -179,7 +158,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback,
         return lastKnwnLoc;
     }
 
-    public void checkIfRequestAccepted(OnRequestExistsCallBack onRequestExistsCallBack){
+    public void checkIfRequestAccepted(){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
@@ -193,7 +172,6 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback,
                         if (dataSnapshot.child(nameOfRider) != null){
                             isRequestAccepted = true;
 
-                            onRequestExistsCallBack.onRequestExistsCallback(isRequestAccepted);
                             setMarkerOfDriversLocation(String.valueOf(dataSnapshot.getKey()));
 
                         }
@@ -243,62 +221,19 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback,
             return;
         }
 
-        LatLng driversposition = new LatLng(latitude,longitude);
+        currentDriverLatLng = new LatLng(latitude,longitude);
 
-        driverMarker= mMap.addMarker(new MarkerOptions().position(driversposition).title("Driver").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+        driverMarker= mMap.addMarker(new MarkerOptions().position(currentDriverLatLng).title("Driver").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
 
 
         Log.i("Marker added","Accepted call from "+driversName+" and marker added on map");
     }
 
-    public void getDriverLatLang(OnRequestLatLang onRequestLatLang){
-        checkIfRequestAccepted(new OnRequestExistsCallBack() {
-            @Override
-            public void onRequestExistsCallback(boolean exists) {
-                if (exists){
-                    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                    DatabaseReference root = firebaseDatabase.getReference();
-
-                    root.child("Requests").child("Accepted requests").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()){
-                                Log.e("Driver's number","Number of drivers who accepted call-> "+String.valueOf(snapshot.getChildrenCount()));
-
-                                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                                    if (dataSnapshot.child(nameOfRider) != null){
-                                        Log.i("Founded", dataSnapshot.getKey()+" accepted "+nameOfRider);
-
-                                        double latitude = (double) dataSnapshot.child("Driver's location").child("driver_latitude").getValue();
-                                        double longitude = (double) dataSnapshot.child("Driver's location").child("driver_longitude").getValue();
-
-                                        onRequestLatLang.onRequestsLatLang(new LatLng(latitude,longitude));
-
-
-                                    }
-                                }
-                            }
-                            else{
-                                Log.e("FAILED","Can not find path to accepted requests");
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull  DatabaseError error) {
-                            Log.e("Database error",error.getMessage());
-                        }
-                    });
-                }
-            }
-        });
-    }
 
     public void updateLocation(Location location, String username, String message) {
-        LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
-        currentRiderMarker =  mMap.addMarker(new MarkerOptions().position(position).title(username + "\n" + message).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
-
-        currentRiderLatLang = position;
+        currentRiderLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        currentRiderMarker =  mMap.addMarker(new MarkerOptions().position(currentRiderLatLng).title(username + "\n" + message).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentRiderLatLng));
     }
 
     public void setMarkerOnRiderEndLocation() {
@@ -354,97 +289,9 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback,
         }
     }
 
-    // function to find Routes.
-    public void Findroutes(LatLng Start, LatLng End)
-    {
-        if(Start==null || End==null) {
-            Toast.makeText(MainRider.this,"Unable to get location", Toast.LENGTH_LONG).show();
-        }
-        else
-        {
-            Routing routing = new Routing.Builder()
-                    .travelMode(AbstractRouting.TravelMode.DRIVING)
-                    .withListener(this)
-                    .alternativeRoutes(true)
-                    .waypoints(Start, End)
-                    .key("AIzaSyAHGvJ92ezvleOW9CGlzKA_thlAcjSRnF4")  //also define your api key here.
-                    .build();
-            routing.execute();
-        }
-    }
-
-    //Routing call back functions.
-    @Override
-    public void onRoutingFailure(RouteException e) {
-        View parentLayout = findViewById(android.R.id.content);
-        Snackbar snackbar= Snackbar.make(parentLayout, e.toString(), Snackbar.LENGTH_LONG);
-        snackbar.show();
-//        Findroutes(start,end);
-    }
-
-    @Override
-    public void onRoutingStart() {
-        Toast.makeText(MainRider.this,"Finding Route...",Toast.LENGTH_LONG).show();
-    }
-
-    //If Route finding success..
-    @Override
-    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
-
-        CameraUpdate center = CameraUpdateFactory.newLatLng(currentRiderLatLang);
-        CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
-        if(polylines!=null) {
-            polylines.clear();
-        }
-        PolylineOptions polyOptions = new PolylineOptions();
-        LatLng polylineStartLatLng=null;
-        LatLng polylineEndLatLng=null;
-
-
-        polylines = new ArrayList<>();
-        //add route(s) to the map using polyline
-        for (int i = 0; i <route.size(); i++) {
-
-            if(i==shortestRouteIndex)
-            {
-                polyOptions.color(getResources().getColor(R.color.colorPrimary));
-                polyOptions.width(7);
-                polyOptions.addAll(route.get(shortestRouteIndex).getPoints());
-                Polyline polyline = mMap.addPolyline(polyOptions);
-                polylineStartLatLng=polyline.getPoints().get(0);
-                int k=polyline.getPoints().size();
-                polylineEndLatLng=polyline.getPoints().get(k-1);
-                polylines.add(polyline);
-
-            }
-            else {
-
-            }
-
-        }
-
-        //Add Marker on route starting position
-        MarkerOptions startMarker = new MarkerOptions();
-        startMarker.position(polylineStartLatLng);
-        startMarker.title("My Location");
-        mMap.addMarker(startMarker);
-
-        //Add Marker on route ending position
-        MarkerOptions endMarker = new MarkerOptions();
-        endMarker.position(polylineEndLatLng);
-        endMarker.title("Destination");
-        mMap.addMarker(endMarker);
-    }
-
-    @Override
-    public void onRoutingCancelled() {
-        Findroutes(currentRiderLatLang,end);
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Findroutes(currentRiderLatLang,end);
+    public void setTextDistance(LatLng currentRiderLatLng,LatLng currentDriverLatLng){
 
     }
+
 
 }
