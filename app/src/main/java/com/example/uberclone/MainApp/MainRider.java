@@ -108,16 +108,6 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 updateLocation(location, nameOfRider, "START");
-
-                checkIfRequestAccepted(new DriverLatLngCallBack() {
-                    @Override
-                    public void onDriverLatLng(LatLng driverLatLng) {
-                        driverLatLng = new LatLng(location.getLatitude(),location.getLongitude());
-                        driverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("Driver").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-
-                        Log.i("Location updated","Driver and Rider LatLng updated");
-                    }
-                });
             }
 
             @Override
@@ -143,7 +133,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
         checkIfRequestAccepted(new DriverLatLngCallBack() {
             @Override
             public void onDriverLatLng(LatLng driverLatLng) {
-
+                setTextDistance(currentRiderLatLng,currentDriverLatLng);
             }
         });
 
@@ -289,6 +279,14 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
         float distanceBetween = currentRidLoc.distanceTo(currentDriverLoc);
 
         distanceView.setText(distanceBetween+" KM");
+    }
+
+    public void getUpdates(){
+        while (true){
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+            }
+        }
     }
 
 
