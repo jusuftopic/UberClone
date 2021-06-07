@@ -183,6 +183,8 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
                             double latitude = (double) dataSnapshot.child("Driver's location").child("driver_latitude").getValue();
                             double longitude = (double) dataSnapshot.child("Driver's location").child("driver_longitude").getValue();
 
+                            Log.i("TEST","Current latitude "+latitude);
+
                             currentDriverLatLng = new LatLng(latitude,longitude);
 
                             driverMarker = mMap.addMarker(new MarkerOptions().position(currentDriverLatLng).title(username).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
