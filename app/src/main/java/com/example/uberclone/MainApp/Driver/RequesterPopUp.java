@@ -117,22 +117,27 @@ public class RequesterPopUp extends AppCompatActivity {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requests").addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child("Requests").child("Accepted requests").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull  DataSnapshot snapshot) {
                 if (snapshot.exists()){
-                    root.child("Requests").child("Accepted requests").child(driverName).child("Driver's location").setValue(driverLocation);
-                    root.child("Requests").child("Accepted requests").child(driverName).child(riderName).child("Current location").setValue(currentLocation);
-                    root.child("Requests").child("Accepted requests").child(driverName).child(riderName).child("End location").setValue(endLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Log.i("SUCCESEFULL","ADDED ACCEPTED PATH IN POP UP");
+                    if (snapshot.getChildrenCount() < 2){
+                        root.child("Requests").child("Accepted requests").child(driverName).child("Driver's location").setValue(driverLocation);
+                        root.child("Requests").child("Accepted requests").child(driverName).child(riderName).child("Current location").setValue(currentLocation);
+                        root.child("Requests").child("Accepted requests").child(driverName).child(riderName).child("End location").setValue(endLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.i("SUCCESEFULL","ADDED ACCEPTED PATH IN POP UP");
 
-                            Intent toMainDriver = new Intent(RequesterPopUp.this, MainDriver.class);
-                            toMainDriver.putExtra("driver name from accept",nameOfDriver);
-                            startActivity(toMainDriver);
-                        }
-                    });
+                                Intent toMainDriver = new Intent(RequesterPopUp.this, MainDriver.class);
+                                toMainDriver.putExtra("driver name from accept",nameOfDriver);
+                                startActivity(toMainDriver);
+                            }
+                        });
+                    }
+                    else{
+                        Log.e("FAILED",nameOfDriver+" has already accpeted request");
+                    }
                 }
                 else{
                     Log.e("Path problem","Failed to find request path");

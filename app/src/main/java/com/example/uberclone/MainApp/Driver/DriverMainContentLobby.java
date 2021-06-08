@@ -275,18 +275,24 @@ public class DriverMainContentLobby extends FragmentActivity implements OnMapRea
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
-                    root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).child("AcceptedRequest").setValue(driverLocationAccept).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                         Log.i("User Accepted","Driver: "+nameOfDriver+" accpeted rider location");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e("accept request failed","Failed to set in driver path accepted request");
-                        }
-                    });
+
+                    if (snapshot.getChildrenCount() < 2){
+                        root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).child("AcceptedRequest").setValue(driverLocationAccept).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.i("User Accepted","Driver: "+nameOfDriver+" accpeted rider location");
+                            }
+                        })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.e("accept request failed","Failed to set in driver path accepted request");
+                                    }
+                                });
+                    }
+                    else{
+                        Log.e("FAILED", nameOfDriver+" has already accepted request");
+                    }
                 }
                 else{
                     Log.e("Problem with name", nameOfDriver +" didn't recognized in acceptRequstMethod");
