@@ -108,7 +108,7 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 updateLocation(location);
-                setDriverLocationUpdateInDatabase(location);
+                //setDriverLocationUpdateInDatabase(location);
             }
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -159,7 +159,7 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
                 Location locDriver = transformToLocation(latLngs.get(0));
                 Location locRider = transformToLocation(latLngs.get(1));
 
-                float distance = locDriver.distanceTo(locDriver);
+                float distance = locDriver.distanceTo(locRider);
 
                 this.distanceText.setText(distance+" km");
             }
@@ -167,8 +167,9 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
                 Log.e("FAILED","size of latlng list not 2");
             }
         }
-
-        Log.e("FAILED","Can not calculate distance on empty list");
+        else{
+            Log.e("FAILED","Can not calculate distance on empty list");
+        }
     }
 
     public void drawPolyline(ArrayList<LatLng> latLngs){
@@ -234,7 +235,7 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Accpeted requests").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child("Requests").child("Accepted requests").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
@@ -249,6 +250,8 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
                                 currentRiderLocation = new RiderLocation(rider_latitude,rider_longitude);
 
                                 currentLocationCallBack.onCurrentLocationCallBackWihtUsername(dataSnapshot.getKey(),currentRiderLocation);
+
+                                Log.i("ADDED",currentRiderLocation.toString()+" added in callback methode");
 
                             }
                         }
