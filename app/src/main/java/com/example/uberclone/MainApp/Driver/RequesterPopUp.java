@@ -76,7 +76,7 @@ public class RequesterPopUp extends AppCompatActivity {
         choosenTime = 0;
 
         timechooser = (Spinner) findViewById(R.id.timechooser);
-        timesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,times);
+        timesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, times);
         timechooser.setAdapter(timesAdapter);
         setListenerOnSpinner(timechooser);
 
@@ -86,7 +86,7 @@ public class RequesterPopUp extends AppCompatActivity {
         nameOfDriver = getNameOfDriver();
         driverLocation = getDriverLocation();
 
-       // rider_endCordinates = getEndCordinates();
+        // rider_endCordinates = getEndCordinates();
 
         setAvatarImage();
         setUsernameFromIntent();
@@ -94,72 +94,85 @@ public class RequesterPopUp extends AppCompatActivity {
 
         rider_currentCordinates = getCurrentLocationCordinates();
         //transform cordinates to real address
-        rider_endCordinates= getEndLocationFromIntent();
+        rider_endCordinates = getEndLocationFromIntent();
         transformCorindatesToAddress(rider_endCordinates);
 
         acceptRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!choosenTime.equals("")){
-                    changeDriversAcceptanceStatus(nameOfDriver,rider_currentCordinates,rider_endCordinates);
-                   // deleteRiderFromRequests(String.valueOf(usernameField.getText()));
-                    mergeDriverAndRider(nameOfDriver,driverLocation,String.valueOf(usernameField.getText()),rider_currentCordinates,rider_endCordinates);
+                if (!choosenTime.equals("")) {
+                    changeDriversAcceptanceStatus(nameOfDriver, rider_currentCordinates, rider_endCordinates);
+                    // deleteRiderFromRequests(String.valueOf(usernameField.getText()));
+                    mergeDriverAndRider(nameOfDriver, driverLocation, String.valueOf(usernameField.getText()), rider_currentCordinates, rider_endCordinates);
 
-                }
-                else{
-                    Toast.makeText(RequesterPopUp.this,"Please choose the time at which you will pick up the passenger",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(RequesterPopUp.this, "Please choose the time at which you will pick up the passenger", Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
-    public void mergeDriverAndRider(String driverName,DriverLocation driverLocation,String riderName,RiderLocation currentLocation,RiderLocation endLocation){
+    public void mergeDriverAndRider(String driverName, DriverLocation driverLocation, String riderName, RiderLocation currentLocation, RiderLocation endLocation) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requests").child("Accepted requests").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child("Requests").child("Accepted requests").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull  DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    if (snapshot.getChildrenCount() < 2){
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    if (snapshot.child(nameOfDriver).exists()) {
+                        if (snapshot.child(nameOfDriver).getChildrenCount() < 2) {
+                            root.child("Requests").child("Accepted requests").child(driverName).child("Driver's location").setValue(driverLocation);
+                            root.child("Requests").child("Accepted requests").child(driverName).child(riderName).child("Current location").setValue(currentLocation);
+                            root.child("Requests").child("Accepted requests").child(driverName).child(riderName).child("End location").setValue(endLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Log.i("SUCCESEFULL", "ADDED ACCEPTED PATH IN POP UP");
+
+                                    Intent toMainDriver = new Intent(RequesterPopUp.this, MainDriver.class);
+                                    toMainDriver.putExtra("driver name from accept", nameOfDriver);
+                                    startActivity(toMainDriver);
+                                }
+                            });
+                        } else {
+                            Log.e("FAILED", nameOfDriver + " has already accpeted request");
+                        }
+                    } else {
                         root.child("Requests").child("Accepted requests").child(driverName).child("Driver's location").setValue(driverLocation);
                         root.child("Requests").child("Accepted requests").child(driverName).child(riderName).child("Current location").setValue(currentLocation);
                         root.child("Requests").child("Accepted requests").child(driverName).child(riderName).child("End location").setValue(endLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
-                                Log.i("SUCCESEFULL","ADDED ACCEPTED PATH IN POP UP");
+                                Log.i("SUCCESEFULL", "ADDED ACCEPTED PATH IN POP UP");
 
                                 Intent toMainDriver = new Intent(RequesterPopUp.this, MainDriver.class);
-                                toMainDriver.putExtra("driver name from accept",nameOfDriver);
+                                toMainDriver.putExtra("driver name from accept", nameOfDriver);
                                 startActivity(toMainDriver);
                             }
                         });
+
                     }
-                    else{
-                        Log.e("FAILED",nameOfDriver+" has already accpeted request");
-                    }
-                }
-                else{
-                    Log.e("Path problem","Failed to find request path");
+                } else {
+                    Log.e("Path problem", "Failed to find request path");
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull  DatabaseError error) {
-                Log.e("Database error",error.getMessage());
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Database error", error.getMessage());
             }
         });
     }
 
-    public void changeDriversAcceptanceStatus(String nameOfDriver,RiderLocation rider_currentCordinates,RiderLocation rider_endCordinates){
-        if (rider_currentCordinates != null && rider_endCordinates != null){
+    public void changeDriversAcceptanceStatus(String nameOfDriver, RiderLocation rider_currentCordinates, RiderLocation rider_endCordinates) {
+        if (rider_currentCordinates != null && rider_endCordinates != null) {
             FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
             DatabaseReference root = firebaseDatabase.getReference();
 
             root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists()){
+                    if (snapshot.exists()) {
 
                         double driver_latitude = driverLocation.getDriver_latitude();
                         double driver_longitude = driverLocation.getDriver_longitude();
@@ -167,91 +180,86 @@ public class RequesterPopUp extends AppCompatActivity {
                         RiderLocation rider_current = rider_currentCordinates;
                         RiderLocation rider_end = rider_endCordinates;
 
-                        DriverLocation location_accpet = new DriverLocation(driver_latitude,driver_longitude,acceptedCall,rider_current,rider_end);
+                        DriverLocation location_accpet = new DriverLocation(driver_latitude, driver_longitude, acceptedCall, rider_current, rider_end);
 
                         root.child("Requests").child("Driver's Acceptance").child(nameOfDriver).child("Current location").setValue(location_accpet).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
-                                Toast.makeText(RequesterPopUp.this,"Request acceped",Toast.LENGTH_LONG).show();
+                                Toast.makeText(RequesterPopUp.this, "Request acceped", Toast.LENGTH_LONG).show();
                             }
                         });
-                    }
-                    else{
-                        Log.e("Driver's path problem",nameOfDriver+" doesn't exists in database");
+                    } else {
+                        Log.e("Driver's path problem", nameOfDriver + " doesn't exists in database");
                     }
                 }
 
                 @Override
-                public void onCancelled(@NonNull  DatabaseError error) {
-                    Log.e("Database error",error.getMessage());
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("Database error", error.getMessage());
                 }
             });
-        }
-        else{
-            Log.e("FAIL from intent","Can not change driver's status because current or end rider's location null");
+        } else {
+            Log.e("FAIL from intent", "Can not change driver's status because current or end rider's location null");
         }
     }
 
-    public void deleteRiderFromRequests(String username){
-        if (username != null && !username.equals("")){
+    public void deleteRiderFromRequests(String username) {
+        if (username != null && !username.equals("")) {
             FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
             DatabaseReference root = firebaseDatabase.getReference();
 
             root.child("Requests").child("Rider Calls").child(username).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists()){
-                       // root.child("Requests").child("Rider Calls").child(username).setValue(null);
-                        Log.i("Deleted rider",username+" deleted from requests list");
-                    }
-                    else{
-                        Log.e("Database problem: ","Can't find path to username: "+username);
+                    if (snapshot.exists()) {
+                        // root.child("Requests").child("Rider Calls").child(username).setValue(null);
+                        Log.i("Deleted rider", username + " deleted from requests list");
+                    } else {
+                        Log.e("Database problem: ", "Can't find path to username: " + username);
                     }
                 }
 
                 @Override
-                public void onCancelled(@NonNull  DatabaseError error) {
+                public void onCancelled(@NonNull DatabaseError error) {
 
                 }
             });
-        }
-        else{
-            Log.e("Rider name","Failed to detele rider from requests-> Username didn't recognized");
+        } else {
+            Log.e("Rider name", "Failed to detele rider from requests-> Username didn't recognized");
         }
     }
 
-    public String getNameOfDriver(){
-        if (this.getIntent().getStringExtra("diver name") == null){
-            Log.e("Driver's name problem","Problem to get name of driver from intent-> null pointer");
+    public String getNameOfDriver() {
+        if (this.getIntent().getStringExtra("diver name") == null) {
+            Log.e("Driver's name problem", "Problem to get name of driver from intent-> null pointer");
             return "";
         }
         return this.getIntent().getStringExtra("diver name");
     }
 
-    public DriverLocation getDriverLocation(){
+    public DriverLocation getDriverLocation() {
         DriverLocation driverLoc = new DriverLocation();
 
-        double latitude = this.getIntent().getDoubleExtra("driver location_latitude",-1);
-        double longitude = this.getIntent().getDoubleExtra("driver location_longitude",-1);
+        double latitude = this.getIntent().getDoubleExtra("driver location_latitude", -1);
+        double longitude = this.getIntent().getDoubleExtra("driver location_longitude", -1);
 
-        if (latitude == -1 || longitude == -1){
-            Log.e("Location from Intent","Problem to get location from intent -> latitude: "+latitude+"; longitude: "+longitude);
-        }
-        else{
+        if (latitude == -1 || longitude == -1) {
+            Log.e("Location from Intent", "Problem to get location from intent -> latitude: " + latitude + "; longitude: " + longitude);
+        } else {
             driverLoc.setDriver_latitude(latitude);
             driverLoc.setDriver_longitude(longitude);
         }
         return driverLoc;
     }
 
-    public RiderLocation getEndCordinates(){
+    public RiderLocation getEndCordinates() {
         RiderLocation location_from_intent = new RiderLocation();
 
-        double latitude = this.getIntent().getDoubleExtra("endlocation_latitude",-1);
-        double longitude = this.getIntent().getDoubleExtra("endlocation_longitude",-1);
+        double latitude = this.getIntent().getDoubleExtra("endlocation_latitude", -1);
+        double longitude = this.getIntent().getDoubleExtra("endlocation_longitude", -1);
 
-        if (latitude == -1 || longitude == -1){
-            Log.e("Rider's endLoc problem","Problem to get latitude and longitude from rider's end locations");
+        if (latitude == -1 || longitude == -1) {
+            Log.e("Rider's endLoc problem", "Problem to get latitude and longitude from rider's end locations");
             return null;
         }
 
@@ -261,20 +269,20 @@ public class RequesterPopUp extends AppCompatActivity {
         return location_from_intent;
     }
 
-    public void setAvatarImage(){
-       int avatarRessource = this.getIntent().getIntExtra("avatar image",-1);
+    public void setAvatarImage() {
+        int avatarRessource = this.getIntent().getIntExtra("avatar image", -1);
 
-       if (avatarRessource == 1){
-           Log.e("Avatar image problem","Problem to get ressource for avatar image from intetn");
-           return;
-       }
+        if (avatarRessource == 1) {
+            Log.e("Avatar image problem", "Problem to get ressource for avatar image from intetn");
+            return;
+        }
 
-       this.avatarView.setImageResource(avatarRessource);
+        this.avatarView.setImageResource(avatarRessource);
     }
 
-    public void setUsernameFromIntent(){
-        if (this.getIntent().getStringExtra("username_rider") == null){
-            Log.e("Rider's name problem","Problem to get name of rider from intent");
+    public void setUsernameFromIntent() {
+        if (this.getIntent().getStringExtra("username_rider") == null) {
+            Log.e("Rider's name problem", "Problem to get name of rider from intent");
             return;
         }
 
@@ -282,9 +290,9 @@ public class RequesterPopUp extends AppCompatActivity {
         this.usernameField.setText(ridersUsername);
     }
 
-    public void setCurrentLocationFromIntent(){
-        if (this.getIntent().getStringExtra("current address") == null){
-            Log.e("Endlocation problem","Problem to get End location from intetn-> show on null object");
+    public void setCurrentLocationFromIntent() {
+        if (this.getIntent().getStringExtra("current address") == null) {
+            Log.e("Endlocation problem", "Problem to get End location from intetn-> show on null object");
             return;
         }
         String endaddress = this.getIntent().getStringExtra("current address");
@@ -292,36 +300,34 @@ public class RequesterPopUp extends AppCompatActivity {
         this.currentLocationField.setText(endaddress);
     }
 
-    public RiderLocation getCurrentLocationCordinates(){
-        double latitude = getIntent().getDoubleExtra("currentlocation_latitude",-1);
-        double longitude = getIntent().getDoubleExtra("currentlocation_longitude",-1);
+    public RiderLocation getCurrentLocationCordinates() {
+        double latitude = getIntent().getDoubleExtra("currentlocation_latitude", -1);
+        double longitude = getIntent().getDoubleExtra("currentlocation_longitude", -1);
 
-        if (latitude != -1 && longitude != -1){
-            return new RiderLocation(latitude,longitude);
-        }
-        else {
-            Log.e("Current cordinates","Problem to trasport current rider's cordinates from intent");
+        if (latitude != -1 && longitude != -1) {
+            return new RiderLocation(latitude, longitude);
+        } else {
+            Log.e("Current cordinates", "Problem to trasport current rider's cordinates from intent");
             return null;
         }
     }
 
 
-    public RiderLocation getEndLocationFromIntent(){
-        double latitude = this.getIntent().getDoubleExtra("endlocation_latitude",-1);
-        double longitude = this.getIntent().getDoubleExtra("endlocation_longitude",-1);
+    public RiderLocation getEndLocationFromIntent() {
+        double latitude = this.getIntent().getDoubleExtra("endlocation_latitude", -1);
+        double longitude = this.getIntent().getDoubleExtra("endlocation_longitude", -1);
 
-        if (latitude != -1 && longitude != -1){
-            return new RiderLocation(latitude,longitude);
+        if (latitude != -1 && longitude != -1) {
+            return new RiderLocation(latitude, longitude);
 
-        }
-        else{
-            Log.e("Intent problem","Problem to get cordinates of rider's end location");
+        } else {
+            Log.e("Intent problem", "Problem to get cordinates of rider's end location");
             return null;
         }
     }
 
-    public void transformCorindatesToAddress(RiderLocation rider_endlocation){
-        LatLng endposition = new LatLng(rider_endlocation.getRider_latitude(),rider_endlocation.getRider_longitude());
+    public void transformCorindatesToAddress(RiderLocation rider_endlocation) {
+        LatLng endposition = new LatLng(rider_endlocation.getRider_latitude(), rider_endlocation.getRider_longitude());
 
         Geocoder geocoder = new Geocoder(RequesterPopUp.this, Locale.getDefault());
         List<Address> addresses = null;
@@ -329,32 +335,29 @@ public class RequesterPopUp extends AppCompatActivity {
         String streetname = "";
 
         try {
-            addresses = geocoder.getFromLocation(endposition.latitude,endposition.longitude,1);
+            addresses = geocoder.getFromLocation(endposition.latitude, endposition.longitude, 1);
 
-            if (addresses.size() > 0 && addresses != null){
-                if (addresses.get(0).getThoroughfare() != null){
+            if (addresses.size() > 0 && addresses != null) {
+                if (addresses.get(0).getThoroughfare() != null) {
                     streetname += addresses.get(0).getThoroughfare();
+                } else {
+                    Log.e("Problem with streetname", "Can not get streetname from geocoder-> NullPointerException or empty");
                 }
-                else{
-                    Log.e("Problem with streetname","Can not get streetname from geocoder-> NullPointerException or empty");
-                }
+            } else {
+                Log.e("List of addresses", "Can not get addresses from geocoder");
             }
-            else{
-                Log.e("List of addresses","Can not get addresses from geocoder");
-            }
-        }
-        catch (IOException ioe){
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
 
         endLocationField.setText(streetname);
     }
 
-    public void setListenerOnSpinner(Spinner timesspinner){
+    public void setListenerOnSpinner(Spinner timesspinner) {
         timesspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position){
+                switch (position) {
                     case 0:
                         choosenTime = times[0];
                         break;
@@ -368,7 +371,7 @@ public class RequesterPopUp extends AppCompatActivity {
                         choosenTime = times[3];
                         break;
                     default:
-                        Log.e("Spinner problem","Can not choose time for picking");
+                        Log.e("Spinner problem", "Can not choose time for picking");
                         choosenTime = 0;
                         break;
 
@@ -382,7 +385,7 @@ public class RequesterPopUp extends AppCompatActivity {
         });
     }
 
-    public void setUpTimes(){
+    public void setUpTimes() {
         this.times = new Integer[4];
 
         times[0] = 15;
@@ -392,7 +395,7 @@ public class RequesterPopUp extends AppCompatActivity {
     }
 
 
-    public void setMetrics(){
+    public void setMetrics() {
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -400,7 +403,7 @@ public class RequesterPopUp extends AppCompatActivity {
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
 
-        getWindow().setLayout((int) (width*0.9),(int) (height*0.7));
+        getWindow().setLayout((int) (width * 0.9), (int) (height * 0.7));
 
         WindowManager.LayoutParams params = getWindow().getAttributes();
         params.gravity = Gravity.CENTER;
