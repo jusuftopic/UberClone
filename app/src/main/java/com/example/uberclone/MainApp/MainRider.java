@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -56,7 +57,6 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
     private LatLng currentRiderLatLng;
     private LatLng currentDriverLatLng;
-
 
     private ArrayList<LatLng> latLngsForDrawing;
 
@@ -139,12 +139,12 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
         handlePermission();
 
-        setMarkerOnRiderEndLocation();
 
         checkIfRequestAccepted(new DriverLatLngCallBack() {
             @Override
             public void onDriverLatLng(LatLng driverLatLng) {
                latLngsForDrawing.add(driverLatLng);
+               Log.i("TEST LIST",latLngsForDrawing.toString());
                drawPolyline(latLngsForDrawing);
             }
         });
@@ -222,11 +222,11 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
     }
 
     public void drawPolyline(ArrayList<LatLng> latlngs){
-        if (latlngs.size() != 0){
-            latlngs.clear();
+        if (this.polyline != null){
+            this.polyline.remove();
         }
 
-        PolylineOptions polylineOptions = new PolylineOptions().addAll(latlngs).clickable(true);
+        PolylineOptions polylineOptions = new PolylineOptions().addAll(latlngs).clickable(true).color(Color.BLUE);
 
         polyline = mMap.addPolyline(polylineOptions);
     }
@@ -234,50 +234,12 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
     public void updateLocation(Location location, String username, String message) {
         currentRiderLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         currentRiderMarker =  mMap.addMarker(new MarkerOptions().position(currentRiderLatLng).title(username + "\n" + message).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentRiderLatLng,25f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentRiderLatLng));
 
         latLngsForDrawing.add(currentRiderLatLng);
     }
 
-    public void setMarkerOnRiderEndLocation() {
-        getEndRiderLocation(new EndLocationCallBack() {
-            @Override
-            public void onEndLocationCallBack(RiderLocation endRiderLocation) {
-                LatLng endPosition = new LatLng(endRiderLocation.getRider_latitude(), endRiderLocation.getRider_longitude());
-                driverMarker = mMap.addMarker(new MarkerOptions().position(endPosition).title(nameOfRider + "\n" + "END").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
-                Log.i("Marker added","Marked added on locations "+endPosition.toString());
-
-            }
-        });
-    }
-
-    public void getEndRiderLocation(EndLocationCallBack endLocationCallBack) {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference();
-
-        root.child("Requests").child("Rider Calls").child(nameOfRider).child("End location").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    double latitude = (double) snapshot.child("rider_latitude").getValue();
-                    double longitude = (double) snapshot.child("rider_longitude").getValue();
-
-                    endRiderLocation = new RiderLocation(latitude, longitude);
-
-                    endLocationCallBack.onEndLocationCallBack(endRiderLocation);
-                } else {
-                    Log.e("Path problem", "Can not find path to user end location");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Database error", error.getMessage());
-            }
-        });
-
-    }
 
     public String getNameOfRider() {
         if (this.getIntent().getStringExtra("existed requester") != null && !this.getIntent().getStringExtra("existed requester").equalsIgnoreCase("")) {
