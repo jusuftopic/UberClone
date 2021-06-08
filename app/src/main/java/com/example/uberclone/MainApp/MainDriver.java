@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -169,7 +171,14 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
         Log.e("FAILED","Can not calculate distance on empty list");
     }
 
+    public void drawPolyline(ArrayList<LatLng> latLngs){
+        if (this.polyline != null) polyline.remove();
 
+        PolylineOptions polylineOptions = new PolylineOptions().addAll(latLngs).color(Color.BLUE).clickable(true);
+
+        polyline = mMap.addPolyline(polylineOptions);
+
+    }
     public LatLng transformToLatLng(RiderLocation riderLocation){
         return new LatLng(riderLocation.getRider_latitude(),riderLocation.getRider_longitude());
     }
