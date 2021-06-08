@@ -24,11 +24,15 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 
 public class MainRider extends FragmentActivity implements OnMapReadyCallback {
@@ -52,6 +56,11 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
     private LatLng currentRiderLatLng;
     private LatLng currentDriverLatLng;
+
+
+    private ArrayList<LatLng> latLngsForDrawing;
+
+    Polyline polyline;
 
 
 
@@ -87,6 +96,8 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
         currentRiderLatLng = new LatLng(-1,-1);
         currentDriverLatLng = new LatLng(-1,-1);
+
+        latLngsForDrawing = new ArrayList<>();
 
     }
 
@@ -133,7 +144,8 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
         checkIfRequestAccepted(new DriverLatLngCallBack() {
             @Override
             public void onDriverLatLng(LatLng driverLatLng) {
-                setTextDistance(currentRiderLatLng,currentDriverLatLng);
+               latLngsForDrawing.add(driverLatLng);
+               drawPolyline(latLngsForDrawing);
             }
         });
 
@@ -209,10 +221,22 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
         });
     }
 
+    public void drawPolyline(ArrayList<LatLng> latlngs){
+        if (latlngs.size() != 0){
+            latlngs.clear();
+        }
+
+        PolylineOptions polylineOptions = new PolylineOptions().addAll(latlngs).clickable(true);
+
+        polyline = mMap.addPolyline(polylineOptions);
+    }
+
     public void updateLocation(Location location, String username, String message) {
         currentRiderLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         currentRiderMarker =  mMap.addMarker(new MarkerOptions().position(currentRiderLatLng).title(username + "\n" + message).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentRiderLatLng));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentRiderLatLng,25f));
+
+        latLngsForDrawing.add(currentRiderLatLng);
     }
 
     public void setMarkerOnRiderEndLocation() {
@@ -283,13 +307,6 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
         distanceView.setText(distanceBetween+" KM");
     }
 
-    public void getUpdates(){
-        while (true){
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-            }
-        }
-    }
 
 
 }
