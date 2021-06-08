@@ -141,15 +141,43 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
                     setUpMarker(username,riderLocation);
 
                     LatLng riderLatLng = transformToLatLng(riderLocation);
+                    latLngs.add(riderLatLng);
+
+                    calculateDistance(latLngs);
+                    drawPolyline(latLngs);
+
                 }
             });
-
-
         }
     }
 
+    public void calculateDistance(ArrayList<LatLng> latLngs){
+        if (latLngs.size() > 0){
+            if (latLngs.size() == 2){
+                Lo latLngDriver = latLngs.get(0);
+                LatLng latLngRider = latLngs.get(1);
+
+                float distance =
+            }
+            else{
+                Log.e("FAILED","size of latlng list not 2");
+            }
+        }
+
+        Log.e("FAILED","Can not calculate distance on empty list");
+    }
+
+
     public LatLng transformToLatLng(RiderLocation riderLocation){
         return new LatLng(riderLocation.getRider_latitude(),riderLocation.getRider_longitude());
+    }
+
+    public Location transformToLocation(LatLng latLng){
+        Location location = new Location(LocationManager.GPS_PROVIDER);
+        location.setLatitude(latLng.latitude);
+        location.setLongitude(latLng.longitude);
+
+        return location;
     }
 
     public void setDriverLocationUpdateInDatabase(Location location){
