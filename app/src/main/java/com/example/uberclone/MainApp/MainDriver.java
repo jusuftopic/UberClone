@@ -10,6 +10,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.uberclone.MainApp.CallBacks.Rider.CurrentLocationCallBack;
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +32,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
 
@@ -44,6 +48,13 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
     private Marker riderMarker;
 
     private RiderLocation currentRiderLocation;
+
+    private ArrayList<LatLng> latLngs;
+    private LatLng driverposition;
+
+    private Polyline polyline;
+
+    private TextView distanceText;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull  String[] permissions, @NonNull  int[] grantResults) {
@@ -69,6 +80,12 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
 
         nameOfDriver = getNameOfDriver();
+
+        distanceText = (TextView) findViewById(R.id.distanceTextDriver);
+
+        latLngs = new ArrayList<>();
+
+        polyline = null;
     }
 
     /**
@@ -122,11 +139,17 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
                 @Override
                 public void onCurrentLocationCallBackWihtUsername(String username, RiderLocation riderLocation) {
                     setUpMarker(username,riderLocation);
+
+                    LatLng riderLatLng = transformToLatLng(riderLocation);
                 }
             });
 
 
         }
+    }
+
+    public LatLng transformToLatLng(RiderLocation riderLocation){
+        return new LatLng(riderLocation.getRider_latitude(),riderLocation.getRider_longitude());
     }
 
     public void setDriverLocationUpdateInDatabase(Location location){
@@ -217,10 +240,13 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
     }
 
     public void updateLocation(Location location){
-        LatLng driverPosition = new LatLng(location.getLatitude(),location.getLongitude());
+        driverposition = new LatLng(location.getLatitude(),location.getLongitude());
 
-        driverMarker = mMap.addMarker(new MarkerOptions().position(driverPosition).title("My location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(driverPosition,5f));
+        driverMarker = mMap.addMarker(new MarkerOptions().position(driverposition).title("My location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(driverposition,5f));
+
+        latLngs.add(driverposition);
+
 
 
     }
