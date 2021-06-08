@@ -233,7 +233,7 @@ public class MainRider extends FragmentActivity implements OnMapReadyCallback {
 
     public void updateLocation(Location location, String username, String message) {
         currentRiderLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        currentRiderMarker =  mMap.addMarker(new MarkerOptions().position(currentRiderLatLng).title(username + "\n" + message).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+        currentRiderMarker =  mMap.addMarker(new MarkerOptions().position(currentRiderLatLng).title("My location" + "\n" + message).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(currentRiderLatLng));
 
         latLngsForDrawing.add(currentRiderLatLng);
