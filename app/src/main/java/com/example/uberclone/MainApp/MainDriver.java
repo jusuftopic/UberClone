@@ -154,10 +154,12 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
     public void calculateDistance(ArrayList<LatLng> latLngs){
         if (latLngs.size() > 0){
             if (latLngs.size() == 2){
-                Lo latLngDriver = latLngs.get(0);
-                LatLng latLngRider = latLngs.get(1);
+                Location locDriver = transformToLocation(latLngs.get(0));
+                Location locRider = transformToLocation(latLngs.get(1));
 
-                float distance =
+                float distance = locDriver.distanceTo(locDriver);
+
+                this.distanceText.setText(distance+" km");
             }
             else{
                 Log.e("FAILED","size of latlng list not 2");
