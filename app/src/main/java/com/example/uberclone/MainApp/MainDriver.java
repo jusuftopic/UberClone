@@ -173,7 +173,8 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
     }
 
     public void drawPolyline(ArrayList<LatLng> latLngs){
-        if (this.polyline != null) polyline.remove();
+        Log.i("TEST","list member's"+ latLngs.toString());
+        if (this.polyline != null) {polyline.remove();}
 
         PolylineOptions polylineOptions = new PolylineOptions().addAll(latLngs).color(Color.BLUE).clickable(true);
 
@@ -285,7 +286,7 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
         driverposition = new LatLng(location.getLatitude(),location.getLongitude());
 
         driverMarker = mMap.addMarker(new MarkerOptions().position(driverposition).title("My location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(driverposition,5f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(driverposition));
 
         latLngs.add(driverposition);
 
