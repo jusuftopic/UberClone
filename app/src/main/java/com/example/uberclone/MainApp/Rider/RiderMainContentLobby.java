@@ -16,9 +16,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.example.uberclone.MainApp.MainRider;
 import com.example.uberclone.MainApp.Rider.RiderPayment.RidePayment;
+import com.example.uberclone.MainApp.Rider.Settings.SettingsMenu;
 import com.example.uberclone.Models.Requests.RiderLocation;
 import com.example.uberclone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -57,6 +59,8 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
     private RiderLocation endlocation;
 
     int numberOfMarkers;
+
+    private ImageButton settingsButton;
 
 
     @Override
@@ -98,10 +102,9 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
         checkIfTheRequestExists(nameOfRider);
         isCalled = false;
 
-
-
         numberOfMarkers = 1;
 
+        settingsButton = (ImageButton) findViewById(R.id.settingButton);
 
     }
 
@@ -192,6 +195,12 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
         callUber.setText(message);
     }
 
+    public void goToSettings(View view){
+        Intent toSettings = new Intent(RiderMainContentLobby.this, SettingsMenu.class);
+        toSettings.putExtra("name of rider",nameOfRider);
+        startActivity(toSettings);
+    }
+
     public void setDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(RiderMainContentLobby.this)
                 .setTitle("Cancle Uber?")
@@ -222,8 +231,6 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
 
         dialogBuilder.create().show();
     }
-
-
 
     public void addMarkerOfUsersEndLocation(String ridersUsername){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -335,8 +342,6 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
             }
         });
     }
-
-
 
 
     public void checkIfTheRequestExists(String username) {
