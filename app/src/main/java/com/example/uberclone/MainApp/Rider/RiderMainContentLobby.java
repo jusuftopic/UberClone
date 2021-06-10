@@ -197,7 +197,7 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
 
     public void goToSettings(View view){
         Intent toSettings = new Intent(RiderMainContentLobby.this, SettingsMenu.class);
-        toSettings.putExtra("name of rider",nameOfRider);
+        toSettings.putExtra("RIDER_LOBBY-name of rider",nameOfRider);
         startActivity(toSettings);
     }
 
