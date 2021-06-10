@@ -8,13 +8,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+
     <fragment
         android:id="@+id/spotmap"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainApp.Rider.RiderMainContentLobby" />
-
 
     <Button
         android:id="@+id/sendRequest"
@@ -25,7 +25,17 @@
         android:background="@drawable/borders"
         android:onClick="callUberOnDrive"
         android:shadowColor="#977979"
-        android:text="Call Uber" />
+        android:text="Call Uber"
+      />
+
+    <ImageButton
+        android:id="@+id/settingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30px"
+        android:layout_marginTop="40px"
+        android:src="@drawable/ic_settings"
+        android:onClick="goToSettings"/>
 
 
 </RelativeLayout>
