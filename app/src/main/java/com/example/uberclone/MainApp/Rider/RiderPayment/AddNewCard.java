@@ -14,7 +14,7 @@ import com.braintreepayments.cardform.utils.CardType;
 import com.braintreepayments.cardform.view.CardEditText;
 import com.braintreepayments.cardform.view.CardForm;
 import com.example.uberclone.MainApp.MainRider;
-import com.example.uberclone.MainApp.Rider.Settings.OptionPayment;
+import com.example.uberclone.MainApp.Rider.Settings.OptionItems.OptionPayment;
 import com.example.uberclone.Models.Card.Card;
 import com.example.uberclone.R;
 import com.google.android.gms.tasks.OnSuccessListener;

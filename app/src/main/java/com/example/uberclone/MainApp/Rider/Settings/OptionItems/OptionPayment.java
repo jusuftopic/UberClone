@@ -1,4 +1,4 @@
-package com.example.uberclone.MainApp.Rider.Settings;
+package com.example.uberclone.MainApp.Rider.Settings.OptionItems;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.uberclone.Extras.Adapters.CardsAdapter;
 import com.example.uberclone.MainApp.Rider.RiderPayment.AddNewCard;
+import com.example.uberclone.MainApp.Rider.Settings.SettingsMenu;
 import com.example.uberclone.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
