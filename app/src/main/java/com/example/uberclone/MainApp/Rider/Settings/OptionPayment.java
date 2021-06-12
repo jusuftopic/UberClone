@@ -73,9 +73,9 @@ public class OptionPayment extends AppCompatActivity {
 
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()){
                             logos[counter] = getLogo(String.valueOf(dataSnapshot.child("cardType").getValue()));
-                            cardnames[counter] = String.valueOf(dataSnapshot.child("cardType"));
-                            cardholders[counter] = String.valueOf(dataSnapshot.child("cardholder"));
-                            cardNumbers[counter] = hideCardNumber(String.valueOf(dataSnapshot.child("cardnumber")));
+                            cardnames[counter] = String.valueOf(dataSnapshot.child("cardType").getValue());
+                            cardholders[counter] = String.valueOf(dataSnapshot.child("cardholder").getValue());
+                            cardNumbers[counter] = hideCardNumber(String.valueOf(dataSnapshot.child("cardnumber").getValue()));
                             counter++;
                         }
 

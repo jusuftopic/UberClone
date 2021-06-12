@@ -22,7 +22,7 @@
         android:layout_marginBottom="42dp"
         android:background="@color/colorAccent"
         android:onClick="addNewCardInDatabase"
-        android:text="Later"
+        android:text="Add card"
         android:textColor="@android:color/white" />
 
 
