@@ -14,6 +14,7 @@ import com.braintreepayments.cardform.utils.CardType;
 import com.braintreepayments.cardform.view.CardEditText;
 import com.braintreepayments.cardform.view.CardForm;
 import com.example.uberclone.MainApp.MainRider;
+import com.example.uberclone.MainApp.Rider.Settings.OptionPayment;
 import com.example.uberclone.Models.Card.Card;
 import com.example.uberclone.R;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -22,12 +23,15 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class AddNewCard extends AppCompatActivity {
 
-    private String nameOfRider;
+    private static final String MESSAGE = "ERROR_OCCURED";
 
+    private String nameOfRider;
 
     private CardForm ridercardform;
 
     private Button addNewCard;
+
+    private boolean cameFromOptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,8 @@ public class AddNewCard extends AppCompatActivity {
         ridercardform =  findViewById(R.id.ridernewcardform);
 
         addNewCard = (Button) findViewById(R.id.addNewCard);
+
+        cameFromOptions = false;
 
         ridercardform.cardRequired(true)
                 .expirationRequired(true)
@@ -73,9 +79,17 @@ public class AddNewCard extends AppCompatActivity {
                     root.child("User").child("Rider").child(nameOfRider).child("Cards").child("Card").setValue(card).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Intent toMainContent = new Intent(AddNewCard.this, MainRider.class);
-                            toMainContent.putExtra("name of rider from payment",nameOfRider);
-                            startActivity(toMainContent);
+                            if (!cameFromOptions){
+                                Intent toMainContent = new Intent(AddNewCard.this, MainRider.class);
+                                toMainContent.putExtra("name of rider from payment",nameOfRider);
+                                startActivity(toMainContent);
+                            }
+                            else{
+                                Intent againToPaymentOptions = new Intent(AddNewCard.this, OptionPayment.class);
+                                againToPaymentOptions.putExtra("USERNAME FROM NEW CARD",nameOfRider);
+                                startActivity(againToPaymentOptions);
+                            }
+
                         }
                     });
                 }
@@ -93,8 +107,16 @@ public class AddNewCard extends AppCompatActivity {
         if (username != null && !username.equalsIgnoreCase("")){
             return username;
         }
-
-        Log.e("Problem with intent","Failed to pass rider's username to add new Card");
-        return null;
+        else{
+            username = this.getIntent().getStringExtra("USER_FROM_OPTIONS");
+            if (username != null && !username.equalsIgnoreCase("")){
+                cameFromOptions = true;
+                return username;
+            }
+            else{
+                Log.e(MESSAGE,"Failed to get username from intent");
+                return null;
+            }
+        }
     }
 }
