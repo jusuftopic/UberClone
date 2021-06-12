@@ -41,6 +41,8 @@ public class OptionPayment extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_option_payment2);
 
+        this.getSupportActionBar().hide();
+
         nameOfRider = getNameOfRider();
 
         cardSettingsList = (ListView) findViewById(R.id.cardSettingsList);
@@ -83,8 +85,6 @@ public class OptionPayment extends AppCompatActivity {
                     else{
                         Toast.makeText(OptionPayment.this,"No added cards yet",Toast.LENGTH_LONG).show();
                     }
-
-
                 }
                 else{
                     Log.e(OptionPayment.getFailMessage(),nameOfRider+" doesn't exist in database");
@@ -129,13 +129,13 @@ public class OptionPayment extends AppCompatActivity {
 
     public void addNewCard(View view){
         Intent toAddNewCard = new Intent(OptionPayment.this, AddNewCard.class);
-        toAddNewCard.putExtra("USER_FROM_OPRIONS",nameOfRider);
+        toAddNewCard.putExtra("USER_FROM_OPTIONS",nameOfRider);
         startActivity(toAddNewCard);
     }
 
     public String getNameOfRider(){
-        if (SettingsMenu.getMessageTag() != null && !SettingsMenu.getMessageTag().equalsIgnoreCase("")){
-            return SettingsMenu.getMessageTag();
+        if (this.getIntent().getStringExtra(SettingsMenu.getMessageTag()) != null && !this.getIntent().getStringExtra(SettingsMenu.getMessageTag()).equalsIgnoreCase("")){
+            return this.getIntent().getStringExtra(SettingsMenu.getMessageTag());
         }
         Log.e(FAIL_MESSAGE,"Failed to trasport name of rider from Settings Menu");
         return null;
