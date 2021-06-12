@@ -3,12 +3,16 @@ package com.example.uberclone.MainApp.Rider.Settings;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.uberclone.Extras.Adapters.CardsAdapter;
+import com.example.uberclone.MainApp.Rider.RiderPayment.AddNewCard;
 import com.example.uberclone.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,6 +34,8 @@ public class OptionPayment extends AppCompatActivity {
     private ListView cardSettingsList;
     private CardsAdapter cardsAdapter;
 
+    private Button addNewCardButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +44,8 @@ public class OptionPayment extends AppCompatActivity {
         nameOfRider = getNameOfRider();
 
         cardSettingsList = (ListView) findViewById(R.id.cardSettingsList);
+
+        addNewCardButton = (Button) findViewById(R.id.newCardOptionPayment);
 
         getCardDataFromDatabase();
     }
@@ -68,6 +76,9 @@ public class OptionPayment extends AppCompatActivity {
                             cardNumbers[counter] = hideCardNumber(String.valueOf(dataSnapshot.child("cardnumber")));
                             counter++;
                         }
+
+                        cardsAdapter = new CardsAdapter(OptionPayment.this,logos,cardnames,cardholders,cardNumbers);
+                        cardSettingsList.setAdapter(cardsAdapter);
                     }
                     else{
                         Toast.makeText(OptionPayment.this,"No added cards yet",Toast.LENGTH_LONG).show();
@@ -96,6 +107,7 @@ public class OptionPayment extends AppCompatActivity {
 
         return cardnumArray.toString();
     }
+
     public int getLogo(String cardTYPE){
         switch (cardTYPE.toUpperCase()){
             case "VISA":
@@ -113,6 +125,12 @@ public class OptionPayment extends AppCompatActivity {
             default:
                 return R.drawable.bt_ic_unknown;
         }
+    }
+
+    public void addNewCard(View view){
+        Intent toAddNewCard = new Intent(OptionPayment.this, AddNewCard.class);
+        toAddNewCard.putExtra("USER_FROM_OPRIONS",nameOfRider);
+        startActivity(toAddNewCard);
     }
 
     public String getNameOfRider(){
