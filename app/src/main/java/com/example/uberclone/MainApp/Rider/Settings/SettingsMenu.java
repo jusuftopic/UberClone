@@ -38,6 +38,7 @@ public class SettingsMenu extends AppCompatActivity {
         nameOfRider = getNameOfRider();
 
         usernameTextView = (TextView) findViewById(R.id.usernameSettings);
+        usernameTextView.setText(nameOfRider);
 
         logos = getLogos();
         settingsOptions = getSettingOptions();
@@ -81,7 +82,6 @@ public class SettingsMenu extends AppCompatActivity {
 
     public String getNameOfRider(){
         if (this.getIntent().getStringExtra("RIDER_LOBBY-name of rider") != null && !this.getIntent().getStringExtra("RIDER_LOBBY-name of rider").equalsIgnoreCase("")){
-            usernameTextView.setText(this.getIntent().getStringExtra("RIDER_LOBBY-name of rider"));
             return this.getIntent().getStringExtra("RIDER_LOBBY-name of rider");
         }
 
