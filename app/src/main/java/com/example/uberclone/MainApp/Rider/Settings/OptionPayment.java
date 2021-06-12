@@ -65,8 +65,8 @@ public class OptionPayment extends AppCompatActivity {
                             logos[counter] = getLogo(String.valueOf(dataSnapshot.child("cardType").getValue()));
                             cardnames[counter] = String.valueOf(dataSnapshot.child("cardType"));
                             cardholders[counter] = String.valueOf(dataSnapshot.child("cardholder"));
-
-
+                            cardNumbers[counter] = hideCardNumber(String.valueOf(dataSnapshot.child("cardnumber")));
+                            counter++;
                         }
                     }
                     else{
@@ -87,6 +87,15 @@ public class OptionPayment extends AppCompatActivity {
         });
     }
 
+    public String hideCardNumber(String cardnumber){
+        char[] cardnumArray = cardnumber.toCharArray();
+
+        for (int i = 0; i < cardnumArray.length-4; i++){
+           cardnumArray[i] = '*';
+        }
+
+        return cardnumArray.toString();
+    }
     public int getLogo(String cardTYPE){
         switch (cardTYPE.toUpperCase()){
             case "VISA":
