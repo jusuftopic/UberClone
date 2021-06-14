@@ -11,6 +11,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +60,8 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
 
     private TextView distanceText;
 
+    private Button gotRideButton;
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull  String[] permissions, @NonNull  int[] grantResults) {
         if (requestCode == 1){
@@ -88,6 +92,8 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
         latLngs = new ArrayList<>();
 
         polyline = null;
+
+        gotRideButton = (Button) findViewById(R.id.gotRideButton);
     }
 
     /**
@@ -151,6 +157,52 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
                 }
             });
         }
+    }
+
+    public void handleGotRideAction(View view){
+        getRiderCurrentLocation(new CurrentLocationCallBack() {
+            @Override
+            public void onCurrentLocationCallBack(RiderLocation currentRiderLocation) {
+
+            }
+
+            @Override
+            public void onCurrentLocationCallBackWihtUsername(String username, RiderLocation riderLocation) {
+                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                DatabaseReference root = firebaseDatabase.getReference();
+
+                root.child("Requests").child("Finished requests").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                        if (snapshot.exists()){
+                            root.child("Requests").child("Finished requests").child(nameOfDriver).child("Riders").child(username).setValue(username).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Log.i("SUCCESEFULL","Ride succesefull finished");
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull  Exception e) {
+                                    Log.e("Failed finish ride",e.getMessage());
+
+                                }
+                            });
+                        }
+                        else{
+                            Log.e("ERROR","Failed to find Finished requests path");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull  DatabaseError error) {
+                        Log.e("Database error",error.getMessage());
+
+                    }
+                });
+            }
+        });
+
+
     }
 
     public void calculateDistance(ArrayList<LatLng> latLngs){
