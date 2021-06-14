@@ -102,7 +102,7 @@ public class RequesterPopUp extends AppCompatActivity {
             public void onClick(View v) {
                 if (!choosenTime.equals("")) {
                     changeDriversAcceptanceStatus(nameOfDriver, rider_currentCordinates, rider_endCordinates);
-                    // deleteRiderFromRequests(String.valueOf(usernameField.getText()));
+                     deleteRiderFromRequests(String.valueOf(usernameField.getText()));
                     mergeDriverAndRider(nameOfDriver, driverLocation, String.valueOf(usernameField.getText()), rider_currentCordinates, rider_endCordinates);
 
                 } else {
