@@ -191,6 +191,7 @@ public class DriverMainContentLobby extends FragmentActivity implements OnMapRea
     }
 
     public void mergeDriverAndRider(String driverName, DriverLocation driverLocation,String riderName){
+        deleteRiderFromRequests(riderName);
         getAcceptedRiderCurrentLocation(new CurrentLocationCallBack() {
             @Override
             public void onCurrentLocationCallBack(RiderLocation currentRiderLocation) {
