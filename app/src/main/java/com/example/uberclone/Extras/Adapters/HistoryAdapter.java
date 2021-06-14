@@ -12,17 +12,17 @@ import androidx.annotation.Nullable;
 
 import com.example.uberclone.R;
 
+import java.util.ArrayList;
+
 public class HistoryAdapter extends ArrayAdapter<String> {
 
     private Context c;
-    private String[] startAddress;
-    private String[] endAddress;
+    private ArrayList<String> startAddress;
 
-    public HistoryAdapter(Context c,String[] startAddress, String[] endAddress){
+    public HistoryAdapter(Context c,ArrayList<String> startAddress){
         super(c, R.layout.history_adapter,startAddress);
         this.c = c;
         this.startAddress = startAddress;
-        this.endAddress = endAddress;
     }
 
     @NonNull
@@ -31,10 +31,8 @@ public class HistoryAdapter extends ArrayAdapter<String> {
         LayoutInflater inflater = (LayoutInflater) this.c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View historyView = inflater.inflate(R.layout.history_adapter,null);
         TextView startLoc = (TextView) historyView.findViewById(R.id.historyCurrentToAdd);
-        TextView endLoc = (TextView) historyView.findViewById(R.id.historyEndToAdd);
 
-        startLoc.setText(startAddress[position]);
-        endLoc.setText(endAddress[position]);
+        startLoc.setText(startAddress.get(position));
 
         return historyView;
     }
@@ -47,19 +45,11 @@ public class HistoryAdapter extends ArrayAdapter<String> {
         this.c = c;
     }
 
-    public String[] getStartAddress() {
+    public ArrayList<String> getStartAddress() {
         return startAddress;
     }
 
-    public void setStartAddress(String[] startAddress) {
+    public void setStartAddress(ArrayList<String> startAddress) {
         this.startAddress = startAddress;
-    }
-
-    public String[] getEndAddress() {
-        return endAddress;
-    }
-
-    public void setEndAddress(String[] endAddress) {
-        this.endAddress = endAddress;
     }
 }
