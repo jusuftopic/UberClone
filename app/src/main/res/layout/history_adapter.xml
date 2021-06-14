@@ -7,55 +7,26 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:orientation="vertical"
-        >
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:orientation="horizontal"
-        >
-
-
-        <TextView
-            android:id="@+id/historyCurrentText"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Start location"
-            android:textSize="15dp" />
-
-        <TextView
-            android:id="@+id/historyCurrentToAdd"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="TextView"
-            android:textSize="15dp" />
-
-    </LinearLayout>
+        android:layout_height="53dp"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
 
 
             <TextView
-                android:id="@+id/historyEndText"
+                android:id="@+id/historyCurrentText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="End location"
+                android:text="Start location"
                 android:textSize="15dp" />
 
             <TextView
-                android:id="@+id/historyEndToAdd"
+                android:id="@+id/historyCurrentToAdd"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -64,6 +35,7 @@
                 android:textSize="15dp" />
 
         </LinearLayout>
+
 
     </LinearLayout>
 </RelativeLayout>

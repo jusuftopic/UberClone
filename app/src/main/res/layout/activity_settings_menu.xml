@@ -13,7 +13,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/historyText"
+            android:id="@+id/usernameSettings"
             android:layout_width="match_parent"
             android:layout_height="89dp"
             android:background="#6E6666"

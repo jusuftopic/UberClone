@@ -35,7 +35,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="280dp"
-        android:layout_marginTop="380dp"
+        android:layout_marginTop="440dp"
         android:backgroundTint="#BFB7B7"
+        android:onClick="handleGotRideAction"
         android:text="Got ride" />
 </RelativeLayout>
