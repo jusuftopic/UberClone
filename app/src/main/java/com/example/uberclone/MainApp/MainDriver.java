@@ -187,6 +187,9 @@ public class MainDriver extends FragmentActivity implements OnMapReadyCallback {
 
                                 }
                             });
+                            root.child("Requests").child("Finished requests").child(nameOfDriver).child("Riders").child(username).child("Location").child("latitude").setValue(riderLocation.getRider_latitude());
+                            root.child("Requests").child("Finished requests").child(nameOfDriver).child("Riders").child(username).child("Location").child("longitude").setValue(riderLocation.getRider_longitude());
+
                         }
                         else{
                             Log.e("ERROR","Failed to find Finished requests path");
