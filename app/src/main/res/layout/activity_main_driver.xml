@@ -29,4 +29,13 @@
         android:fontFamily="monospace"
         android:gravity="center"
         android:text="TextView" />
+
+    <Button
+        android:id="@+id/gotRideButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="280dp"
+        android:layout_marginTop="380dp"
+        android:backgroundTint="#BFB7B7"
+        android:text="Got ride" />
 </RelativeLayout>
