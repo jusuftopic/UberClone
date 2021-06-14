@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.example.uberclone.Extras.Adapters.SettingsAdapter;
 import com.example.uberclone.MainApp.Rider.Settings.OptionItems.OptionHistory;
 import com.example.uberclone.MainApp.Rider.Settings.OptionItems.OptionPayment;
+import com.example.uberclone.MainApp.Rider.Settings.OptionItems.OptionPersonalData;
 import com.example.uberclone.R;
 
 public class SettingsMenu extends AppCompatActivity {
@@ -66,6 +67,9 @@ public class SettingsMenu extends AppCompatActivity {
                     case 1:
                         toOptionItem(OptionHistory.class);
                         break;
+
+                    case 2:
+                        toOptionItem(OptionPersonalData.class);
                 }
             }
         });
