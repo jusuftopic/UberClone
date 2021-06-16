@@ -59,9 +59,6 @@ public class SettingsMenu extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position){
                     case 0:
-                       /* Intent toPayment = new Intent(SettingsMenu.this,OptionPayment.class);
-                        toPayment.putExtra(MESSAGE_TAG,nameOfRider);
-                        startActivity(toPayment);*/
                         toOptionItem(OptionPayment.class);
                         break;
                     case 1:
@@ -70,6 +67,7 @@ public class SettingsMenu extends AppCompatActivity {
 
                     case 2:
                         toOptionItem(OptionPersonalData.class);
+                        break;
                 }
             }
         });
@@ -82,19 +80,22 @@ public class SettingsMenu extends AppCompatActivity {
     }
 
     public int[] getLogos(){
-        int[] resLogos = new int[2];
+        int[] resLogos = new int[3];
 
         resLogos[0] = R.drawable.ic_card;
         resLogos[1] = R.drawable.ic_history;
+        resLogos[2] = R.drawable.ic_settings;
+
 
         return resLogos;
     }
 
     public String[] getSettingOptions(){
-        String[] menuOptions = new String[2];
+        String[] menuOptions = new String[3];
 
         menuOptions[0] = "Payment";
         menuOptions[1] = "History";
+        menuOptions[2] = "Personal Settings";
 
         return menuOptions;
     }
