@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.example.uberclone.Extras.Adapters.CardsAdapter;
 import com.example.uberclone.MainApp.MainRider;
 import com.example.uberclone.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,6 +37,7 @@ public class RidePayment extends AppCompatActivity {
     private CardsAdapter cardsAdapter;
 
     private Button addNewCardButton;
+    private Button cancelCardButton;
 
 
     @Override
@@ -47,6 +50,7 @@ public class RidePayment extends AppCompatActivity {
         nameOfRider = getNameOfRider();
 
         addNewCardButton = (Button) findViewById(R.id.addNewCardButton);
+        cancelCardButton = (Button) findViewById(R.id.cancleNewCardButton);
 
         listOfCards = (ListView) findViewById(R.id.listOfAddedCards);
 
@@ -105,6 +109,41 @@ public class RidePayment extends AppCompatActivity {
                 Intent toMeetingWithDriver = new Intent(RidePayment.this, MainRider.class);
                 toMeetingWithDriver.putExtra("name of rider from payment",nameOfRider);
                 startActivity(toMeetingWithDriver);
+            }
+        });
+    }
+
+    public void cancelAddNewCard(View view){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").child(nameOfRider).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    root.child("Requests").child("Rider Calls").child(nameOfRider).setValue(null)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Log.i("DELETED","Succesefull deleted "+nameOfRider+" from Rider calls");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e("DELETE FAILED","Failed to selete "+nameOfRider+" from Rider calls");
+                                    e.printStackTrace();
+                                }
+                            });
+                }
+                else{
+                    Log.e("Path fail","Failed to find rider in calls");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull  DatabaseError error) {
+                Log.e("Database error",error.getMessage());
             }
         });
     }
