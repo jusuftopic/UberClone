@@ -22,6 +22,8 @@ import com.google.firebase.database.ValueEventListener;
 
 public class ChangePassword extends AppCompatActivity {
 
+    private static final String PASSWORD_FORM_MESSAGE = "Password need to contain upper/lower casses, numbers and characters";
+
     private final String nameOfRider = SettingsMenu.getRiderUsername();
 
     private EditText currentPassword;
@@ -52,8 +54,43 @@ public class ChangePassword extends AppCompatActivity {
         String confirmedCurrentPasswordText = String.valueOf(confirmedCurrentPassword.getText());
 
         if (areSamePasswords(currentPasswordText,confirmedCurrentPasswordText)){
+            if (isApprovedPasswordStyle(currentPasswordText))
             checkDatabaseAndChange(currentPasswordText);
         }
+    }
+
+    public boolean isApprovedPasswordStyle(String approvedPassword){
+        int counterUpperCase = 0;
+        int counterLowerCase = 0;
+        int counterDigits = 0;
+        int counterCharacters = 0;
+
+        for (int i = 0; i < approvedPassword.length(); i++){
+            char currentCharacter = approvedPassword.charAt(i);
+            if (Character.isUpperCase(currentCharacter)){
+                counterUpperCase++;
+            }
+            if (Character.isLowerCase(currentCharacter)){
+                counterLowerCase++;
+            }
+            if (Character.isDigit(currentCharacter)){
+                counterDigits++;
+            }
+            if ((int) currentCharacter >= 33 && (int) currentCharacter<= 46 ||
+                    (int) currentCharacter >= 58 && (int) currentCharacter<=64
+            || (int) currentCharacter >= 91 && (int)currentCharacter<=96
+            || (int) currentCharacter >= 123 && (int) currentCharacter <=126){
+                counterCharacters++;
+            }
+
+        }
+
+        if (counterUpperCase > 0 && counterLowerCase > 0 && counterDigits > 0 && counterCharacters > 0){
+            return true;
+        }
+
+        makeWarning(PASSWORD_FORM_MESSAGE);
+        return false;
     }
 
     public void checkDatabaseAndChange(String approvedPassword){
