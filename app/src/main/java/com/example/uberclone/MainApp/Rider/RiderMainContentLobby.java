@@ -72,7 +72,7 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
                     Location lastKnownLocation = getLastKnownLocation();
                     if (lastKnownLocation != null) {
                         setCurrentLocation(lastKnownLocation);
-                        addCurrentLocationInDatabase(lastKnownLocation);
+                        //addCurrentLocationInDatabase(lastKnownLocation);
                     } else {
                         Log.e("Last location ", "Not recognized");
                     }
@@ -148,7 +148,7 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
             Location lastKnownLocation = getLastKnownLocation();
             if (lastKnownLocation != null) {
                 setCurrentLocation(lastKnownLocation);
-                addCurrentLocationInDatabase(lastKnownLocation);
+              //  addCurrentLocationInDatabase(lastKnownLocation);
             } else {
                 Log.e("Last location ", "Not recognized");
             }
@@ -271,7 +271,7 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
                         changeButtonInfos(true, "Cancle Uber");
                         Location lastKnownLocation = getLastKnownLocation();
                         if (lastKnownLocation != null) {
-                            addCurrentLocationInDatabase(lastKnownLocation);
+                          //  addCurrentLocationInDatabase(lastKnownLocation);
                         }
                         addMarkerOfUsersEndLocation(nameOfRider);
                         callUber.setEnabled(false);
@@ -319,81 +319,41 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
         mMap.moveCamera(CameraUpdateFactory.newLatLng(endPosition));
     }
 
-    public void addEndLocationToDatabase(RiderLocation location) {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference();
-
-        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    root.child("Requests").child("Rider Calls").child(nameOfRider).child("End location").setValue(location).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.i("End location", "SUCCESEFULL ADDED");
-                        }
-                    });
-                } else {
-                    Log.e("ERROR-END LOCATION", nameOfRider + " not recognized");
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("ERROR-END LOCATION", error.getMessage());
-            }
-        });
-    }
-
-    public void addCurrentLocationInDatabase(Location location) {
-        currentlocation.setRider_latitude(location.getLatitude());
-        currentlocation.setRider_longitude(location.getLongitude());
-
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference();
-
-        root.child("Requests").child("Rider Calls").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    root.child("Requests").child("Rider Calls").child(nameOfRider).child("Current location").setValue(currentlocation).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.i("CURRENT LOCATION ", "ADDED");
-                        }
-                    });
-
-                } else {
-                    Log.e("ERROR-CURRENT LOCATION ", nameOfRider + " doesn't exists");
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("ERROR-CURRENT LOCATION ", error.getMessage());
-            }
-        });
-    }
 
     public void deleteRequestFromDatabase(String rider_username) {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference root = firebaseDatabase.getReference();
+       FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+       DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChild(rider_username)) {
-                    root.child("Requests").child("Rider Calls").child(rider_username).setValue(null);
-                }
-            }
+       root.child("User").child("Rider").child(rider_username).addListenerForSingleValueEvent(new ValueEventListener() {
+           @Override
+           public void onDataChange(@NonNull  DataSnapshot snapshot) {
+               if (snapshot.exists()){
+                   root.child("User").child("Rider").child(rider_username).child("Location").setValue(null)
+                           .addOnSuccessListener(new OnSuccessListener<Void>() {
+                               @Override
+                               public void onSuccess(Void unused) {
+                                   Log.i("Location deleted","Succesefull deleted location for rider");
+                               }
+                           })
+                           .addOnFailureListener(new OnFailureListener() {
+                               @Override
+                               public void onFailure(@NonNull Exception e) {
+                                   Log.e("Loc deletion failed",e.getMessage());
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                               }
+                           });
+               }
+               else{
+                   Log.e("Path fail","Failed to find rider: "+rider_username+" in database");
+               }
+           }
 
-            }
-        });
+           @Override
+           public void onCancelled(@NonNull  DatabaseError error) {
+               Log.e("Database error",error.getMessage());
+
+           }
+       });
     }
 
 
