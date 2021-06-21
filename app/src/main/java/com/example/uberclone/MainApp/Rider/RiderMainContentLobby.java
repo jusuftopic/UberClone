@@ -262,6 +262,7 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         deleteRequestFromDatabase(nameOfRider);
+                        deleteRequestFromActiveCalls(nameOfRider);
                         changeButtonInfos(false, "Call Uber");
                     }
                 })
@@ -356,6 +357,48 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
        });
     }
 
+    public void deleteRequestFromActiveCalls(String ridername){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    if (snapshot.getChildrenCount() > 0){
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                            if (dataSnapshot.getKey().equals(ridername)){
+                                root.child("Requests").child("Rider Calls").child(String.valueOf(dataSnapshot.getKey())).setValue(null)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                Log.i("Deletion succesefully","Succefull deletion of "+dataSnapshot.getKey()+" from database");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.e("Deletion failed","Failed to delete "+dataSnapshot.getKey()+" from database");
+                                            }
+                                        });
+                            }
+                        }
+                    }
+
+                }
+                else{
+                    Log.e("Path fail","Failed to get Rider Calls path");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull  DatabaseError error) {
+                Log.e("Database error",error.getMessage());
+            }
+        });
+    }
+
 
     public void checkIfTheRequestExists(String username) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -363,13 +406,14 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
 
         Log.i("Users check", username);
 
-        root.child("User").child(nameOfRider).child("Location").addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child("User").child("Rider").child(nameOfRider).child("Location").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    setDialog();
+                  //  setDialog();
+                    checkIfRequestActive(username);
                 } else {
-                    Log.i("Location null", username + "didn't call driver yet");
+                    Log.i("Location null", username + " didn't call driver yet");
                 }
             }
 
@@ -381,6 +425,30 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
 
     }
 
+    public void checkIfRequestActive(String username){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("Requests").child("Rider Calls").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    setDialog();
+                }
+                else{
+                    Log.i("Request inactive",nameOfRider+" doens't have active requests");
+                    deleteRequestFromDatabase(nameOfRider);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull  DatabaseError error) {
+                Log.e("Database fail",error.getMessage());
+            }
+        });
+    }
+
+    /*
     public void setMarkerOnEndLocation(String username) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
@@ -409,7 +477,7 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
                 Log.e("Database error", error.getMessage());
             }
         });
-    }
+    }*/
 
     public void createMarker(double latitude, double longitude) {
         LatLng endPosition = new LatLng(latitude, longitude);
