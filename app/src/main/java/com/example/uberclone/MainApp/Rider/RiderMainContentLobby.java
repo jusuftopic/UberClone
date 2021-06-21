@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -174,8 +175,7 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
             ProgressDialog dialog = new ProgressDialog(this);
             dialog.setMessage("Please wait...");
 
-            addEndLocationToDatabase(endlocation);
-
+            addLastRequestedLocation(currentlocation,endlocation);
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
@@ -188,6 +188,59 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
         } else {
             setDialog();
         }
+    }
+
+    public void addLastRequestedLocation(RiderLocation currentlocation, RiderLocation endlocation){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference root = firebaseDatabase.getReference();
+
+        root.child("User").child("Rider").child(nameOfRider).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if (snapshot.exists()){
+
+
+                    root.child("User").child("Rider").child(nameOfRider).child("Location").child("Current Location").setValue(currentlocation)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                 Log.i("Succesefull","Added rider current location["+currentlocation.toString()+"] to database");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull  Exception e) {
+                                    Log.e("Failed","Failed to add user current location ["+currentlocation.toString()+"] to database");
+                                    e.printStackTrace();
+                                }
+                            });
+                    root.child("User").child("Rider").child(nameOfRider).child("Location").child("End Location").setValue(endlocation)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Log.i("Succesefull","Added rider's end location["+endlocation.toString()+"] to database");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull  Exception e) {
+                                    Log.e("Failed","Failed to add user end location ["+currentlocation.toString()+"] to database");
+                                    e.printStackTrace();
+                                }
+                            });
+
+                }
+                else{
+                    Log.e("Path failed","Failed to find "+nameOfRider+" in database");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Database error",error.getMessage());
+            }
+        });
     }
 
     public void changeButtonInfos(boolean called, String message) {
