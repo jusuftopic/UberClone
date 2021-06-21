@@ -289,19 +289,17 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference root = firebaseDatabase.getReference();
 
-        root.child("Requests").child("Rider Calls").child(ridersUsername).addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child("User").child("Rider").child(nameOfRider).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
+                    double endLocationLatitude = (double) snapshot.child("Location").child("End Location").child("rider_latitude").getValue();
+                    double endLocationLongitude = (double) snapshot.child("Location").child("End Location").child("rider_longitude").getValue();
 
-                    double endLatitude = Double.parseDouble(String.valueOf(snapshot.child("End location").child("rider_latitude").getValue()));
-                    double endLongitude = Double.parseDouble(String.valueOf(snapshot.child("End location").child("rider_longitude").getValue()));
-
-                    setMarkerOnAlreadyRequestedRiders(nameOfRider,endLatitude,endLongitude);
-
+                    setMarkerOnAlreadyRequestedRiders(ridersUsername,endLocationLatitude,endLocationLongitude);
                 }
                 else{
-                    Log.e("Rider's username","Failed to find "+ridersUsername+" in database");
+                    Log.e("Path failed","Failed to find "+nameOfRider+" in database");
                 }
             }
 
@@ -310,6 +308,8 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
                 Log.e("Database error",error.getMessage());
             }
         });
+
+
     }
 
     public void setMarkerOnAlreadyRequestedRiders(String username,double latitude, double longitude){
@@ -363,13 +363,13 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
 
         Log.i("Users check", username);
 
-        root.child("Requests").child("Rider Calls").child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child("User").child(nameOfRider).child("Location").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     setDialog();
                 } else {
-                    Log.i("First request", username + " doesn't have requests in database");
+                    Log.i("Location null", username + "didn't call driver yet");
                 }
             }
 
