@@ -72,7 +72,6 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
                     Location lastKnownLocation = getLastKnownLocation();
                     if (lastKnownLocation != null) {
                         setCurrentLocation(lastKnownLocation);
-                        //addCurrentLocationInDatabase(lastKnownLocation);
                     } else {
                         Log.e("Last location ", "Not recognized");
                     }
@@ -148,7 +147,6 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
             Location lastKnownLocation = getLastKnownLocation();
             if (lastKnownLocation != null) {
                 setCurrentLocation(lastKnownLocation);
-              //  addCurrentLocationInDatabase(lastKnownLocation);
             } else {
                 Log.e("Last location ", "Not recognized");
             }
@@ -181,7 +179,7 @@ public class RiderMainContentLobby extends FragmentActivity implements OnMapRead
             }
             changeButtonInfos(true, "Cancle call");
 
-            Intent toPickCar = new Intent(RiderMainContentLobby.this, ChooseUberCar.class);
+            Intent toPickCar = new Intent(RiderMainContentLobby.this, RideInformations.class);
             toPickCar.putExtra("username from ridermain", nameOfRider);
             startActivity(toPickCar);
 
